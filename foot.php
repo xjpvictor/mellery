@@ -8,7 +8,7 @@ include($base_dir.'my_foot.php');
 $url=getpageurl();
 ?>
 <p>&copy; <?php echo date("Y"); ?> <a href="<?php echo $base_url; ?>"><?php echo $site_name; ?></a>. <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">CC BY-NC-SA 3.0</a></p>
-<p>Powered by Mellery and <a href="https://www.box.com" target="_blank">box</a>. Validated with <a href="http://validator.w3.org/check?uri=<?php echo $url; ?>" target="_blank">HTML5</a> and <a href="http://jigsaw.w3.org/css-validator/validator?uri=<?php echo $url; ?>&amp;profile=css3&amp;usermedium=all&amp;warning=1&amp;vextwarning=true&amp;lang=en" target="_blank">CSS3</a>. Optimized for <a href="http://my.opera.com/community/download.pl?ref=xjpvictor&amp;p=opera_desktop" target="_blank">Opera</a>.</p>
+<p>Powered by Mellery and <a href="https://www.box.com" target="_blank">box</a>.</p>
 <p>Hotkeys: j/k - Scroll down/up; J/K - Scroll to bottom/top; h/l - Page down/up; H/L - Scroll left/right; Left/Right - Go to Previous/Next image; U - Back to parent folder</p>
 <p><a href="<?php echo $base_url; ?>stat.php?dnt=1&amp;ref=<?php echo $url; ?>" title="Do Not Track">Do Not Track</a></p>
 <img src="<?php echo $base_url; ?>admin/cache.php" width="1" height="1" alt="" />
