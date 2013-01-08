@@ -16,7 +16,7 @@ if (!$auth || $auth == 'fail') {
 $my_head = 'my_head.php';
 $my_foot = 'my_foot.php';
 $my_sidebar = 'my_sidebar.php';
-$my_style = 'my_sidebar.css';
+$my_style = 'my_style.css';
 
 if (!empty($_POST) && array_key_exists('my_head',$_POST) && $_POST['my_head'] !== file_get_contents($base_dir.$my_head, true)) {
   file_put_contents($base_dir.$my_head, $_POST['my_head'], LOCK_EX);
