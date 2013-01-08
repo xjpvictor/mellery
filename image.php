@@ -28,16 +28,9 @@ if (empty($match)) {
 
 $box_cache=boxcache();
 $folder_list=getfolderlist();
-$file_list=getfilelist($folder_id,null,null);
-$otp=getkey($expire_image);
+$url=getpageurl();
 
-if ($file_list == 'error' || !array_key_exists('id-'.$id,$file_list) || !array_key_exists('id-'.$folder_id,$folder_list)) {
-  header("Status: 404 Not Found");
-  include($base_dir."library/404.php");
-  exit(0);
-}
 if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access']['public'][0] !== '1') {
-  $url=getpageurl();
   $auth=auth(array($username,'id-'.$folder_id));
   if (!$auth || $auth == 'fail') {
     header("HTTP/1.1 401 Unauthorized");
@@ -48,32 +41,26 @@ if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access
   }
 }
 
-if (auth($username) !== 'pass')
-  $use_cache = true;
-else
-  $use_cache = false;
-$use_page_cache = false;
-if ($use_cache) {
+$otp=getkey($expire_image);
+$auth_admin = auth($username);
+
+if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) {
+  $session_str = '<div id="delaymessage">'.$_SESSION['message'].'</div><script type="text/javascript">$(document).ready( function(){$("#delaymessage").show("fast");var to=setTimeout("hideDiv()",5000);});function hideDiv(){$("#delaymessage").hide("fast");}</script>';
+  $session_message = true;
+} else {
+  $session_message = false;
+}
+
+if ($auth_admin !== 'pass') {
   $page_cache=$cache_dir.$folder_id.'-'.$id.'.html';
   if (file_exists($page_cache)) {
     $age = filemtime($page_cache);
-    if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($base_dir.'config.php') && time() - $age <= $cache_expire) {
+    if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($base_dir.'config.php')) {
       $output = file_get_contents($page_cache);
       $output = preg_replace(array('/#OTP#/', '/#IMGURL#/'), array($otp, $match[1]), $output);
-      if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) {
-        echo '<div id="delaymessage">';
-        echo $_SESSION['message'];
-        echo '</div>';
-        echo '<script type="text/javascript">'."\n";
-        echo '  $(document).ready( function(){'."\n";
-        echo '    $("#delaymessage").show("fast");'."\n";
-        echo '    var to=setTimeout("hideDiv()",5000);'."\n";
-        echo '  });'."\n";
-        echo '  function hideDiv()'."\n";
-        echo '  {'."\n";
-        echo '    $("#delaymessage").hide("fast");'."\n";
-        echo '  }'."\n";
-        echo '</script>';
+      echo $output;
+      if ($session_message) {
+        echo $session_str;
         $_SESSION['message'] = '';
       }
       echo '</body></html>';
@@ -82,12 +69,19 @@ if ($use_cache) {
   }
 }
 
+$file_list=getfilelist($folder_id,null,null);
+if ($file_list == 'error' || !array_key_exists('id-'.$id,$file_list) || !array_key_exists('id-'.$folder_id,$folder_list)) {
+  header("Status: 404 Not Found");
+  include($base_dir."library/404.php");
+  exit(0);
+}
+
 ob_start();
 
 include($base_dir."head.php");
 $name=$file_list['id-'.$id]['name'];
 $name = substr($name, 0, strrpos($name, '.', -1));
-echo '<body id="body-img">'."\n".'<div id="main-img">'."\n".'<div id="content-img" class="move-fix-top">'."\n";
+echo '<body id="body-img">'."\n".'<div id="main-img">'."\n".'<div id="content-img">'."\n";
 echo '<div id="imgbox"><img id="mainimg-img" src="#IMGURL#" alt="'.$name.'"/><a title="Download original image" target="_blank" href="#IMGURL#"><div id="download">&nbsp;</div></a>';
 
 foreach ($file_list as $key => $value) {
@@ -145,10 +139,10 @@ echo '</div>';
 </li>
 <?php
 echo '<li class="widget-container">'."\n";
-if (auth($username) == 'pass')
-  echo '<div class="edit-image"><a href="'.$base_url.'admin/folder.php?id='.$folder_id.'&amp;p='.floor($k / $admin_folder_limit).'#'.$id.'">Edit</a></div><div class="edit-image"><a href="'.$base_url.'admin">Dashboard</a></div><div class="logout-image"><a href="'.$base_url.'admin/logout.php?ref='.getpageurl().'">Log out</a></div>';
+if ($auth_admin == 'pass')
+  echo '<div class="edit-image"><a href="'.$base_url.'admin/folder.php?id='.$folder_id.'&amp;p='.floor($k / $admin_folder_limit).'#'.$id.'">Edit</a></div><div class="edit-image"><a href="'.$base_url.'admin">Dashboard</a></div><div class="logout-image"><a href="'.$base_url.'admin/logout.php?ref='.$url.'">Log out</a></div>';
 else
-  echo '<div class="edit-image"><a href="'.$base_url.'admin/login.php?ref='.getpageurl().'">Log in</a></div>';
+  echo '<div class="edit-image"><a href="'.$base_url.'admin/login.php?ref='.$url.'">Log in</a></div>';
 echo '</li></ul>'."\n";
 
 if (isset($disqus_shortname) && !empty($disqus_shortname)) {
@@ -171,7 +165,7 @@ if (isset($disqus_shortname) && !empty($disqus_shortname)) {
 
 echo '</div></div>';
 if ($seq && count($seq) > 1) {
-  echo '<div id="info-img-nav" class="move-fix-bottom"><div id="imagename-img">'.$name.' ('.$k.' of '.count($file_list).' images)</div>';
+  echo '<div id="info-img-nav"><div id="imagename-img">'.$name.' ('.$k.' of '.count($file_list).' images)</div>';
   $i=0;
   echo '<div id="nav-img">';
   foreach($seq as $item) {
@@ -192,7 +186,7 @@ if ($seq && count($seq) > 1) {
     echo '<div id="next"><a title="Next" href="'.$next_url.'">Next →</a></div>';
   echo '</div>';
 } else
-  echo '<div id="info-img" class="move-fix-bottom"><div id="imagename-img">'.$name.'</div>';
+  echo '<div id="info-img"><div id="imagename-img">'.$name.'</div>';
 echo '<div id="message-img">';
 include($base_dir."foot.php");
 ?>
@@ -233,7 +227,7 @@ $(window).resize();});
 <?php
 $output = ob_get_contents();
 ob_clean();
-if ($use_cache) {
+if ($auth_admin !== 'pass') {
   file_put_contents($page_cache,$output);
 }
 
@@ -242,20 +236,8 @@ echo $output;
 
 ob_end_flush();
 
-if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) {
-  echo '<div id="delaymessage">';
-  echo $_SESSION['message'];
-  echo '</div>';
-  echo '<script type="text/javascript">'."\n";
-  echo '  $(document).ready( function(){'."\n";
-  echo '    $("#delaymessage").show("fast");'."\n";
-  echo '    var to=setTimeout("hideDiv()",5000);'."\n";
-  echo '  });'."\n";
-  echo '  function hideDiv()'."\n";
-  echo '  {'."\n";
-  echo '    $("#delaymessage").hide("fast");'."\n";
-  echo '  }'."\n";
-  echo '</script>';
+if ($session_message) {
+  echo $session_str;
   $_SESSION['message'] = '';
 }
 echo '</body></html>';

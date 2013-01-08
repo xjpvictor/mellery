@@ -15,16 +15,9 @@ if (array_key_exists('id',$_GET)) {
 $header_string=boxauth();
 $box_cache=boxcache();
 $folder_list = getfolderlist();
-$file_list=getfilelist($folder_id,$limit,$p);
-$otp=getkey($expire_image);
+$url=getpageurl();
 
-if (!array_key_exists('id-'.$folder_id,$folder_list) || $file_list == 'error' || ($p !== 0 && empty($file_list))) {
-  header("Status: 404 Not Found");
-  include($base_dir."library/404.php");
-  exit(0);
-}
 if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access']['public'][0] !== '1') {
-  $url=getpageurl();
   $auth=auth(array($username,'id-'.$folder_id));
   if (!$auth || $auth == 'fail') {
     header("HTTP/1.1 401 Unauthorized");
@@ -35,15 +28,21 @@ if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access
   }
 }
 
-if (auth($username) !== 'pass')
-  $use_cache = true;
-else
-  $use_cache = false;
-if ($use_cache) {
+$otp=getkey($expire_image);
+$auth_admin = auth($username);
+
+if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) {
+  $session_str = '<div id="delaymessage">'.$_SESSION['message'].'</div><script type="text/javascript">$(document).ready( function(){$("#delaymessage").show("fast");var to=setTimeout("hideDiv()",5000);});function hideDiv(){$("#delaymessage").hide("fast");}</script>';
+  $session_message = true;
+} else {
+  $session_message = false;
+}
+
+if ($auth_admin !== 'pass') {
   $page_cache=$cache_dir.$folder_id.'-'.$p.'.html';
   if (file_exists($page_cache)) {
     $age = filemtime($page_cache);
-    if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($base_dir.'config.php') && time() - $age <= $cache_expire * 86400) {
+    if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($base_dir.'config.php')) {
       $output = file_get_contents($page_cache);
       $output = preg_replace('/#OTP#/', $otp, $output);
       preg_match_all('/#VIEW_COUNT_CHANGE_(\d+)#/', $output, $matches);
@@ -55,26 +54,21 @@ if ($use_cache) {
         $output = preg_replace('/#VIEW_COUNT_CHANGE_'.$match.'#/', $c, $output);
       }
       echo $output;
-      if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) {
-        echo '<div id="delaymessage">';
-        echo $_SESSION['message'];
-        echo '</div>';
-        echo '<script type="text/javascript">'."\n";
-        echo '  $(document).ready( function(){'."\n";
-        echo '    $("#delaymessage").show("fast");'."\n";
-        echo '    var to=setTimeout("hideDiv()",5000);'."\n";
-        echo '  });'."\n";
-        echo '  function hideDiv()'."\n";
-        echo '  {'."\n";
-        echo '    $("#delaymessage").hide("fast");'."\n";
-        echo '  }'."\n";
-        echo '</script>';
+      if ($session_message) {
+        echo $session_str;
         $_SESSION['message'] = '';
       }
       echo '</body></html>';
       exit(0);
     }
   }
+}
+
+$file_list=getfilelist($folder_id,$limit,$p);
+if (!array_key_exists('id-'.$folder_id,$folder_list) || $file_list == 'error' || ($p !== 0 && empty($file_list))) {
+  header("Status: 404 Not Found");
+  include($base_dir."library/404.php");
+  exit(0);
 }
 
 ob_start();
@@ -97,7 +91,7 @@ echo '<div id="sharetop"><table><tr>'."\n";
 if ($folder_id !== $box_root_folder_id)
   echo '<td id="view_count"><script src="'.$base_url.'stat.php?id='.$folder_id.'&amp;update=#OTP#"></script> Views</td>'."\n";
 echo '<td>'."\n".'<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>'."\n".'</td><td>'."\n".'<div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>'."\n".'</td>'."\n".'</tr></table></div>'."\n";
-if ($folder_id !== $box_root_folder_id && auth($username) == 'pass')
+if ($folder_id !== $box_root_folder_id && $auth_admin == 'pass')
   echo '<div id="edit-folder"><a href="'.$base_url.'admin/folder.php?id='.$folder_id.'">Edit</a></div>';
 
 $style=array('rotateleft1','rotateleft2','rotateleft3','rotateright1','rotateright2','rotateright3');
@@ -128,7 +122,7 @@ include($base_dir.'foot.php');
 
 $output = ob_get_contents();
 ob_clean();
-if ($use_cache) {
+if ($auth_admin !== 'pass') {
   file_put_contents($page_cache,$output);
 }
 
@@ -145,20 +139,8 @@ echo $output;
 
 ob_end_flush();
 
-if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) {
-  echo '<div id="delaymessage">';
-  echo $_SESSION['message'];
-  echo '</div>';
-  echo '<script type="text/javascript">'."\n";
-  echo '  $(document).ready( function(){'."\n";
-  echo '    $("#delaymessage").show("fast");'."\n";
-  echo '    var to=setTimeout("hideDiv()",5000);'."\n";
-  echo '  });'."\n";
-  echo '  function hideDiv()'."\n";
-  echo '  {'."\n";
-  echo '    $("#delaymessage").hide("fast");'."\n";
-  echo '  }'."\n";
-  echo '</script>';
+if ($session_message) {
+  echo $session_str;
   $_SESSION['message'] = '';
 }
 echo '</body></html>';

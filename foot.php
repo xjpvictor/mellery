@@ -5,7 +5,6 @@ if (!defined('includeauth')) {
   exit(0);
 }
 include($base_dir.'my_foot.php');
-$url=getpageurl();
 ?>
 <p>&copy; <?php echo date("Y"); ?> <a href="<?php echo $base_url; ?>"><?php echo $site_name; ?></a>. <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">CC BY-NC-SA 3.0</a></p>
 <p>Powered by <a href="https://github.com/xjpvictor/mellery" target="_blank">Mellery</a> and <a href="https://www.box.com" target="_blank">box</a>.</p>
