@@ -53,7 +53,7 @@ if (!empty($_POST) && array_key_exists('username',$_POST) && array_key_exists('p
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
-<title>Log in | xjpvictor's Gallery</title>
+<title>Log in | <?php echo $site_name; ?></title>
 <link rel="profile" href="http://gmpg.org/xfn/11" />
 <link rel="stylesheet" href="<?php echo $base_url; ?>library/style.css" type="text/css" media="all" />
 <link rel="shortcut icon" href="/favicon.ico" />

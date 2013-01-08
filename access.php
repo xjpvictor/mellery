@@ -76,7 +76,7 @@ if ($pass) {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
-<title>Access | xjpvictor's Gallery</title>
+<title>Access | <?php echo $site_name; ?></title>
 <link rel="profile" href="http://gmpg.org/xfn/11" />
 <link rel="shortcut icon" href="/favicon.ico" />
 </head>

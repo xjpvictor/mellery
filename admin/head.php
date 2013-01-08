@@ -13,6 +13,7 @@ if (!defined('includeauth')) {
 <title>Admin | <?php echo $site_name; ?></title>
 <link rel="profile" href="http://gmpg.org/xfn/11" />
 <link rel="stylesheet" href="<?php echo $base_url; ?>library/style.css" type="text/css" media="all" />
+<link rel="stylesheet" href="<?php echo $base_url; ?>my_style.css" type="text/css" media="all" />
 <link rel="shortcut icon" href="/favicon.ico" />
 <?php include($base_dir.'my_head.php'); ?>
 </head>

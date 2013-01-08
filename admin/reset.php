@@ -46,7 +46,7 @@ if (!empty($_POST)) {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
-<title>Password reset | xjpvictor's Gallery</title>
+<title>Password reset | <?php echo $site_name; ?></title>
 <link rel="profile" href="http://gmpg.org/xfn/11" />
 <link rel="stylesheet" href="<?php echo $base_url; ?>library/style.css" type="text/css" media="all" />
 <link rel="shortcut icon" href="/favicon.ico" />

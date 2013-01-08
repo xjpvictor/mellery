@@ -391,18 +391,6 @@ function coverbordercompose($dimg,$nw,$nh,$nbw,$nbh,$border_width,$thumb,$i) {
   imagecopy($newlayer,$dimg,0,0,0,0,$nw,$nh);
   return($newlayer);
 }
-//function isfilenameexist($file,$fid) {
-//  $list=getlist($fid,null,null);
-//  $result=array();
-//  if (!empty($list)) {
-//    foreach($entries as $entry) {
-//      if(in_array($file,$entry)) {
-//        $result=$entry;
-//      }
-//    }
-//  }
-//  return($result);
-//}
 function downloadfile($file,$id) {
   global $header_string;
   $ch=curl_init();
@@ -438,28 +426,6 @@ function downloadfile($file,$id) {
   } else
     return(false);
 }
-//function uploadfile($file,$fid,$path) {
-//  global $header_string;
-//  $result=is_filename_exist($file,$fid);
-//  if (!empty($result)) {
-//    $id=$result['id'];
-//    $url='https://api.box.com/2.0/files/'.$id.'/content';
-//    $postfield=array('filename' => '@'.$path.$file);
-//  } else {
-//    $url='https://api.box.com/2.0/files/content';
-//    $postfield=array('filename' => '@'.$path.$file,'folder_id' => $fid);
-//  }
-//  $ch=curl_init();
-//  curl_setopt($ch, CURLOPT_URL,$url);
-//  curl_setopt($ch, CURLOPT_HEADER,false);
-//  curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
-//  curl_setopt($ch, CURLOPT_POST,true);
-//  curl_setopt($ch, CURLOPT_POSTFIELDS,$postfield);
-//  curl_setopt($ch, CURLOPT_HTTPHEADER, array($header_string));
-//  $response=json_decode(curl_exec($ch));
-//  curl_close($ch);
-//  return($response);
-//}
 function generaterandomstring($length) {
   $characters = '234567ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   $randomString = '';
