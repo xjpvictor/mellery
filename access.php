@@ -1,0 +1,119 @@
+<?php
+define('includeauth',true);
+include_once('functions.php');
+
+if (!empty($_GET) && array_key_exists('id',$_GET) && array_key_exists('ref',$_GET))
+  $url = urldecode($_GET['ref']);
+else {
+  header("HTTP/1.1 403 Forbidden");
+  include($base_dir."library/403.php");
+  exit(0);
+}
+
+if (ipblock($_SERVER['REMOTE_ADDR'])) {
+  header("HTTP/1.1 401 Unauthorized");
+  $redirect_url = $base_url;
+  $redirect_message = 'Too many failures. Please wait for some time.';
+  include($base_dir."library/redirect.php");
+  exit(0);
+}
+
+$otp=getkey(60);
+
+$header_string=boxauth();
+$box_cache=boxcache();
+$folder_list=getfolderlist();
+
+$folder_id=$_GET['id'];
+if (!array_key_exists('id-'.$folder_id,$folder_list)) {
+  header("Status: 404 Not Found");
+  include($base_dir."library/404.php");
+  exit(0);
+}
+
+$auth=auth(array('id-'.$folder_id,$username));
+session_regenerate_id(true);
+if ($auth == 'pass') {
+  header("Location: $url");
+  exit(0);
+}
+
+if ($folder_list['id-'.$folder_id]['access']['public'][0] == '1') {
+  $pass = true;
+} else {
+  $pass = false;
+  if (!empty($_POST) && array_key_exists('accesscode',$_POST)) {
+    foreach (array_slice($folder_list['id-'.$folder_id]['access'],1,3) as $key => $access) {
+      if ($key == 'general' && $access[0] == 1 ){
+        if ($_POST['accesscode'] == hash('sha256',hash('sha256',$general_access_code).$otp) || $_POST['password'] == hash('sha256',hash('sha256',$general_access_code).getprevkey(60))) {
+          $pass = true;
+          break;
+        }
+      } elseif ($access[0] == 1 && !empty($access['code'])) {
+        if (!array_key_exists('time',$access) || (array_key_exists('time',$access) && $access['time'] > time())) {
+          if ($_POST['accesscode'] == hash('sha256',hash('sha256',$access['code']).$otp) || $_POST['accesscode'] == hash('sha256',hash('sha256',$access['code']).getprevkey(60))) {
+            $pass = true;
+            break;
+          }
+        }
+      }
+    }
+    if (!$pass)
+      recordfailure($_SERVER['REMOTE_ADDR']);
+  }
+}
+if ($pass) {
+  $_SESSION['time'] = time();
+  $_SESSION['id-'.$folder_id] = hash('sha256',$secret_key.'id-'.$folder_id);
+  $_SESSION['message'] = 'Access granted';
+  header("Location: $url");
+  exit(0);
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+<title>Access | xjpvictor's Gallery</title>
+<link rel="profile" href="http://gmpg.org/xfn/11" />
+<link rel="shortcut icon" href="/favicon.ico" />
+</head>
+<body style="background:url(<?php echo $base_url; ?>library/redirect.png) no-repeat center 70px #2c2727;">
+<div style="background:rgba(255,255,255,0.5);width:350px;margin:0px auto;padding:100px 80px;border: 1px solid rgba(0,125,255,0.25);box-shadow: 0 0 10px #007dff;border-radius:5px;">
+<p >You are trying to access restricted zone.<br/>Please enter access code:<br/></p>
+<script type="text/javascript">
+function SubmitForm() {
+  if (document.getElementById("accesscode").value) {
+<?php
+echo 'document.getElementById("accesscode").value = Sha256.hash(Sha256.hash(document.getElementById("accesscode").value) + "'.$otp.'");'."\n";
+?>
+  }
+  document.form1.submit
+}
+function Load(){ 
+  var stoptime=60;
+for(var i=stoptime;i>=0;i--) 
+{ 
+  window.setTimeout('doUpdate(' + i + ')', (stoptime-i) * 1000); 
+}
+} 
+function doUpdate(num) 
+{
+  document.getElementById('count-down').innerHTML = num ;
+}
+Load();
+</script>
+<div id="access-form" style="width:230px;margin:0px auto;">
+  <form name="form1" method="post" action="<?php echo $base_url;?>access.php?id=<?php echo $folder_id; ?>&amp;ref=<?php echo urlencode($url); ?>">
+<input required id="accesscode" name="accesscode" type="text">
+<input class="button" type="submit" value="Submit" onclick="SubmitForm();">
+</form>
+<p style="font-size:13px;line-height:25px;">* This page is valid for <span id="count-down"></span> s.</p><br/>
+</div>
+<a href="<?php echo $base_url; ?>" style="color:#88c34B;text-decoration:none;"><p>&lt;&lt; Go Back to Homepage</p></a>
+</div>
+</body>
+<script type="text/javascript" src="<?php echo $base_url; ?>library/sha256.js"></script>
+</html>

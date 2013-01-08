@@ -1,0 +1,165 @@
+<?php
+define('includeauth',true);
+include_once("functions.php");
+if (array_key_exists('id',$_GET)) {
+  $folder_id=$_GET['id'];
+  if (array_key_exists('p',$_GET))
+    $p=$_GET['p'];
+  else
+    $p='0';
+} else {
+  $folder_id=$box_root_folder_id;
+  $p='0';
+}
+
+$header_string=boxauth();
+$box_cache=boxcache();
+$folder_list = getfolderlist();
+$file_list=getfilelist($folder_id,$limit,$p);
+$otp=getkey($expire_image);
+
+if (!array_key_exists('id-'.$folder_id,$folder_list) || $file_list == 'error' || ($p !== 0 && empty($file_list))) {
+  header("Status: 404 Not Found");
+  include($base_dir."library/404.php");
+  exit(0);
+}
+if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access']['public'][0] !== '1') {
+  $url=getpageurl();
+  $auth=auth(array($username,'id-'.$folder_id));
+  if (!$auth || $auth == 'fail') {
+    header("HTTP/1.1 401 Unauthorized");
+    $redirect_url = $base_url.'access.php?id='.$folder_id.'&ref='.$url;
+    $redirect_message = 'Access restricted';
+    include($base_dir."library/redirect.php");
+    exit(0);
+  }
+}
+
+if (auth($username) !== 'pass')
+  $use_cache = true;
+else
+  $use_cache = false;
+if ($use_cache) {
+  $page_cache=$cache_dir.$folder_id.'-'.$p.'.html';
+  if (file_exists($page_cache)) {
+    $age = filemtime($page_cache);
+    if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($base_dir.'config.php') && time() - $age <= $cache_expire * 86400) {
+      $output = file_get_contents($page_cache);
+      $output = preg_replace('/#OTP#/', $otp, $output);
+      preg_match_all('/#VIEW_COUNT_CHANGE_(\d+)#/', $output, $matches);
+      foreach ($matches[1] as $match) {
+        if (file_exists($data_dir.$match))
+          $c = file_get_contents($data_dir.$match, true);
+        else
+          $c = '0';
+        $output = preg_replace('/#VIEW_COUNT_CHANGE_'.$match.'#/', $c, $output);
+      }
+      echo $output;
+      if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) {
+        echo '<div id="delaymessage">';
+        echo $_SESSION['message'];
+        echo '</div>';
+        echo '<script type="text/javascript">'."\n";
+        echo '  $(document).ready( function(){'."\n";
+        echo '    $("#delaymessage").show("fast");'."\n";
+        echo '    var to=setTimeout("hideDiv()",5000);'."\n";
+        echo '  });'."\n";
+        echo '  function hideDiv()'."\n";
+        echo '  {'."\n";
+        echo '    $("#delaymessage").hide("fast");'."\n";
+        echo '  }'."\n";
+        echo '</script>';
+        $_SESSION['message'] = '';
+      }
+      echo '</body></html>';
+      exit(0);
+    }
+  }
+}
+
+ob_start();
+
+include($base_dir.'head.php');
+echo '<body>'."\n".'<div id="wrap" class="clearfix">'."\n".'<div id="main">'."\n".'<div class="logo">'."\n".'<h1><a href="'. $base_url.'" title="'. $site_name.'">'. $site_name.'</a></h1><p>'. $site_description.'</p>'."\n".'</div>'."\n".'<div id="content">'."\n";
+
+if ($folder_id !== $box_root_folder_id) {
+  if ($folder_list['id-'.$folder_id] !== 'error')
+    $folder_count=$folder_list['id-'.$folder_id]['total_count'];
+  else
+    $folder_count='null';
+  if ($folder_list['id-'.$folder_id]['parent']['id'] !== $box_root_folder_id)
+    echo '<div id="info"><div id="parent"><a href="'.$base_url.'index.php?id='.$folder_list['id-'.$folder_id]['parent']['id'].'">&lt;&lt;&nbsp;'.$folder_list['id-'.$folder_id]['parent']['name'].'</a></div><div id="foldername">'.$folder_name.' ('.$folder_count.' items)</div></div>'."\n";
+  else
+    echo '<div id="info"><div id="parent"><a href="'.$base_url.'">&lt;&lt;&nbsp;Home</a></div><div id="foldername">'.$folder_name.' ('.$folder_count.' items)</div></div>'."\n";
+}
+echo '<div id="description">'.$folder_list['id-'.$folder_id]['description'].'</div>'."\n";
+echo '<div id="sharetop"><table><tr>'."\n";
+if ($folder_id !== $box_root_folder_id)
+  echo '<td id="view_count"><script src="'.$base_url.'stat.php?id='.$folder_id.'&amp;update=#OTP#"></script> Views</td>'."\n";
+echo '<td>'."\n".'<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>'."\n".'</td><td>'."\n".'<div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>'."\n".'</td>'."\n".'</tr></table></div>'."\n";
+if ($folder_id !== $box_root_folder_id && auth($username) == 'pass')
+  echo '<div id="edit-folder"><a href="'.$base_url.'admin/folder.php?id='.$folder_id.'">Edit</a></div>';
+
+$style=array('rotateleft1','rotateleft2','rotateleft3','rotateright1','rotateright2','rotateright3');
+foreach ($file_list as $entry) {
+  $class=$style[rand(0,count($style) - 1)];
+  if (array_key_exists('type',$entry) && $entry['type'] == 'file') {
+    $name = substr($entry['name'], 0, strrpos($entry['name'], '.', -1));
+    echo '<div style="z-index:'.rand(1,6).'" class="'.$class.' container thumbnail" title="'.$name.'"><a href="'.$base_url.'image.php?id='.$entry['id'].'&amp;fid='.$folder_id.'" title="'.$name.'"><img src="'.$base_url.'thumbnail.php?id='.$entry['id'].'-'.$entry['sequence_id'].'&amp;fid='.$folder_id.'&amp;w='.$w.'&amp;h='.$h.'&amp;otp=#OTP#" alt="'.$name.'" title="'.$name.'" width="'.$w.'" height="'.$h.'" /><span class="thumbtitle">'.$name.'<br/><br/>#VIEW_COUNT_CHANGE_'.$entry['id'].'# views</span></a></div>'."\n";
+  } elseif (array_key_exists('type',$entry) && $entry['type'] == 'folder') {
+    $folder=$folder_list['id-'.$entry['id']];
+    if ($folder !== 'error')
+      $count=$folder['total_count'];
+    else
+      $count='null';
+    echo '<div style="z-index:'.rand(1,6).'" class="'.$class.' container album" title="'.$entry['name'].'"><a href="?id='.$entry['id'].'"><img src="'.$base_url.'cover.php?id='.$entry['id'].'-'.$entry['sequence_id'].'&amp;w='.$w.'&amp;h='.$h.'&amp;otp=#OTP#" alt="'.$entry['name'].'" title="'.$entry['name'].'" width="'.$w.'" height="'.$h.'" /><span class="albumtitle">'.$entry['name'].'<br/><br/>'.$count.' items (#VIEW_COUNT_CHANGE_'.$entry['id'].'# views)</span></a></div>'."\n";
+  }
+}
+$np = $p + 1;
+echo '<a class="next_page" href="?id='.$folder_id.'&amp;p='.$np.'"></a>'."\n";
+
+include($base_dir.'sidebar.php');
+?>
+<div id="footer">
+<div id="footer-content">
+<div>
+<?php
+include($base_dir.'foot.php');
+
+$output = ob_get_contents();
+ob_clean();
+if ($use_cache) {
+  file_put_contents($page_cache,$output);
+}
+
+$output = preg_replace('/#OTP#/', $otp, $output);
+preg_match_all('/#VIEW_COUNT_CHANGE_(\d+)#/', $output, $matches);
+foreach ($matches[1] as $match) {
+  if (file_exists($data_dir.$match))
+    $c = file_get_contents($data_dir.$match, true);
+  else
+    $c = '0';
+  $output = preg_replace('/#VIEW_COUNT_CHANGE_'.$match.'#/', $c, $output);
+}
+echo $output;
+
+ob_end_flush();
+
+if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) {
+  echo '<div id="delaymessage">';
+  echo $_SESSION['message'];
+  echo '</div>';
+  echo '<script type="text/javascript">'."\n";
+  echo '  $(document).ready( function(){'."\n";
+  echo '    $("#delaymessage").show("fast");'."\n";
+  echo '    var to=setTimeout("hideDiv()",5000);'."\n";
+  echo '  });'."\n";
+  echo '  function hideDiv()'."\n";
+  echo '  {'."\n";
+  echo '    $("#delaymessage").hide("fast");'."\n";
+  echo '  }'."\n";
+  echo '</script>';
+  $_SESSION['message'] = '';
+}
+echo '</body></html>';
+?>

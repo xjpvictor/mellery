@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /cache/
+Disallow: /data/
+Disallow: /admin/
+Disallow: /library/
+Disallow: *?*
+Disallow: /*.php$
+Disallow: /*.ico$
