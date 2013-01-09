@@ -13,62 +13,111 @@ if (!$auth || $auth == 'fail') {
   exit(0);
 }
 
-$my_head = 'my_head.php';
-$my_foot = 'my_foot.php';
-$my_sidebar = 'my_sidebar.php';
-$my_style = 'my_style.css';
+$my_page_file = $data_dir.'my_page.php';
+$my_page = include($my_page_file);
+$my_style_file = $data_dir.'my_style.css';
+if (file_exists($my_style_file))
+  $my_style = file_get_contents($my_style_file, true);
 
-if (!empty($_POST) && array_key_exists('my_head',$_POST) && $_POST['my_head'] !== file_get_contents($base_dir.$my_head, true)) {
-  file_put_contents($base_dir.$my_head, $_POST['my_head'], LOCK_EX);
-}
-if (!empty($_POST) && array_key_exists('my_foot',$_POST) && $_POST['my_foot'] !== file_get_contents($base_dir.$my_foot, true)) {
-  file_put_contents($base_dir.$my_foot, $_POST['my_foot'], LOCK_EX);
-}
-if (!empty($_POST) && array_key_exists('my_sidebar',$_POST) && $_POST['my_sidebar'] !== file_get_contents($base_dir.$my_sidebar, true)) {
-  file_put_contents($base_dir.$my_sidebar, $_POST['my_sidebar'], LOCK_EX);
-}
-if (!empty($_POST) && array_key_exists('my_style',$_POST) && $_POST['my_style'] !== file_get_contents($base_dir.$my_style, true)) {
-  file_put_contents($base_dir.$my_style, $_POST['my_style'], LOCK_EX);
+if (!empty($_POST)) {
+  if (array_key_exists('header',$_POST)) {
+    if ($_POST['header'] !== $my_page['header']) {
+      $my_page['header'] = $_POST['header'];
+      $update = true;
+    }
+  }
+  if (array_key_exists('foot',$_POST)) {
+    if ($_POST['foot'] !== $my_page['foot']) {
+      $my_page['foot'] = $_POST['foot'];
+      $update = true;
+    }
+  }
+  if (array_key_exists('widget',$_POST)) {
+    foreach ($_POST['widget'] as $n => $value) {
+      if (empty($value['content']) && array_key_exists($n, $my_page['widget'])) {
+        unset($my_page['widget'][$n]);
+        $my_page['widget'] = array_values(array_filter($my_page['widget']));
+        $update = true;
+      } elseif (!empty($value['content']) && !array_key_exists($n, $my_page['widget'])) {
+        $my_page['widget'][$n] = $value;
+        $update = true;
+      } elseif (!empty($value['content']) && array_key_exists($n, $my_page['widget']) && ($value['title'] !== $my_page[$n]['title'] || $value['content'] !== $my_page[$n]['content'])) {
+        $my_page['widget'][$n] = $value;
+        $update = true;
+      }
+    }
+  }
+  if (isset($update) && $update) {
+    file_put_contents($my_page_file, '<?php return '.var_export($my_page,true). '; ?>', LOCK_EX);
+  }
+  if (array_key_exists('my_style',$_POST) && $_POST['my_style'] !== $my_style) {
+    file_put_contents($my_style_file, $_POST['my_style'], LOCK_EX);
+  }
 }
 
+$my_page = include($data_dir.'my_page.php');
 include('head.php');
 ?>
 <div id="wrap-admin">
 <div class="site-config">
-<p>Header</p>
+<p>Custom header</p>
 <form method="post" action="customize.php">
-<textarea rows="20" class="custom" name="my_head">
-<?php echo htmlentities(file_get_contents($base_dir.$my_head, true)); ?>
+<textarea rows="10" class="custom" name="header">
+<?php echo htmlentities($my_page['header']); ?>
 </textarea><br/><br/>
 <input class="button right" type="submit" value="Update">
 <div class="clear"></div>
 </form> 
 </div>
 <div class="site-config">
-<p>Footer</p>
+<p>Custom footer</p>
 <form method="post" action="customize.php">
-<textarea rows="20" class="custom" name="my_foot">
-<?php echo htmlentities(file_get_contents($base_dir.$my_foot, true)); ?>
+<textarea rows="10" class="custom" name="foot">
+<?php echo htmlentities($my_page['foot']); ?>
 </textarea><br/><br/>
 <input class="button right" type="submit" value="Update">
 <div class="clear"></div>
 </form> 
 </div>
+<?php
+$i = 0;
+if (array_key_exists('widget', $my_page)) {
+  foreach ($my_page['widget'] as $key => $widget) {
+    echo '<div class="site-config">'."\n";
+    echo '<p>Widget '.($i + 1).'</p>'."\n";
+    echo '<form method="post" action="customize.php">'."\n";
+    echo '<p>Title (Optional):</p>'."\n";
+    echo '<textarea rows="1" class="custom" name="widget['.$key.'][title]">'."\n";
+    echo htmlentities($widget['title']);
+    echo '</textarea><br/><br/>'."\n";
+    echo '<textarea rows="10" class="custom" name="widget['.$key.'][content]">'."\n";
+    echo htmlentities($widget['content']);
+    echo '</textarea><br/><br/>'."\n";
+    echo '<input class="button right" type="submit" value="Update">'."\n";
+    echo '<div class="clear"></div>'."\n";
+    echo '</form>'."\n";
+    echo '</div>'."\n";
+    $i ++;
+  }
+}
+?>
 <div class="site-config">
-<p>Sidebar</p>
+<p>New sidebar widget</p>
 <form method="post" action="customize.php">
-<textarea rows="20" class="custom" name="my_sidebar">
-<?php echo htmlentities(file_get_contents($base_dir.$my_sidebar, true)); ?>
+<p>Title (Optional):</p>
+<textarea rows="1" class="custom" name="widget[<?php echo $i; ?>][title]">
 </textarea><br/><br/>
-<input class="button right" type="submit" value="Update">
+<textarea rows="10" class="custom" name="widget[<?php echo $i; ?>][content]">
+</textarea><br/><br/>
+<input class="button right" type="submit" value="New">
 <div class="clear"></div>
-</form> 
+</form>
 </div>
 <div class="site-config">
-<p>Style</p>
+<p>Custom CSS stylesheet</p>
 <form method="post" action="customize.php">
-<textarea rows="20" class="custom" name="my_style">
-<?php echo htmlentities(file_get_contents($base_dir.$my_style, true)); ?>
+<textarea rows="10" class="custom" name="my_style">
+<?php if (isset($my_style)) echo htmlentities($my_style); ?>
 </textarea><br/><br/>
 <input class="button right" type="submit" value="Update">
 <div class="clear"></div>

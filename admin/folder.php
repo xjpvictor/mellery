@@ -231,6 +231,7 @@ if (!empty($_POST) && array_key_exists('otp',$_POST)) {
   exit(0);
 }
 
+$my_page = include($data_dir.'my_page.php');
 include('head.php');
 ?>
 <script type="text/javascript">

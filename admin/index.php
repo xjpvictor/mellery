@@ -13,6 +13,7 @@ if (!$auth || $auth == 'fail') {
   exit(0);
 }
 
+$my_page = include($data_dir.'my_page.php');
 include('head.php');
 $header_string=boxauth();
 $box_cache=boxcache();

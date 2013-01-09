@@ -1,6 +1,0 @@
-<?php include_once("config.php"); if (!defined("includeauth")) {header("Location: $base_url"); exit(0);} ?>
-
-<!-- Customize sidebar from here -->
-<!-- Wrap each sidebar widget with <li class="widget-container"> and </li> -->
-<!-- Name sidebar widget with <h3 class="widget-title">Title</h3> -->
-<!-- Custom sidebar end -->

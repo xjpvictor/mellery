@@ -78,6 +78,7 @@ if ($file_list == 'error' || !array_key_exists('id-'.$id,$file_list) || !array_k
 
 ob_start();
 
+$my_page = include($data_dir.'my_page.php');
 include($base_dir."head.php");
 $name=$file_list['id-'.$id]['name'];
 $name = substr($name, 0, strrpos($name, '.', -1));

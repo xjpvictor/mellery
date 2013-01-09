@@ -1,15 +1,11 @@
 <?php
 include_once("functions.php");
-if(!array_key_exists('w',$_GET) || !array_key_exists('h',$_GET) || !array_key_exists('id',$_GET)) {
+if(!array_key_exists('w',$_GET) || !array_key_exists('h',$_GET) || !array_key_exists('id',$_GET) || !array_key_exists('otp',$_GET) || !verifykey($_GET['otp'], $expire_image, null)) {
   header("HTTP/1.1 403 Forbidden");
   include($base_dir."library/403.php");
   exit(0);
 }
-if (!array_key_exists('otp',$_GET) || !verifykey($_GET['otp'], $expire_image, null)) {
-  header("HTTP/1.1 403 Forbidden");
-  include($base_dir."library/403.php");
-  exit(0);
-}
+
 $nw = $_GET['w'];
 $nh = $_GET['h'];
 $id=$_GET['id'];
@@ -28,15 +24,14 @@ if (!array_key_exists('id-'.$folder_id,$folder_list)) {
   include($base_dir."library/404.php");
   exit(0);
 }
-$folder=getfilelist($folder_id,null,null);
-if ($folder == 'error') {
-  header("Status: 404 Not Found");
-  include($base_dir."library/404.php");
-  exit(0);
-}
 
 if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access']['public'][0] !== '1') {
   $auth=auth(array($username,'id-'.$folder_id));
+}
+
+$folder=getfilelist($folder_id,null,null);
+if ($folder == 'error') {
+  $folder = array();
 }
 
 $dimg = imagecreatetruecolor($nw, $nh);

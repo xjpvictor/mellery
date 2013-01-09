@@ -113,6 +113,7 @@ if (!empty($_POST)) {
   exit(0);
 }
 
+$my_page = include($data_dir.'my_page.php');
 include('head.php');
 
 $otp_session=getkey($expire_session);

@@ -24,7 +24,12 @@ if ($folder_id !== $box_root_folder_id) {
   }
   echo '</ul></div></li>'."\n";
 }
-include($base_dir.'my_sidebar.php');
+if (!isset($my_page)) $my_page = include($data_dir.'my_page.php');
+foreach ($my_page['widget'] as $widget) {
+  echo '<li class="widget-container"><h3 class="widget-title">'.$widget['title'].'</h3>'."\n";
+  echo $widget['content']."\n";
+  echo '</li>'."\n";
+}
 echo '<li class="widget-container"><h3 class="widget-title">Admin</h3><ul>'."\n";
 echo '<li><a href="'.$base_url.'admin/">Dashboard</a></li>';
 if (auth($username) !== 'pass') {

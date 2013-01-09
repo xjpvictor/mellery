@@ -1,4 +1,0 @@
-<?php include_once("config.php"); if (!defined("includeauth")) {header("Location: $base_url"); exit(0);} ?>
-
-<!-- Customize header from here -->
-<!-- Custom header end -->

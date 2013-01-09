@@ -73,6 +73,7 @@ if (!array_key_exists('id-'.$folder_id,$folder_list) || $file_list == 'error' ||
 
 ob_start();
 
+$my_page = include($data_dir.'my_page.php');
 include($base_dir.'head.php');
 echo '<body>'."\n".'<div id="wrap" class="clearfix">'."\n".'<div id="main">'."\n".'<div class="logo">'."\n".'<h1><a href="'. $base_url.'" title="'. $site_name.'">'. $site_name.'</a></h1><p>'. $site_description.'</p>'."\n".'</div>'."\n".'<div id="content">'."\n";
 
