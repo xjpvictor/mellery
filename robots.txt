@@ -11,4 +11,3 @@ Disallow: /*.jpeg$
 Disallow: /*.png$
 Disallow: /*.gif$
 Disallow: /*.md$
-Disallow: /*.dist$
