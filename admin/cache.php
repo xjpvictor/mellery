@@ -38,7 +38,7 @@ if ($cache_clean !== 'always' && ($cache_clean == '0' || time() - $timestamp < $
 $files = scandir($cache_dir);
 foreach ($files as $file) {
   if ($file !== '.' && $file !== '..' && time() - filemtime($cache_dir.$file) >= $cache_expire * 86400) {
-    if (!empty($_GET) && array_key_exists('option', $_GET) && $_GET['option'] == 'all' && preg_match('/^[a-z0-9\.]+$/',$file))
+    if (!empty($_GET) && array_key_exists('option', $_GET) && $_GET['option'] == 'all' && preg_match('/^[a-z0-9][a-z0-9\.]+$/',$file))
       unlink($cache_dir.$file);
     elseif (!empty($_GET) && array_key_exists('option', $_GET) && $_GET['option'] == 'thumbnail' && preg_match('/^[a-z0-9]+$/',$file))
       unlink($cache_dir.$file);
