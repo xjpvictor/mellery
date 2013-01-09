@@ -80,10 +80,17 @@ ob_start();
 
 $my_page = include($data_dir.'my_page.php');
 include($base_dir."head.php");
+?>
+
+<body id="body-img">
+<div id="main-img">
+
+<div id="content-img">
+<div id="imgbox">
+<?php
 $name=$file_list['id-'.$id]['name'];
 $name = substr($name, 0, strrpos($name, '.', -1));
-echo '<body id="body-img">'."\n".'<div id="main-img">'."\n".'<div id="content-img">'."\n";
-echo '<div id="imgbox"><img id="mainimg-img" src="#IMGURL#" alt="'.$name.'"/><a title="Download original image" target="_blank" href="#IMGURL#"><div id="download">&nbsp;</div></a>';
+echo '<img id="mainimg-img" src="#IMGURL#" alt="'.$name.'"/><a title="Download original image" target="_blank" href="#IMGURL#"><div id="download">&nbsp;</div></a>';
 
 foreach ($file_list as $key => $value) {
   if ($file_list[$key]['type'] !== 'file')
@@ -110,42 +117,43 @@ if ($seq && count($seq) > 1) {
   if (isset($next_url))
     echo '<a title="Next" href="'.$next_url.'"><div id="right">&nbsp;</div></a>';
 }
-echo '</div>';
 ?>
 </div>
-<div id="sidebar-secondary-img">
-<div id="sidebar-wrap-img">
-<ul class="sidebar">
-<li class="widget-container">
-<p id="parent">
-<a href="<?php echo $base_url; ?>?id=<?php echo $folder_id; ?>">&lt;&lt;&nbsp;Back to <?php echo $folder_name; ?></a></p>
-</li>
-<li class="widget-container">
-<div id="sharebottom-img"><table>
+</div>
+
+<div id="sidebar-img" class="sidebar"><div id="sidebar-wrap-img">
+
+<div class="widget-container">
+<p id="parent"><a href="<?php echo $base_url; ?>?id=<?php echo $folder_id; ?>">&lt;&lt;&nbsp;Back to <?php echo $folder_name; ?></a></p>
+</div>
+
+<div class="widget-container">
+<div id="shareimg"><table>
 <tr>
-<td id="view_count" style="padding-bottom:10px;"><script src="<?php echo $base_url; ?>stat.php?id=<?php echo $id; ?>&amp;update=#OTP#"></script> Views</td><td></td>
+<td id="view-count" class="view-count"><script src="<?php echo $base_url; ?>stat.php?id=<?php echo $id; ?>&amp;update=#OTP#"></script> Views</td><td></td>
 </tr>
 <tr>
-<td>
-<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
-</td>
-<td>
-<div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>
-</td>
+<td><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a></td>
+<td><div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div></td>
+<td><div class="g-plusone" data-size="medium"></div></td>
 </tr>
 </table></div>
-</li>
-<li class="widget-container">
-<p id="description-image"><?php if (!empty($description)) echo $description; else echo 'No description'; ?></p>
-</li>
-<?php
-echo '<li class="widget-container">'."\n";
-if ($auth_admin == 'pass')
-  echo '<div class="edit-image"><a href="'.$base_url.'admin/folder.php?id='.$folder_id.'&amp;p='.floor($k / $admin_folder_limit).'#'.$id.'">Edit</a></div><div class="edit-image"><a href="'.$base_url.'admin">Dashboard</a></div><div class="logout-image"><a href="'.$base_url.'admin/logout.php?ref='.$url.'">Log out</a></div>';
-else
-  echo '<div class="edit-image"><a href="'.$base_url.'admin/login.php?ref='.$url.'">Log in</a></div>';
-echo '</li></ul>'."\n";
+</div>
 
+<div class="widget-container">
+<p id="description-img"><?php if (!empty($description)) echo $description; else echo 'No description'; ?></p>
+</div>
+
+<div class="widget-container">
+<?php
+if ($auth_admin == 'pass')
+  echo '<div class="edit-img"><a href="'.$base_url.'admin/folder.php?id='.$folder_id.'&amp;p='.floor($k / $admin_folder_limit).'#'.$id.'">Edit</a></div><div class="edit-img"><a href="'.$base_url.'admin">Dashboard</a></div><div class="edit-img right"><a href="'.$base_url.'admin/logout.php?ref='.$url.'">Log out</a></div>';
+else
+  echo '<div class="edit-img"><a href="'.$base_url.'admin/login.php?ref='.$url.'">Log in</a></div>';
+?>
+</div>
+
+<?php
 if (isset($disqus_shortname) && !empty($disqus_shortname)) {
   echo '<div id="disqus_thread"></div>'."\n";
   echo '<script type="text/javascript">'."\n";
@@ -163,10 +171,13 @@ if (isset($disqus_shortname) && !empty($disqus_shortname)) {
   echo '<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>'."\n";
   echo '<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>'."\n";
 }
+?>
 
-echo '</div></div>';
+</div></div>
+
+<?php
 if ($seq && count($seq) > 1) {
-  echo '<div id="info-img-nav"><div id="imagename-img">'.$name.' ('.$k.' of '.count($file_list).' images)</div>';
+  echo '<div id="info-img-nav" class="info-img"><div id="imagename">'.$name.' ('.$k.' of '.count($file_list).' images)</div>';
   $i=0;
   echo '<div id="nav-img">';
   foreach($seq as $item) {
@@ -187,13 +198,18 @@ if ($seq && count($seq) > 1) {
     echo '<div id="next"><a title="Next" href="'.$next_url.'">Next →</a></div>';
   echo '</div>';
 } else
-  echo '<div id="info-img"><div id="imagename-img">'.$name.'</div>';
+  echo '<div id="info-img" class="info-img">><div id="imagename">'.$name.'</div>';
 echo '<div id="message-img">';
 include($base_dir."foot.php");
+echo '</div>'."\n";
+echo '</div>'."\n";
 ?>
+
+</div>
+
 <script type="text/javascript"> 
 (function(){ 
-  var o = document.getElementById("description-image"); 
+  var o = document.getElementById("description-img"); 
   var s = o.innerHTML; 
   var p = document.createElement("span"); 
   var n = document.createElement("a"); 
@@ -241,5 +257,6 @@ if ($session_message) {
   echo $session_str;
   $_SESSION['message'] = '';
 }
-echo '</body></html>';
 ?>
+
+</body></html>

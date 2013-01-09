@@ -118,9 +118,9 @@ include('head.php');
 
 $otp_session=getkey($expire_session);
 ?>
-<div id="wrap-admin">
+
 <form action="configure.php" name="form1" method="POST">
-<div class="site-config">
+<div class="site-config clearfix">
 <p class="config-title">Site Configuration</p>
 <table>
 <tr><td><p<?php if (!isset($site_name) || ($site_name !== '0' && empty($site_name))) {echo ' class="notset"'; $notify = true;} ?>>Site name:</p></td><td><input required name="site_name" value="<?php if (isset($site_name)) echo htmlentities($site_name); ?>"></td></tr>
@@ -136,7 +136,7 @@ $otp_session=getkey($expire_session);
 </table>
 </div>
 
-<div class="site-config">
+<div class="site-config clearfix">
 <p class="config-title">Box.com Configuration</p>
 <table>
 <tr><td><p<?php if (!isset($client_id) || ($client_id !== '0' && empty($client_id))) {echo ' class="notset"'; $notify = true;} ?>>Client ID (Leave blank if not changed):</p></td><td><input name="client_id"></td></tr>
@@ -146,7 +146,7 @@ $otp_session=getkey($expire_session);
 </table>
 </div>
 
-<div class="site-config">
+<div class="site-config clearfix">
 <p class="config-title">User</p>
 <table>
 <tr><td><p<?php if (!isset($username) || ($username !== '0' && empty($username))) {echo ' class="notset"'; $notify = true;} ?>>Username:</p></td><td><input required name="username" value="<?php if (isset($username)) echo htmlentities($username); ?>"></td></tr>
@@ -177,7 +177,7 @@ if (!empty($_SESSION) && array_key_exists('showotpqr', $_SESSION) && $_SESSION['
 </table>
 </div>
 
-<div class="site-config">
+<div class="site-config clearfix">
 <p class="config-title">Security</p>
 <table>
 <tr><td><p<?php if (!isset($expire_session) || ($expire_session !== '0' && empty($expire_session))) {echo ' class="notset"'; $notify = true;} ?>>Session expiration time (s):</p></td><td><input required name="expire_session" value="<?php if (isset($expire_session)) echo htmlentities($expire_session); ?>"></td></tr>

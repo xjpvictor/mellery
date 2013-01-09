@@ -58,32 +58,32 @@ if (!empty($_POST)) {
 $my_page = include($data_dir.'my_page.php');
 include('head.php');
 ?>
-<div id="wrap-admin">
-<div class="site-config">
+
+<div class="site-config clearfix">
 <p>Custom header</p>
 <form method="post" action="customize.php">
 <textarea rows="10" class="custom" name="header">
 <?php echo htmlentities($my_page['header']); ?>
 </textarea><br/><br/>
 <input class="button right" type="submit" value="Update">
-<div class="clear"></div>
 </form> 
 </div>
-<div class="site-config">
+
+<div class="site-config clearfix">
 <p>Custom footer</p>
 <form method="post" action="customize.php">
 <textarea rows="10" class="custom" name="foot">
 <?php echo htmlentities($my_page['foot']); ?>
 </textarea><br/><br/>
 <input class="button right" type="submit" value="Update">
-<div class="clear"></div>
 </form> 
 </div>
+
 <?php
 $i = 0;
 if (array_key_exists('widget', $my_page)) {
   foreach ($my_page['widget'] as $key => $widget) {
-    echo '<div class="site-config">'."\n";
+    echo '<div class="site-config clearfix">'."\n";
     echo '<p>Widget '.($i + 1).'</p>'."\n";
     echo '<form method="post" action="customize.php">'."\n";
     echo '<p>Title (Optional):</p>'."\n";
@@ -94,14 +94,14 @@ if (array_key_exists('widget', $my_page)) {
     echo htmlentities($widget['content']);
     echo '</textarea><br/><br/>'."\n";
     echo '<input class="button right" type="submit" value="Update">'."\n";
-    echo '<div class="clear"></div>'."\n";
     echo '</form>'."\n";
     echo '</div>'."\n";
     $i ++;
   }
 }
 ?>
-<div class="site-config">
+
+<div class="site-config clearfix">
 <p>New sidebar widget</p>
 <form method="post" action="customize.php">
 <p>Title (Optional):</p>
@@ -110,21 +110,21 @@ if (array_key_exists('widget', $my_page)) {
 <textarea rows="10" class="custom" name="widget[<?php echo $i; ?>][content]">
 </textarea><br/><br/>
 <input class="button right" type="submit" value="New">
-<div class="clear"></div>
 </form>
 </div>
-<div class="site-config">
+
+<div class="site-config clearfix">
 <p>Custom CSS stylesheet</p>
 <form method="post" action="customize.php">
 <textarea rows="10" class="custom" name="my_style">
 <?php if (isset($my_style)) echo htmlentities($my_style); ?>
 </textarea><br/><br/>
 <input class="button right" type="submit" value="Update">
-<div class="clear"></div>
 </form> 
 </div>
 
 </div>
+
 <?php
 include('foot.php');
 ?>

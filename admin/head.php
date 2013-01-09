@@ -17,13 +17,11 @@ if (!defined('includeauth')) {
 <link rel="shortcut icon" href="/favicon.ico" />
 <?php if (!isset($my_page)) $my_page = include($data_dir.'my_page.php'); echo $my_page['header']; ?>
 </head>
-<body id="admin-body">
-<div id="wrap" class="clearfix">
-<div id="main">
+<body id="body-admin">
+<div id="main" class="clearfix">
 <div class="logo">
 <h1><a href="<?php echo $base_url; ?>" title="<?php echo $site_name; ?>"><?php echo $site_name; ?></a></h1><p><?php echo $site_description; ?></p>
 </div>
-<div id="content-admin">
 <?php
-echo '<div id="admin-nav"><span><a href="'.$base_url.'admin/">Dashboard</a></span><span><a href="'.$base_url.'admin/folder.php">Albums</a></span><span><a href="'.$base_url.'admin/customize.php">Customization</a></span><span><a href="'.$base_url.'admin/configure.php">Configuration</a></span><span id="logout"><a href="'.$base_url.'admin/logout.php">Log Out</a></span></div>';
+echo '<div id="admin-nav"><a href="'.$base_url.'admin/">Dashboard</a><a href="'.$base_url.'admin/folder.php">Albums</a><a href="'.$base_url.'admin/customize.php">Customization</a><a href="'.$base_url.'admin/configure.php">Configuration</a><span id="logout" class="right"><a href="'.$base_url.'admin/logout.php">Log Out</a></div>';
 ?>

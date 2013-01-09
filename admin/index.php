@@ -21,8 +21,8 @@ $folder_list = getfolderlist();
 
 $otp_session=getkey($expire_session);
 ?>
-<div id="wrap-admin">
-<div class="site-config">
+
+<div class="site-config clearfix">
 <p>Hello <?php echo $username; ?>,</p>
 <?php
 if (array_key_exists('id-'.$box_root_folder_id, $folder_list))
@@ -70,14 +70,14 @@ if ($size < 1024) {
 }
 ?>
 
-<p>You have <b><?php echo count($folder_list); ?></b> albums, and <b><?php echo $image_count; ?></b> images in the albums<span class="edit"><a href="<?php echo $base_url; ?>admin/folder.php">Manage albums</a></span></p>
+<p>You have <b><?php echo count($folder_list); ?></b> albums, and <b><?php echo $image_count; ?></b> images in the albums<span class="edit-admin"><a href="<?php echo $base_url; ?>admin/folder.php">Manage albums</a></span></p>
 <?php
 if ($new_count > 0) {
-  echo '<p><b class="new">'.$new_count.'</b> new albums recently uploaded. New albums are kept private by default. You may want to manage the access privilege of the albums.</p>';
+  echo '<p><b class="new">'.$new_count.'</b> new albums recently uploaded. New albums are kept private by default.</p>';
 }
 if (count($folder_list) > 0) {
   echo '<p>Recent albums:</p>'."\n";
-  echo '<div id="admin-new-list">'."\n";
+  echo '<div id="recent-list">'."\n";
   $otp=getkey($expire_image);
   $i = 0;
   foreach ($folder_list as $folder) {
@@ -86,13 +86,13 @@ if (count($folder_list) > 0) {
     if ($i >= 4)
       break;
   }
-  echo '<span class="edit"><a href="'.$base_url.'admin/folder.php">More..</a></span>'."\n";
+  echo '<span class="edit-admin"><a href="'.$base_url.'admin/folder.php">More..</a></span>'."\n";
   echo '</div>'."\n";
 }
 ?>
-<div class="clear"></div>
 </div>
-<div class="site-config">
+
+<div class="site-config clearfix">
 <p>Cache files taking up <b><?php echo $size; ?></b> disk space<span class="button button-right"><a href="<?php echo $base_url; ?>admin/cache.php?option=all&amp;ref=<?php echo $url; ?>">Clean all cache files now</a></span></p>
 <p style="padding-left:10px;"><b><?php echo $thumbnail; ?></b> cached thumbnail images<span class="button button-right"><a href="<?php echo $base_url; ?>admin/cache.php?option=thumbnail&amp;ref=<?php echo $url; ?>">Clean</a></span></p>
 <p style="padding-left:10px;"><b><?php echo $html; ?></b> cached html pages<span class="button button-right"><a href="<?php echo $base_url; ?>admin/cache.php?option=html&amp;ref=<?php echo $url; ?>">Clean</a></span></p>
@@ -100,8 +100,8 @@ if (count($folder_list) > 0) {
 <p class="small">* This may take some time.</p><br/>
 <p>Clean obsolete files<span class="button button-right"><a href="<?php echo $base_url; ?>admin/clean.php">Clean</a></span></p>
 <p class="small">* Data files are leftover when images are deleted from Box.com directly. Cleaning may take some time.</p>
-
 </div>
+
 </div>
 <?php
 include('foot.php');

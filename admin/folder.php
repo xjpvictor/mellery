@@ -4,9 +4,10 @@ include_once('../functions.php');
 
 $auth=auth($username);
 session_regenerate_id(true);
+$url = getpageurl();
 if (!$auth || $auth == 'fail') {
   header("HTTP/1.1 401 Unauthorized");
-  $redirect_url = $base_url.'admin/login.php?ref='.getpageurl();
+  $redirect_url = $base_url.'admin/login.php?ref='.$url;
   $redirect_message = 'Access restricted';
   include($base_dir."library/redirect.php");
   exit(0);
@@ -234,47 +235,6 @@ if (!empty($_POST) && array_key_exists('otp',$_POST)) {
 $my_page = include($data_dir.'my_page.php');
 include('head.php');
 ?>
-<script type="text/javascript">
-function hide(id) {
- document.getElementById(id).style.display = "none";
-};
-function show(id) {
-  if ((document.getElementById(id).style.display) == "block") {
-    document.getElementById(id).style.display = "none";
-  } else {
-    document.getElementById(id).style.display = "block";
-  }
-};
-function getRandomString(stringLength)
-{
-    var ret = "";
-    for (var i=0; i<stringLength; i++){
-        var randNumb = 58; 
-        while (randNumb> 57 && randNumb < 65) { 
-            randNumb = Math.floor(Math.random() * (90 - 48) + 48);
-        }
-        ret += String.fromCharCode(randNumb);
-    }
-    return ret;
-}
-function confirmAct()
-{
-    if(confirm('Are you sure to delete the file? It is impossible to undo this.'))
-    {
-        return true;
-    }
-    return false;
-}
-function selectAll(a) {
-    var theForm = document.myForm;
-    for (i=0; i<theForm.elements.length; i++) {
-        if (theForm.elements[i].name=='multiple[]')
-            theForm.elements[i].checked = a;
-        if (theForm.elements[i].name=='select-all')
-            theForm.elements[i].checked = a;
-    }
-}
-</script>
 <?php
 $otp=getkey($expire_image);
 $otp_session=getkey($expire_session);
@@ -321,7 +281,7 @@ if ($_GET['id'] !== $box_root_folder_id) {
 
 if ($single) {
   $access=$folder['access'];
-  echo '<div class="admin-folder-nav" id="'.$folder['id'].'"><a href="'.$base_url.'?id='.$folder['id'].'">'.$folder['name'].'</a> ('.$folder['total_count'].' items, ';
+  echo '<div class="admin-folder-nav clearfix" id="'.$folder['id'].'"><a href="'.$base_url.'?id='.$folder['id'].'">'.$folder['name'].'</a> ('.$folder['total_count'].' items, ';
   if (file_exists($data_dir.$folder['id']))
     echo file_get_contents($data_dir.$folder['id'], true);
   else
@@ -329,14 +289,14 @@ if ($single) {
   echo ' views)';
   if ($folder['new'] == 1)
     echo '<span class="new">NEW</span>';
-  echo '<span class="edit"><a href="javascript:;" onclick="show(\'admin-folder-'.$folder['id'].'\')">Manage Album</a></span>';
+  echo '<span class="edit-admin"><a href="javascript:;" onclick="show(\'admin-folder-'.$folder['id'].'\')">Manage Album</a></span>';
   echo '<form class="right" method="post" action="folder.php?ref='.urlencode($base_url.'admin/folder.php?id='.$_GET['id']).'">'."\n";
   echo '<input name="name">'."\n";
   echo '<input type="hidden" name="dest" value="'.$_GET['id'].'">'."\n";
   echo '<input type="hidden" name="otp" value="'.$otp_session.'">'."\n";
   echo '<input class="button" type="submit" name="new" value="New Album">'."\n";
   echo '</form>'."\n";
-  echo '<br/><div class="admin-folder" id="admin-folder-'.$folder['id'].'" style="display:none;"><img class="admin-album" src="'.$base_url.'cover.php?id='.$folder['id'].'-'.$folder['sequence_id'].'&amp;w='.$w.'&amp;h='.$h.'&amp;otp='.$otp.'" alt="'.$folder['name'].'" title="'.$folder['name'].'" width="'.$w.'" height="'.$h.'" /><div class="admin-access">';
+  echo '<br/><div class="admin-folder clearfix" id="admin-folder-'.$folder['id'].'" style="display:none;"><img class="admin-album" src="'.$base_url.'cover.php?id='.$folder['id'].'-'.$folder['sequence_id'].'&amp;w='.$w.'&amp;h='.$h.'&amp;otp='.$otp.'" alt="'.$folder['name'].'" title="'.$folder['name'].'" width="'.$w.'" height="'.$h.'" /><div class="admin-access">';
   if ($access['public'][0] == 1) {
     $public = ' checked';
     $restrict = '';
@@ -350,7 +310,7 @@ if ($single) {
     $restrict = '';
     $private = ' checked';
   }
-  echo '<form style="padding:10px;line-height:25px;vertical-align:middle;" method="POST" action="folder.php?ref='.getpageurl().'">'."\n";
+  echo '<form style="padding:10px;line-height:25px;vertical-align:middle;" method="POST" action="folder.php?ref='.$url.'">'."\n";
   echo '<p>Name:</p><input class="name-conf" name="single['.$folder['id'].'][name]" value="'.$folder['name'].'"><br/>'."\n";
   echo '<p>Description:</p><textarea rows="3" class="description-conf" name="single['.$folder['id'].'][description]">'.$folder['description'].'</textarea><br/>'."\n";
   echo '<p>Access:</p>'."\n";
@@ -386,12 +346,11 @@ if ($single) {
   echo '<input type="hidden" name="single['.$folder['id'].'][type]" value="folder">'."\n";
   echo '<br/><input class="button" type="submit" name="single['.$folder['id'].'][submit]" value="Update">'."\n";
   echo '<input class="button right delete" type="submit" name="single['.$folder['id'].'][submit]" value="Delete" onclick="return confirmAct();">'."\n";
-  echo '<div class="clear"></div>'."\n";
   echo '<input type="hidden" name="otp" value="'.$otp_session.'">'."\n";
   echo '</form>'."\n";
   echo '</div></div></div>'."\n";
 } else {
-  echo '<div class="admin-folder-nav">'."\n";
+  echo '<div class="admin-folder-nav clearfix">'."\n";
   echo 'Albums list ('.$n.' albums)'."\n";
   echo '<form class="right" method="post" action="folder.php?ref='.urlencode($base_url.'admin/folder.php?id='.$_GET['id']).'">'."\n";
   echo '<input name="name">'."\n";
@@ -402,13 +361,13 @@ if ($single) {
   echo '</div>';
 }
 
-echo '<div class="admin-folder-nav">'."\n";
+echo '<div class="admin-folder-nav clearfix">'."\n";
 if ($single && $folder['parent']['id'] !== $box_root_folder_id)
   echo '<div class="admin-folder-parent" id="jumpto"><a href="'.$base_url.'admin/folder.php?id='.$folder['parent']['id'].'">&lt;&lt;&nbsp;'.$folder['parent']['name'].'</a>';
 elseif ($single)
   echo '<div class="admin-folder-parent" id="jumpto"><a href="'.$base_url.'admin/folder.php">&lt;&lt;&nbsp;Albums list</a>';
 if ($single)
-  echo '<div class="edit"><a href="javascript:;" onclick="show(\'all-album-list\')">Jump to..</a><div id="all-album-list"><a class="close" href="javascript:;" onclick="show(\'all-album-list\')">[Close]</a><br/>'.$all_album_list.'</div></div></div>'."\n";
+  echo '<div class="edit-admin"><a href="javascript:;" onclick="show(\'all-album-list\')">Jump to..</a><div id="all-album-list"><a class="close" href="javascript:;" onclick="show(\'all-album-list\')">[Close]</a><br/>'.$all_album_list.'</div></div></div>'."\n";
 echo '<form method="post" class="admin-folder-form right" action="folder.php?ref='.urlencode($base_url.'admin/folder.php?id='.$_GET['id']).'">'."\n";
 echo 'Items per page:<input class="admin-folder-limit" name="admin_folder_limit" value="'.$admin_folder_limit.'">'."\n";
 echo '</form>'."\n";
@@ -417,14 +376,13 @@ if ($p > 0)
   echo '<div class="prev"><a href="folder.php?id='.$_GET['id'].'&amp;p='.($p - 1).'" title="Previous">← Previous</a></div>';
 if (($p + 1) * $admin_folder_limit < $n)
   echo '<div class="next"><a href="folder.php?id='.$_GET['id'].'&amp;p='.($p + 1).'" title="Next">Next →</a></div>';
-echo '<div class="pager">Page '.($p + 1).' of '.ceil($n / $admin_folder_limit).'</div>'."\n";
+echo '<div class="pager">Page '.($p + 1).' of '.max(1, ceil($n / $admin_folder_limit)).'</div>'."\n";
 echo '</div>'."\n";
-echo '<div class="clear"></div>'."\n";
 echo '</div>'."\n";
 
-echo '<form name="myForm" method="POST" action="folder.php?ref='.getpageurl().'">'."\n";
+echo '<form name="myForm" method="POST" action="folder.php?ref='.$url.'">'."\n";
 echo '<input style="display:none;" type="submit" name="none" value="None" onclick="return false;">'."\n";
-echo '<div class="admin-folder-nav">'."\n";
+echo '<div class="admin-folder-nav clearfix">'."\n";
 echo '<label class="left"><input class="checkbox" type="checkbox" name="select-all" onclick="if(this.checked==true) {selectAll(1); } else {selectAll(0); }"><span class="multiform">All/None</span></label>'."\n";
 echo '<div class="dropdown left multiform drop-access">'."\n";
 echo '<select id="multi-access-1" name="multi-access" onchange="javascript:{document.getElementById(\'multi-access-2\').value=this.value;}">'."\n";
@@ -444,10 +402,9 @@ echo '</div>'."\n";
 echo '<input type="hidden" name="multi-move-ori" value="'.$_GET['id'].'">'."\n";
 echo '<input class="button left multiform" type="submit" name="multi-submit" value="Move">'."\n";
 echo '<input class="button right delete" type="submit" name="multi-submit" value="Delete" onclick="return confirmAct();">'."\n";
-echo '<div class="clear"></div>'."\n";
 echo '</div>'."\n";
 foreach ($list as $id => $item) {
-  echo '<div class="admin-albumlist" id="'.$item['id'].'">';
+  echo '<div class="site-config clearfix" id="'.$item['id'].'">';
   echo '<input class="checkbox" type="checkbox" name="multiple[]" value="'.$item['id'].'">';
   if ($item !== 'error' && $item['type'] == 'folder') {
     $access=$folder_list[$id]['access'];
@@ -459,7 +416,7 @@ foreach ($list as $id => $item) {
     echo ' views)';
     if ($folder_list[$id]['new'] == 1)
       echo '<span class="new">NEW</span>';
-    echo '<span class="edit"><a href="folder.php?id='.$item['id'].'">Manage Album</a></span>';
+    echo '<span class="edit-admin"><a href="folder.php?id='.$item['id'].'">Manage Album</a></span>';
     echo '<br/><img class="admin-album" src="'.$base_url.'cover.php?id='.$item['id'].'-'.$item['sequence_id'].'&amp;w='.$w.'&amp;h='.$h.'&amp;otp='.$otp.'" alt="'.$item['name'].'" title="'.$item['name'].'" width="'.$w.'" height="'.$h.'" />';
   } elseif ($item !== 'error' && $item['type'] == 'file') {
     echo '<a href="'.$base_url.'image.php?id='.$item['id'].'&amp;fid='.$_GET['id'].'">'.$item['name'].'</a> (';
@@ -531,7 +488,7 @@ foreach ($list as $id => $item) {
 }
 echo '<input type="hidden" name="otp" value="'.$otp_session.'">'."\n";
 
-echo '<div class="admin-folder-nav">'."\n";
+echo '<div class="admin-folder-nav clearfix">'."\n";
 echo '<label class="left"><input class="checkbox" type="checkbox" name="select-all" onclick="if(this.checked==true) {selectAll(1); } else {selectAll(0); }"><span class="multiform">All/None</span></label>'."\n";
 echo '<div class="dropdown left multiform drop-access">'."\n";
 echo '<select id="multi-access-2" name="multi-access" onchange="javascript:{document.getElementById(\'multi-access-1\').value=this.value;}">'."\n";
@@ -551,32 +508,73 @@ echo '</div>'."\n";
 echo '<input type="hidden" name="multi-move-ori" value="'.$_GET['id'].'">'."\n";
 echo '<input class="button left multiform" type="submit" name="multi-submit" value="Move">'."\n";
 echo '<input class="button right delete" type="submit" name="multi-submit" value="Delete" onclick="return confirmAct();">'."\n";
-echo '<div class="clear"></div>'."\n";
 echo '</div>'."\n";
 
 echo '</form>';
 
-echo '<div class="admin-folder-nav">'."\n";
+echo '<div class="admin-folder-nav clearfix">'."\n";
 if ($p > 0)
   echo '<div id="prev"><a href="folder.php?id='.$_GET['id'].'&amp;p='.($p - 1).'" title="Previous">← Previous</a></div>';
 if (($p + 1) * $admin_folder_limit < $n)
   echo '<div id="next"><a href="folder.php?id='.$_GET['id'].'&amp;p='.($p + 1).'" title="Next">Next →</a></div>';
-echo '<div class="pager">Page '.++$p.' of '.ceil($n / $admin_folder_limit).'</div>'."\n";
-echo '<div class="clear"></div>'."\n";
+echo '<div class="pager">Page '.++$p.' of '.max(1, ceil($n / $admin_folder_limit)).'</div>'."\n";
 echo '</div>'."\n";
 
-echo '<div class="admin-folder-nav">'."\n";
+echo '<div class="admin-folder-nav clearfix">'."\n";
 if ($single && $folder['parent']['id'] !== $box_root_folder_id)
   echo '<div class="admin-folder-parent" id="parent"><a href="'.$base_url.'admin/folder.php?id='.$folder['parent']['id'].'">&lt;&lt;&nbsp;'.$folder['parent']['name'].'</a>';
 elseif ($single)
   echo '<div class="admin-folder-parent" id="parent"><a href="'.$base_url.'admin/folder.php">&lt;&lt;&nbsp;Albums list</a>';
 if ($single)
-  echo '<span class="edit"><a href="#jumpto" onclick="show(\'all-album-list\')">Jump to..</a></span></div>'."\n";
+  echo '<span class="edit-admin"><a href="#jumpto" onclick="show(\'all-album-list\')">Jump to..</a></span></div>'."\n";
 echo '<form method="post" class="admin-folder-form right" action="folder.php?ref='.urlencode($base_url.'admin/folder.php?id='.$_GET['id']).'">'."\n";
 echo 'Items per page:<input class="admin-folder-limit" name="admin_folder_limit" value="'.$admin_folder_limit.'">'."\n";
 echo '</form>'."\n";
-echo '<div class="clear"></div>'."\n";
 echo '</div>'."\n";
+?>
+</div>
+<script type="text/javascript">
+function hide(id) {
+ document.getElementById(id).style.display = "none";
+};
+function show(id) {
+  if ((document.getElementById(id).style.display) == "block") {
+    document.getElementById(id).style.display = "none";
+  } else {
+    document.getElementById(id).style.display = "block";
+  }
+};
+function getRandomString(stringLength)
+{
+    var ret = "";
+    for (var i=0; i<stringLength; i++){
+        var randNumb = 58; 
+        while (randNumb> 57 && randNumb < 65) { 
+            randNumb = Math.floor(Math.random() * (90 - 48) + 48);
+        }
+        ret += String.fromCharCode(randNumb);
+    }
+    return ret;
+}
+function confirmAct()
+{
+    if(confirm('Are you sure to delete the file? It is impossible to undo this.'))
+    {
+        return true;
+    }
+    return false;
+}
+function selectAll(a) {
+    var theForm = document.myForm;
+    for (i=0; i<theForm.elements.length; i++) {
+        if (theForm.elements[i].name=='multiple[]')
+            theForm.elements[i].checked = a;
+        if (theForm.elements[i].name=='select-all')
+            theForm.elements[i].checked = a;
+    }
+}
+</script>
 
+<?php
 include('foot.php');
 ?>

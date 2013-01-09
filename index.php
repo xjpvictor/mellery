@@ -65,7 +65,7 @@ if ($auth_admin !== 'pass') {
 }
 
 $file_list=getfilelist($folder_id,$limit,$p);
-if (!array_key_exists('id-'.$folder_id,$folder_list) || $file_list == 'error' || ($p !== 0 && empty($file_list))) {
+if (!array_key_exists('id-'.$folder_id,$folder_list) || $file_list == 'error' || ($p !== '0' && empty($file_list))) {
   header("Status: 404 Not Found");
   include($base_dir."library/404.php");
   exit(0);
@@ -75,8 +75,17 @@ ob_start();
 
 $my_page = include($data_dir.'my_page.php');
 include($base_dir.'head.php');
-echo '<body>'."\n".'<div id="wrap" class="clearfix">'."\n".'<div id="main">'."\n".'<div class="logo">'."\n".'<h1><a href="'. $base_url.'" title="'. $site_name.'">'. $site_name.'</a></h1><p>'. $site_description.'</p>'."\n".'</div>'."\n".'<div id="content">'."\n";
+?>
 
+<body>
+<div id="main" class="clearfix">
+
+<?php
+echo '<div class="logo">'."\n".'<h1><a href="'. $base_url.'" title="'. $site_name.'">'. $site_name.'</a></h1><p>'. $site_description.'</p>'."\n".'</div>'."\n";
+?>
+
+<div id="content">
+<?php
 if ($folder_id !== $box_root_folder_id) {
   if ($folder_list['id-'.$folder_id] !== 'error')
     $folder_count=$folder_list['id-'.$folder_id]['total_count'];
@@ -87,13 +96,14 @@ if ($folder_id !== $box_root_folder_id) {
   else
     echo '<div id="info"><div id="parent"><a href="'.$base_url.'">&lt;&lt;&nbsp;Home</a></div><div id="foldername">'.$folder_name.' ('.$folder_count.' items)</div></div>'."\n";
 }
-echo '<div id="description">'.$folder_list['id-'.$folder_id]['description'].'</div>'."\n";
+if ($folder_id !== $box_root_folder_id && !empty($folder_list['id-'.$folder_id]['description']))
+  echo '<div id="description">'.$folder_list['id-'.$folder_id]['description'].'</div>'."\n";
 echo '<div id="sharetop"><table><tr>'."\n";
 if ($folder_id !== $box_root_folder_id)
-  echo '<td id="view_count"><script src="'.$base_url.'stat.php?id='.$folder_id.'&amp;update=#OTP#"></script> Views</td>'."\n";
-echo '<td>'."\n".'<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>'."\n".'</td><td>'."\n".'<div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>'."\n".'</td>'."\n".'</tr></table></div>'."\n";
+  echo '<td class="view-count"><script src="'.$base_url.'stat.php?id='.$folder_id.'&amp;update=#OTP#"></script> Views</td>'."\n";
+echo '<td>'."\n".'<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>'."\n".'</td><td>'."\n".'<div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>'."\n".'</td>'."\n".'<td><div class="g-plusone" data-size="medium"></div></td>'."\n".'</tr></table></div>'."\n";
 if ($folder_id !== $box_root_folder_id && $auth_admin == 'pass')
-  echo '<div id="edit-folder"><a href="'.$base_url.'admin/folder.php?id='.$folder_id.'">Edit</a></div>';
+  echo '<div id="edit"><a href="'.$base_url.'admin/folder.php?id='.$folder_id.'">Edit</a></div>';
 
 $style=array('rotateleft1','rotateleft2','rotateleft3','rotateright1','rotateright2','rotateright3');
 foreach ($file_list as $entry) {
@@ -112,15 +122,67 @@ foreach ($file_list as $entry) {
 }
 $np = $p + 1;
 echo '<a class="next_page" href="?id='.$folder_id.'&amp;p='.$np.'"></a>'."\n";
-
-include($base_dir.'sidebar.php');
 ?>
+</div>
+
+<div id="sidebar" class="sidebar">
+<?php
+if (isset($home_page) && !empty($home_page))
+  echo '<div class="widget-container"><h3 class="widget-title">About me</h3>'."\n".'<div><a href="'.$home_page.'" target="_blank">My Home Page</a></div>'."\n".'</div>';
+if ($folder_id !== $box_root_folder_id) {
+  echo '<div class="widget-container"><h3 class="widget-title">Albums</h3><div class="content-area"><div>'."\n";
+  if (array_key_exists('id-'.$box_root_folder_id, $folder_list))
+    unset($folder_list['id-'.$box_root_folder_id]);
+  foreach ($folder_list as $folder) {
+    if ($folder !== 'error') {
+      $count=$folder['total_count'];
+      $string='<div class="albumlist"><a href="'.$base_url.'?id='.$folder['id'].'"><img src="'.$base_url.'cover.php?id='.$folder['id'].'-'.$folder['sequence_id'].'&amp;w='.$w.'&amp;h='.$h.'&amp;otp=#OTP#" alt="'.$folder['name'].'" title="'.$folder['name'].'" width="'.$w.'" height="'.$h.'" /><span class="albumtitle">'.$folder['name'].'<br/><br/>'.$count.' images (#VIEW_COUNT_CHANGE_'.$folder['id'].'# views)</span></a></div>'."\n";
+      echo $string;
+    }
+  }
+  echo '</div></div></div>'."\n";
+}
+if (!isset($my_page)) $my_page = include($data_dir.'my_page.php');
+foreach ($my_page['widget'] as $widget) {
+  echo '<div class="widget-container"><h3 class="widget-title">'.$widget['title'].'</h3>'."\n";
+  echo $widget['content']."\n";
+  echo '</div>'."\n";
+}
+echo '<div class="widget-container"><h3 class="widget-title">Admin</h3><div>'."\n";
+echo '<div><a href="'.$base_url.'admin/">Dashboard</a></div>';
+if (auth($username) !== 'pass') {
+  echo '<div><a href="'.$base_url.'admin/login.php?ref='.getpageurl().'">Log in</a></div>';
+} else {
+  echo '<div><a href="'.$base_url.'admin/logout.php?ref='.getpageurl().'">Log out</a></div>';
+}
+echo '</div></div>'."\n";
+?>
+</div>
+
+<div id="sharebottom"><table>
+<tr>
+<td>
+<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+</td>
+<td>
+<div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+</td>
+<td>
+<div class="g-plusone" data-size="medium"></div>
+</td>
+</tr>
+</table></div>
+</div>
+
 <div id="footer">
 <div id="footer-content">
-<div>
 <?php
 include($base_dir.'foot.php');
+?>
+</div>
+</div>
 
+<?php
 $output = ob_get_contents();
 ob_clean();
 if ($auth_admin !== 'pass') {
@@ -144,5 +206,6 @@ if ($session_message) {
   echo $session_str;
   $_SESSION['message'] = '';
 }
-echo '</body></html>';
 ?>
+
+</body></html>
