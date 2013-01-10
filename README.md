@@ -39,7 +39,7 @@ Cache is enabled for the following items for faster access and lower CPU/memory 
 
 * Expire sessions if IP address is changing too frequently
 
-** HTTPS is highly recommended and is required during setup **
+**HTTPS is highly recommended and is required during setup**
 
 ### Others ###
 
