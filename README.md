@@ -30,6 +30,7 @@ Cache is enabled for the following items for faster access and lower CPU/memory 
 
     New albums are set as private by default
 
+
 * Specify an expiration time for thumbnails to prevent hot-linking
 
 * Enable Google 2-Step authentication for login
