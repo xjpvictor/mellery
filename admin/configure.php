@@ -3,9 +3,8 @@ define('includeauth',true);
 include_once('../functions.php');
 
 $auth=auth($username);
-session_regenerate_id(true);
 $url=getpageurl();
-if (!$auth || $auth == 'fail') {
+if ($auth !== 'pass') {
   header("HTTP/1.1 401 Unauthorized");
   $redirect_url = $base_url.'admin/login.php?ref='.$url;
   $redirect_message = 'Access restricted';
@@ -28,30 +27,7 @@ if (substr($base_url, -1) !== '/')
   $base_url .= '/';
 
 if (!empty($_POST)) {
-  $config_key = array(
-    'site_name',
-    'site_description',
-    'base_url',
-    'base_dir',
-    'disqus_shortname',
-    'limit',
-    'expire_image',
-    'expire_session',
-    'https',
-    'cache_expire',
-    'cache_clean',
-    'client_id',
-    'client_secret',
-    'box_root_folder_id',
-    'username',
-    'email',
-    'home_page',
-    'password',
-    'google_auth',
-    'general_access_code',
-    'retry',
-    'lock_timeout'
-  );
+  $config_key = include($base_dir.'admin/config_key.php');
   $config_file = $base_dir.'config.php';
   file_put_contents($config_file, '<?php'."\n", LOCK_EX);
   chmod($config_file, 0600);

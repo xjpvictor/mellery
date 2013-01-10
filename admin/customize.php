@@ -3,9 +3,8 @@ define('includeauth',true);
 include_once('../functions.php');
 
 $auth=auth($username);
-session_regenerate_id(true);
 $url=getpageurl();
-if (!$auth || $auth == 'fail') {
+if ($auth !== 'pass') {
   header("HTTP/1.1 401 Unauthorized");
   $redirect_url = $base_url.'admin/login.php?ref='.$url;
   $redirect_message = 'Access restricted';

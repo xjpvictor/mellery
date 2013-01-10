@@ -50,8 +50,6 @@ if (!array_key_exists('error',$_GET) && array_key_exists('state',$_GET)) {
     $config=var_export($config, true);
     file_put_contents($box_token_file, "<?php return $config ; ?>", LOCK_EX);
     chmod($box_token_file,0600);
-    $_SESSION[$username] = hash('sha256',$secret_key.$username);
-    $_SESSION['time'] = time();
     if (!array_key_exists('message',$_SESSION) || empty($_SESSION['message']))
       $_SESSION['message'] = 'Successfully authenticate with Box.com';
     header("Location: ".$base_url.'admin/');

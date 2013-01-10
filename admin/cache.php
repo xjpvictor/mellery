@@ -16,14 +16,13 @@ if (empty($_GET)) {
   else
     $url = $base_url.'admin/';
   $auth=auth($username);
-  if (!$auth || $auth == 'fail') {
+  if ($auth !== 'pass') {
     header("HTTP/1.1 401 Unauthorized");
     $redirect_url = $base_url.'admin/login.php?ref='.urlencode($url);
     $redirect_message = 'Access restricted';
     include($base_dir."library/redirect.php");
     exit(0);
-  } else
-    session_regenerate_id(true);
+  }
   $_SESSION['message'] = 'Cache cleaned successfully';
   header("Location: $url");
   $cache_expire = '0';

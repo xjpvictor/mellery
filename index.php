@@ -161,15 +161,9 @@ echo '</div></div>'."\n";
 
 <div id="sharebottom"><table>
 <tr>
-<td>
-<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
-</td>
-<td>
-<div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>
-</td>
-<td>
-<div class="g-plusone" data-size="medium"></div>
-</td>
+<td><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a></td>
+<td><div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div></td>
+<td><div class="g-plusone" data-size="medium"></div></td>
 </tr>
 </table></div>
 </div>

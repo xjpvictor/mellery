@@ -20,6 +20,8 @@ a:hover {text-decoration:underline;}
 
 .right{float:right !important;text-align:right;}
 .left{float:left;}
+.small{font-size:13px;line-height:25px;}
+#delaymessage{width:400px;margin-left:-160px;padding:10px;position:fixed;top:0px;left:50%;text-align:center;background:rgba(0,0,0,0.7);color:#fff;border: 1px solid #88c34b;box-shadow: 0 0 3px #007dff;border-radius:3px;display:none;z-index:1000;}
 
 /** index.php **/
 #main {width:90%;max-width:1330px;margin:0px auto;min-height:100%;float:none;background: rgba(255,255,255,0.6);position: relative;z-index: 1;padding-bottom:50px;}
@@ -69,9 +71,8 @@ a:hover {text-decoration:underline;}
 #footer a {color:#999;}
 #footer a:hover {color:#88C34B;}
 #footer p {line-height:19px;}
+#cache-img {display:none;}
 #footer-content {width: 90%;margin:auto auto 20px auto;position:relative;text-align:center;padding:20px 10px 0px 10px;}
-
-#delaymessage{width:300px;margin-left:-160px;padding:10px;position:fixed;top:0px;left:50%;text-align:center;background:rgba(0,0,0,0.7);color:#fff;border: 1px solid #88c34b;box-shadow: 0 0 3px #007dff;border-radius:3px;display:none;z-index:1000;}
 
 /** SNS share **/
 #sharetop{width:100%;height:30px;padding:0px 0px 30px 0px;}
@@ -96,8 +97,8 @@ a:hover {text-decoration:underline;}
 #left:hover,#right:hover{opacity:1.0;}
 
 .info-img{position:absolute;left:0;bottom:0;overflow:hidden;width:60%;height:31px;padding:20px 0px 10px 0px;background:#0a0a0a;opacity:0.6;text-align:center;vertical-align:middle;color:#fff;border-width:1px 1px 0px 0px;border-style:solid;border-color:rgba(255,255,255,0.25);z-index:999;}
-#info-img:hover{height:120px;opacity:0.9;}
-#info-img-nav:hover{height:348px;opacity:0.9;}
+#info-img:hover{height:140px;opacity:0.9;}
+#info-img-nav:hover{height:368px;opacity:0.9;}
 #imagename{text-align:center;font-style:italic;font-weight:bold;text-decoration:underline;width:100%;word-wrap:break-word;word-break:break-all;color:#88c34b;line-height:23px;font-size:14px;}
 #nav-img{width:100%;margin:0px auto 0px auto;padding:20px 0px;}
 #nav-img img{padding:5px;margin:0px 10px;background:#000;border: 1px solid rgba(255,255,255,0.25);box-shadow: 0 0 3px #999;}
@@ -197,12 +198,15 @@ span.multiform{line-height:1.5em;font-size:16px;vertical-align:text-bottom;}
 
 /** Login **/
 #login-body{background:#2c2727;min-width:600px;}
-#login-back{background:rgba(255,255,255,0.5);width:450px;margin:20px auto;padding:50px 50px;border: 1px solid rgba(0,125,255,0.25);box-shadow: 0 0 10px #007dff;border-radius:5px;}
 #login{background:url(redirect.png) no-repeat center 140px transparent;}
+#login-back{background:rgba(255,255,255,0.5);width:450px;margin:20px auto;padding:50px 50px;border: 1px solid rgba(0,125,255,0.25);box-shadow: 0 0 10px #007dff;border-radius:5px;}
 #login-form{width:210px;margin:0px auto;padding:20px;line-height:2em;}
 #reset{background:url(redirect.png) no-repeat center 50px transparent;}
 #reset-form{width:210px;margin:0px auto;line-height:2em;}
-.small{font-size:13px;line-height:25px;}
+
+/** Access **/
+#access{background:url(redirect.png) no-repeat center 50px transparent;}
+#access-form{width:300px;margin:0px auto;padding:20px;line-height:2em;}
 
 .jspContainer
 {
@@ -319,7 +323,7 @@ body {width:480px;max-width:480px;min-width:480px;}
 #sidebar {float:none;padding:0px 0px 20px 0px;}
 #sharebottom{padding:0px 0px 10px;}
 
-#content-img {width:90%;margin:10px auto 0px;}
+#content-img {width:90%;margin:10px auto 0px;float:none;}
 #mainimg-img{display:block;}
 .info-img{width:100%;}
 #info-img:hover{height:140px;}

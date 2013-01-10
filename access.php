@@ -58,12 +58,19 @@ if ($folder_list['id-'.$folder_id]['access']['public'][0] == '1') {
         }
       }
     }
-    if (!$pass)
+    if (!$pass) {
+      session_destroy();
       recordfailure($_SERVER['REMOTE_ADDR']);
+    }
   }
 }
 if ($pass) {
   $_SESSION['time'] = time();
+  if (!$auth) {
+    $_SESSION['ip'] = hash('sha256', $secret_key.$_SERVER['REMOTE_ADDR']);
+    $_SESSION['ip_ts'] = time();
+    $_SESSION['ip_change'] = 0;
+  }
   $_SESSION['id-'.$folder_id] = hash('sha256',$secret_key.'id-'.$folder_id);
   $_SESSION['message'] = 'Access granted';
   header("Location: $url");
@@ -78,11 +85,25 @@ if ($pass) {
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
 <title>Access | <?php echo $site_name; ?></title>
 <link rel="profile" href="http://gmpg.org/xfn/11" />
+<link rel="stylesheet" href="<?php echo $base_url; ?>library/style.css" type="text/css" media="all" />
 <link rel="shortcut icon" href="/favicon.ico" />
 </head>
-<body style="background:url(<?php echo $base_url; ?>library/redirect.png) no-repeat center 70px #2c2727;">
-<div style="background:rgba(255,255,255,0.5);width:350px;margin:0px auto;padding:100px 80px;border: 1px solid rgba(0,125,255,0.25);box-shadow: 0 0 10px #007dff;border-radius:5px;">
+<body id="login-body">
+<div id="access">
+<div id="login-back">
+<div id="access-form">
 <p >You are trying to access restricted zone.<br/>Please enter access code:<br/></p>
+<form name="form1" method="post" action="<?php echo $base_url;?>access.php?id=<?php echo $folder_id; ?>&amp;ref=<?php echo urlencode($url); ?>">
+<input required id="accesscode" name="accesscode" type="text">
+<input class="button" type="submit" value="Submit" onclick="SubmitForm();">
+</form>
+<p class="small">* This page is valid for <span id="count-down"></span> s.</p><br/>
+<a href="<?php echo $base_url; ?>"><p>&lt;&lt; Go Back to Homepage</p></a>
+</div>
+</div>
+</div>
+</body>
+<script type="text/javascript" src="<?php echo $base_url; ?>library/sha256.js"></script>
 <script type="text/javascript">
 function SubmitForm() {
   if (document.getElementById("accesscode").value) {
@@ -105,15 +126,4 @@ function doUpdate(num)
 }
 Load();
 </script>
-<div id="access-form" style="width:230px;margin:0px auto;">
-  <form name="form1" method="post" action="<?php echo $base_url;?>access.php?id=<?php echo $folder_id; ?>&amp;ref=<?php echo urlencode($url); ?>">
-<input required id="accesscode" name="accesscode" type="text">
-<input class="button" type="submit" value="Submit" onclick="SubmitForm();">
-</form>
-<p style="font-size:13px;line-height:25px;">* This page is valid for <span id="count-down"></span> s.</p><br/>
-</div>
-<a href="<?php echo $base_url; ?>" style="color:#88c34B;text-decoration:none;"><p>&lt;&lt; Go Back to Homepage</p></a>
-</div>
-</body>
-<script type="text/javascript" src="<?php echo $base_url; ?>library/sha256.js"></script>
 </html>

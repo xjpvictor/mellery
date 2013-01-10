@@ -193,11 +193,11 @@ function createthumbnail($dimg,$source_file,$nw,$nh) {
   return($dimg);
 }
 function getthumb($file_name,$nw,$nh) {
-  global $header_string,$cache_dir,$base_dir;
+  global $header_string,$secret_key,$cache_dir,$base_dir;
   $thumb_na=$base_dir.'library/na.jpg';
   preg_match('/(\d+)-(\d+)/',$file_name,$match);
   $id=$match[1];
-  $file=substr(hash('sha256',$file_name),2,10);
+  $file=substr(hash('sha256',$secret_key.$file_name),2,10);
   if (!file_exists($cache_dir.$file)) {
     $tmp_file='/tmp/'.$id;
     downloadfile($tmp_file,$id);
@@ -559,23 +559,38 @@ function auth($string) {
   session_name('_mellery');
   if(session_status() !== PHP_SESSION_ACTIVE)
     session_start();
-  if (empty($_SESSION) || !array_key_exists('time',$_SESSION) || (time() - $_SESSION['time']) >= $expire_session) {
+  if (empty($_SESSION) || !array_key_exists('time',$_SESSION) || !array_key_exists('ip',$_SESSION) || !array_key_exists('ip_ts',$_SESSION) || !array_key_exists('ip_change',$_SESSION)) {
     return(false);
-  } else {
-    if (is_array($string)) {
-      foreach ($string as $str) {
-        if (array_key_exists($str,$_SESSION) && $_SESSION[$str] == hash('sha256',$secret_key.$str)) {
-          $_SESSION['time'] = time();
-          return('pass');
-        }
+  } elseif (time() - $_SESSION['time'] >= $expire_session) {
+    return(false);
+  } elseif ($_SESSION['ip'] !== hash('sha256', $secret_key.$_SERVER['REMOTE_ADDR'])) {
+    if (time() - $_SESSION['ip_ts'] <= 60) {
+      if ($_SESSION['ip_change'] >= 5) {
+        return(false);
+      } else {
+        $_SESSION['ip_change'] ++;
       }
     } else {
-      if (array_key_exists($string,$_SESSION) && $_SESSION[$string] == hash('sha256',$secret_key.$string)) {
+      $_SESSION['ip_change'] = 0;
+    }
+    $_SESSION['ip_ts'] = time();
+    $_SESSION['ip'] = hash('sha256', $secret_key.$_SERVER['REMOTE_ADDR']);
+  }
+
+  if (is_array($string)) {
+    foreach ($string as $str) {
+      if (array_key_exists($str,$_SESSION) && $_SESSION[$str] == hash('sha256',$secret_key.$str)) {
         $_SESSION['time'] = time();
         return('pass');
       }
     }
+  } else {
+    if (array_key_exists($string,$_SESSION) && $_SESSION[$string] == hash('sha256',$secret_key.$string)) {
+      $_SESSION['time'] = time();
+      return('pass');
+    }
   }
+
   return('fail');
 }
 function getpageurl() {

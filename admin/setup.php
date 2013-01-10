@@ -31,30 +31,6 @@ function generaterandomstring($length) {
 }
 
 if (!empty($_POST)) {
-  $config_key = array(
-    'site_name',
-    'site_description',
-    'base_url',
-    'base_dir',
-    'disqus_shortname',
-    'limit',
-    'expire_image',
-    'expire_session',
-    'https',
-    'cache_expire',
-    'cache_clean',
-    'client_id',
-    'client_secret',
-    'box_root_folder_id',
-    'username',
-    'email',
-    'home_page',
-    'password',
-    'general_access_code',
-    'google_auth',
-    'retry',
-    'lock_timeout'
-  );
   $url = getpageurl();
   if (!array_key_exists('base_dir',$_POST) || empty($_POST['base_dir'])) {
     $_SESSION['message'] = 'Please fill up all fields'.'<br/>';
@@ -67,6 +43,7 @@ if (!empty($_POST)) {
       $base_dir = $_POST['base_dir'];
     }
   }
+  $config_key = include($base_dir.'admin/config_key.php');
   $config_file = $base_dir.'config.php';
   file_put_contents($config_file, '<?php'."\n", LOCK_EX);
   chmod($config_file, 0600);
@@ -113,6 +90,9 @@ if (!empty($_POST)) {
   session_start();
   $_SESSION[$username] = hash('sha256', $secret_key.$username);
   $_SESSION['time'] = time();
+  $_SESSION['ip'] = hash('sha256', $secret_key.$_SERVER['REMOTE_ADDR']);
+  $_SESSION['ip_ts'] = time();
+  $_SESSION['ip_change'] = 0;
   $_SESSION['message'] = 'Setup finished';
   header("Location: ".$base_url.'admin/authbox.php');
   exit(0);

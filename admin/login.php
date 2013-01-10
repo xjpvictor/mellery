@@ -33,6 +33,11 @@ if (!empty($_POST) && array_key_exists('username',$_POST) && array_key_exists('p
     }
     if ($google_auth == '0' || (array_key_exists('otp',$_POST) && verifykey($_POST['otp'],30,1))) {
       $_SESSION['time'] = time();
+      if (!$auth) {
+        $_SESSION['ip'] = hash('sha256', $secret_key.$_SERVER['REMOTE_ADDR']);
+        $_SESSION['ip_ts'] = time();
+        $_SESSION['ip_change'] = 0;
+      }
       $_SESSION[$username] = hash('sha256',$secret_key.$username);
       if (isset($otp_recovery) && $otp_recovery) {
         $_SESSION['message'] = 'Google 2-step authentication has been disabled';
@@ -44,6 +49,7 @@ if (!empty($_POST) && array_key_exists('username',$_POST) && array_key_exists('p
       exit(0);
     }
   }
+  session_destroy();
   recordfailure($_SERVER['REMOTE_ADDR']);
 }
 ?>
@@ -100,10 +106,29 @@ Load();
 </form>
 <p class="small">* This page is valid for <span id="count-down"></span> s.</p>
 <p><a href="<?php echo $base_url; ?>admin/reset.php">Reset password</a></p>
-<p><a href="<?php echo $base_url; ?>">&lt;&lt; Go Back to Homepage</a></p>
+<br/><a href="<?php echo $base_url; ?>">&lt;&lt; Go Back to Homepage</a>
 </div>
 </div>
 </div>
 </body>
 <script type="text/javascript" src="<?php echo $base_url; ?>library/sha256.js"></script>
+<script type="text/javascript" src="<?php echo $base_url; ?>library/jquery.js"></script>
+<?php
+if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) {
+  echo '<div id="delaymessage">';
+  echo $_SESSION['message'];
+  echo '</div>';
+  echo '<script type="text/javascript">'."\n";
+  echo '  $(document).ready( function(){'."\n";
+  echo '    $("#delaymessage").show("fast");'."\n";
+  echo '    var to=setTimeout("hideDiv()",5000);'."\n";
+  echo '  });'."\n";
+  echo '  function hideDiv()'."\n";
+  echo '  {'."\n";
+  echo '    $("#delaymessage").hide("fast");'."\n";
+  echo '  }'."\n";
+  echo '</script>';
+  $_SESSION['message'] = '';
+}
+?>
 </html>
