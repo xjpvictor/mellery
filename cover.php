@@ -12,7 +12,6 @@ $id=$_GET['id'];
 preg_match('/(\d+)-(\d+)/',$id,$match);
 $folder_id=$match[1];
 $dest='/tmp/'.$folder_id;
-$thumb_na=$base_dir.'library/na.jpg';
 $thumb_lock=$base_dir.'library/lock.png';
 
 $header_string=boxauth();
@@ -61,8 +60,6 @@ if (isset($auth) && ($auth !== 'pass')) {
       $thumb_file=getthumb($cid.'-'.$csi,$nw,$nh);
       if ($thumb_file) {
         $thumb=createthumbnail($thumb,$thumb_file,$ntw,$nth);
-      } else {
-        $thumb=createthumbnail($thumb,$thumb_na,$ntw,$nth);
       }
       $dimg=coverbordercompose($dimg,$nw,$nh,$ntw,$nth,$border_width,$thumb,$i);
       $i++;

@@ -362,11 +362,11 @@ if ($single) {
 
 echo '<div class="admin-folder-nav clearfix">'."\n";
 if ($single && $folder['parent']['id'] !== $box_root_folder_id)
-  echo '<div class="admin-folder-parent" id="jumpto"><a href="'.$base_url.'admin/folder.php?id='.$folder['parent']['id'].'">&lt;&lt;&nbsp;'.$folder['parent']['name'].'</a>';
+  echo '<div class="admin-folder-parent"><a href="'.$base_url.'admin/folder.php?id='.$folder['parent']['id'].'">&lt;&lt;&nbsp;'.$folder['parent']['name'].'</a>';
 elseif ($single)
-  echo '<div class="admin-folder-parent" id="jumpto"><a href="'.$base_url.'admin/folder.php">&lt;&lt;&nbsp;Albums list</a>';
+  echo '<div class="admin-folder-parent"><a href="'.$base_url.'admin/folder.php">&lt;&lt;&nbsp;Albums list</a>';
 if ($single)
-  echo '<div class="edit-admin"><a href="javascript:;" onclick="show(\'all-album-list\')">Jump to..</a><div id="all-album-list"><a class="close" href="javascript:;" onclick="show(\'all-album-list\')">[Close]</a><br/>'.$all_album_list.'</div></div></div>'."\n";
+  echo '<div class="edit-admin" id="jumpto"><a href="javascript:;" onclick="show(\'all-album-list\')">Jump to..</a><div id="all-album-list"><a class="close" href="javascript:;" onclick="show(\'all-album-list\')">[Close]</a><br/>'.$all_album_list.'</div></div></div>'."\n";
 echo '<form method="post" class="admin-folder-form right" action="folder.php?ref='.urlencode($base_url.'admin/folder.php?id='.$_GET['id']).'">'."\n";
 echo 'Items per page:<input class="admin-folder-limit" name="admin_folder_limit" value="'.$admin_folder_limit.'">'."\n";
 echo '</form>'."\n";
