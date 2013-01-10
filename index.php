@@ -98,12 +98,12 @@ if ($folder_id !== $box_root_folder_id) {
 }
 if ($folder_id !== $box_root_folder_id && !empty($folder_list['id-'.$folder_id]['description']))
   echo '<div id="description">'.$folder_list['id-'.$folder_id]['description'].'</div>'."\n";
-echo '<div id="sharetop"><table><tr>'."\n";
-if ($folder_id !== $box_root_folder_id)
-  echo '<td class="view-count"><script src="'.$base_url.'stat.php?id='.$folder_id.'&amp;update=#OTP#"></script> Views</td>'."\n";
-echo '<td>'."\n".'<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>'."\n".'</td><td>'."\n".'<div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>'."\n".'</td>'."\n".'<td><div class="g-plusone" data-size="medium"></div></td>'."\n".'</tr></table></div>'."\n";
-if ($folder_id !== $box_root_folder_id && $auth_admin == 'pass')
-  echo '<div id="edit"><a href="'.$base_url.'admin/folder.php?id='.$folder_id.'">Edit</a></div>';
+if ($folder_id !== $box_root_folder_id) {
+  if ($auth_admin == 'pass')
+    echo '<div id="edit"><a href="'.$base_url.'admin/folder.php?id='.$folder_id.'">Edit</a></div>';
+  echo '<div class="view-count"><script src="'.$base_url.'stat.php?id='.$folder_id.'&amp;update=#OTP#"></script> Views</div>'."\n";
+}
+echo '<div id="sharetop"><table><tr><td>'."\n".'<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>'."\n".'</td><td>'."\n".'<div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>'."\n".'</td>'."\n".'<td><div class="g-plusone" data-size="medium"></div></td>'."\n".'</tr></table></div>'."\n";
 
 $style=array('rotateleft1','rotateleft2','rotateleft3','rotateright1','rotateright2','rotateright3');
 foreach ($file_list as $entry) {
