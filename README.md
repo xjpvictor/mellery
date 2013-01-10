@@ -1,7 +1,7 @@
 mellery
 =======
 
-A PHP photo gallery with box.com as storage
+A PHP photo gallery
 -------
 
 This is a simple photo gallery written with PHP. All information and image files are stored on [Box.com][b] and retrieved using the API provided.
