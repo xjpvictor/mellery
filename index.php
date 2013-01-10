@@ -19,7 +19,7 @@ $url=getpageurl();
 
 if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access']['public'][0] !== '1') {
   $auth=auth(array($username,'id-'.$folder_id));
-  if (!$auth || $auth == 'fail') {
+  if ($auth !== 'pass') {
     header("HTTP/1.1 401 Unauthorized");
     $redirect_url = $base_url.'access.php?id='.$folder_id.'&ref='.$url;
     $redirect_message = 'Access restricted';

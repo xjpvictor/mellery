@@ -49,7 +49,7 @@ if (!empty($folder)) {
 $i = 0;
 $thumb = imagecreatetruecolor($ntw, $nth);
 imagefill($thumb,0,0,imagecolorallocate($thumb,255,255,255));
-if (isset($auth) && (!$auth || $auth == 'fail')) {
+if (isset($auth) && ($auth !== 'pass')) {
   $thumb=createthumbnail($thumb,$thumb_lock,$ntw,$nth);
   $dimg=coverbordercompose($dimg,$nw,$nh,$ntw,$nth,$border_width,$thumb,$i);
   $i++;

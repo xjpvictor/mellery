@@ -20,7 +20,7 @@ if (!array_key_exists('id-'.$folder_id,$folder_list)) {
 if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access']['public'][0] !== '1') {
   $auth=auth(array($username,'id-'.$folder_id));
 }
-if (isset($auth) && (!$auth || $auth == 'fail')) {
+if (isset($auth) && ($auth !== 'pass')) {
   header('Content-type: image/png');
   readfile($base_dir.'library/lock.png');
   exit(0);

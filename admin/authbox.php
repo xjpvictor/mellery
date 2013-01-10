@@ -3,7 +3,7 @@ include('../functions.php');
 
 $auth=auth($username);
 session_regenerate_id(true);
-if (!$auth || $auth == 'fail') {
+if ($auth !== 'pass') {
   header("HTTP/1.1 401 Unauthorized");
   $redirect_url = $base_url.'admin/login.php?ref='.urlencode($base_url.'admin/authbox.php');
   $redirect_message = 'Access restricted';
