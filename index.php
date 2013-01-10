@@ -110,14 +110,20 @@ foreach ($file_list as $entry) {
   $class=$style[rand(0,count($style) - 1)];
   if (array_key_exists('type',$entry) && $entry['type'] == 'file') {
     $name = substr($entry['name'], 0, strrpos($entry['name'], '.', -1));
-    echo '<div style="z-index:'.rand(1,6).'" class="'.$class.' container thumbnail" title="'.$name.'"><a href="'.$base_url.'image.php?id='.$entry['id'].'&amp;fid='.$folder_id.'" title="'.$name.'"><img src="'.$base_url.'thumbnail.php?id='.$entry['id'].'-'.$entry['sequence_id'].'&amp;fid='.$folder_id.'&amp;w='.$w.'&amp;h='.$h.'&amp;otp=#OTP#" alt="'.$name.'" title="'.$name.'" width="'.$w.'" height="'.$h.'" /><span class="thumbtitle">'.$name.'<br/><br/>#VIEW_COUNT_CHANGE_'.$entry['id'].'# views</span></a></div>'."\n";
+    echo '<div style="z-index:'.rand(1,6).'" class="'.$class.' container thumbnail tipTip" title="'.$name;
+    if (!empty($entry['description']))
+      echo '<br/><br/>'.$entry['description'];
+    echo '"><a href="'.$base_url.'image.php?id='.$entry['id'].'&amp;fid='.$folder_id.'"><img src="'.$base_url.'thumbnail.php?id='.$entry['id'].'-'.$entry['sequence_id'].'&amp;fid='.$folder_id.'&amp;w='.$w.'&amp;h='.$h.'&amp;otp=#OTP#" alt="'.$name.'" width="'.$w.'" height="'.$h.'" title="'.$name.'" /><span class="thumbtitle">'.$name.'<br/><br/>#VIEW_COUNT_CHANGE_'.$entry['id'].'# views</span></a></div>'."\n";
   } elseif (array_key_exists('type',$entry) && $entry['type'] == 'folder') {
     $folder=$folder_list['id-'.$entry['id']];
     if ($folder !== 'error')
       $count=$folder['total_count'];
     else
       $count='null';
-    echo '<div style="z-index:'.rand(1,6).'" class="'.$class.' container album" title="'.$entry['name'].'"><a href="?id='.$entry['id'].'"><img src="'.$base_url.'cover.php?id='.$entry['id'].'-'.$entry['sequence_id'].'&amp;w='.$w.'&amp;h='.$h.'&amp;otp=#OTP#" alt="'.$entry['name'].'" title="'.$entry['name'].'" width="'.$w.'" height="'.$h.'" /><span class="albumtitle">'.$entry['name'].'<br/><br/>'.$count.' items (#VIEW_COUNT_CHANGE_'.$entry['id'].'# views)</span></a></div>'."\n";
+    echo '<div style="z-index:'.rand(1,6).'" class="'.$class.' container album tipTip" title="'.$entry['name'];
+    if (!empty($entry['description']))
+      echo '<br/><br/>'.$entry['description'];
+    echo '"><a href="?id='.$entry['id'].'"><img src="'.$base_url.'cover.php?id='.$entry['id'].'-'.$entry['sequence_id'].'&amp;w='.$w.'&amp;h='.$h.'&amp;otp=#OTP#" alt="'.$entry['name'].'" width="'.$w.'" height="'.$h.'" /><span class="albumtitle">'.$entry['name'].'<br/><br/>'.$count.' items (#VIEW_COUNT_CHANGE_'.$entry['id'].'# views)</span></a></div>'."\n";
   }
 }
 $np = $p + 1;
@@ -136,7 +142,10 @@ if ($folder_id !== $box_root_folder_id) {
   foreach ($folder_list as $folder) {
     if ($folder !== 'error') {
       $count=$folder['total_count'];
-      $string='<div class="albumlist"><a href="'.$base_url.'?id='.$folder['id'].'"><img src="'.$base_url.'cover.php?id='.$folder['id'].'-'.$folder['sequence_id'].'&amp;w='.$w.'&amp;h='.$h.'&amp;otp=#OTP#" alt="'.$folder['name'].'" title="'.$folder['name'].'" width="'.$w.'" height="'.$h.'" /><span class="albumtitle">'.$folder['name'].'<br/><br/>'.$count.' images (#VIEW_COUNT_CHANGE_'.$folder['id'].'# views)</span></a></div>'."\n";
+      $string='<div class="albumlist tipTip" title="'.$folder['name'];
+      if (!empty($folder['description']))
+        $string .= '<br/><br/>'.$folder['description'];
+      $string .= '"><a href="'.$base_url.'?id='.$folder['id'].'"><img src="'.$base_url.'cover.php?id='.$folder['id'].'-'.$folder['sequence_id'].'&amp;w='.$w.'&amp;h='.$h.'&amp;otp=#OTP#" alt="'.$folder['name'].'" width="'.$w.'" height="'.$h.'" /><span class="albumtitle">'.$folder['name'].'<br/><br/>'.$count.' images (#VIEW_COUNT_CHANGE_'.$folder['id'].'# views)</span></a></div>'."\n";
       echo $string;
     }
   }
