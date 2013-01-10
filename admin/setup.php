@@ -2,7 +2,7 @@
 
 if (file_exists('../config.php')) {
   include('../config.php');
-  header("Location: $base_url");
+  header("Location: ".$base_url."admin/configure.php");
   exit(0);
 }
 
@@ -138,6 +138,7 @@ if (!empty($_POST)) {
 <tr><td><p>Client ID:</p></td><td><input required name="client_id"></td></tr>
 <tr><td><p>Client secret:</p></td><td><input required name="client_secret"></td></tr>
 <tr><td><p>Box.com root folder ID:</p></td><td><input required name="box_root_folder_id" value="0"></td></tr>
+<tr><td></td><td><p class="small">* If all albums are in the folder named "photo" on Box.com,  get the url of this folder from Box.com: https://www.box.com/files/0/f/xxxxxxxxx/photo , xxxxxxxxx is the ID. Set as 0 if albums are not in a specific folder.</p></td></tr>
 </table>
 </div>
 

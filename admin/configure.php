@@ -118,6 +118,7 @@ $otp_session=getkey($expire_session);
 <tr><td><p<?php if (!isset($client_id) || ($client_id !== '0' && empty($client_id))) {echo ' class="notset"'; $notify = true;} ?>>Client ID (Leave blank if not changed):</p></td><td><input name="client_id"></td></tr>
 <tr><td><p<?php if (!isset($client_secret) || ($client_secret !== '0' && empty($client_secret))) {echo ' class="notset"'; $notify = true;} ?>>Client secret (Leave blank if not changed):</p></td><td><input name="client_secret"></td></tr>
 <tr><td><p<?php if (!isset($box_root_folder_id) || ($box_root_folder_id !== '0' && empty($box_root_folder_id))) {echo ' class="notset"'; $notify = true;} ?>>Box.com root folder ID:</p></td><td><input required name="box_root_folder_id" value="<?php if (isset($box_root_folder_id)) echo htmlentities($box_root_folder_id); ?>"></td></tr>
+<tr><td></td><td><p class="small">* If all albums are in the folder named "photo" on Box.com,  get the url of this folder from Box.com: https://www.box.com/files/0/f/xxxxxxxxx/photo , xxxxxxxxx is the ID. Set as 0 if albums are not in a specific folder.</p></td></tr>
 <tr><td></td><td><p class="button" style="width:200px;"><a href="<?php echo $base_url; ?>admin/authbox.php" target="_blank">Authenticate with Box.com</a></p></td><td></td></tr>
 </table>
 </div>
