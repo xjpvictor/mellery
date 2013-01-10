@@ -27,9 +27,7 @@ Cache is enabled for the following items for faster access and lower CPU/memory 
     * Specify an access code for a particular album
     * Use a temporary access code with certain period of validity
     * Mark as private and no one will be able to access
-
-    New albums are set as private by default
-
+    * New albums are set as private by default
 
 * Specify an expiration time for thumbnails to prevent hot-linking
 
