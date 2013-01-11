@@ -130,10 +130,10 @@ if ($seq && count($seq) > 1) {
 <div class="widget-container">
 <div id="shareimg"><table>
 <tr>
-<td id="view-count" class="view-count"><script src="<?php echo $base_url; ?>stat.php?id=<?php echo $id; ?>&amp;update=#OTP#"></script> Views</td><td></td>
+<td id="view-count" class="view-count"><script src="<?php echo $base_url; ?>stat.php?id=<?php echo $id; ?>&amp;update=#OTP#"></script></td><td></td>
 </tr>
 <tr>
-<td><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a></td>
+<td><a href="https://twitter.com/share" class="twitter-share-button"></a></td>
 <td><div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div></td>
 <td><div class="g-plusone" data-size="medium"></div></td>
 </tr>

@@ -101,9 +101,9 @@ if ($folder_id !== $box_root_folder_id && !empty($folder_list['id-'.$folder_id][
 if ($folder_id !== $box_root_folder_id) {
   if ($auth_admin == 'pass')
     echo '<div id="edit"><a href="'.$base_url.'admin/folder.php?id='.$folder_id.'">Edit</a></div>';
-  echo '<div class="view-count"><script src="'.$base_url.'stat.php?id='.$folder_id.'&amp;update=#OTP#"></script> Views</div>'."\n";
+  echo '<div class="view-count"><script src="'.$base_url.'stat.php?id='.$folder_id.'&amp;update=#OTP#"></script></div>'."\n";
 }
-echo '<div id="sharetop"><table><tr><td>'."\n".'<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>'."\n".'</td><td>'."\n".'<div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>'."\n".'</td>'."\n".'<td><div class="g-plusone" data-size="medium"></div></td>'."\n".'</tr></table></div>'."\n";
+echo '<div id="sharetop"><table><tr><td>'."\n".'<a href="https://twitter.com/share" class="twitter-share-button"></a>'."\n".'</td><td>'."\n".'<div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>'."\n".'</td>'."\n".'<td><div class="g-plusone" data-size="medium"></div></td>'."\n".'</tr></table></div>'."\n";
 
 $style=array('rotateleft1','rotateleft2','rotateleft3','rotateright1','rotateright2','rotateright3');
 foreach ($file_list as $entry) {
@@ -129,6 +129,16 @@ foreach ($file_list as $entry) {
 $np = $p + 1;
 echo '<a class="next_page" href="?id='.$folder_id.'&amp;p='.$np.'"></a>'."\n";
 ?>
+
+<noscript><div class="nav">
+<?php if ($p > 0): ?>
+<a class="left" href="?id=<?php echo $folder_id; ?>&amp;p=<?php echo ($p - 1); ?>">← Previous page</a>
+<?php endif; ?>
+<?php if ($np * $limit < $folder_list['id-'.$folder_id]['total_count']): ?>
+<a class="right" href="?id=<?php echo $folder_id; ?>&amp;p=<?php echo $np; ?>">Next page →</a>
+<?php endif; ?>
+</div></noscript>
+
 </div>
 
 <div id="sidebar" class="sidebar">
@@ -170,11 +180,12 @@ echo '</div></div>'."\n";
 
 <div id="sharebottom"><table>
 <tr>
-<td><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a></td>
+<td><a href="https://twitter.com/share" class="twitter-share-button"></a></td>
 <td><div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div></td>
 <td><div class="g-plusone" data-size="medium"></div></td>
 </tr>
 </table></div>
+
 </div>
 
 <div id="footer">

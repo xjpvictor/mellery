@@ -57,6 +57,8 @@ a:hover {text-decoration:underline;}
 .rotateright2{-webkit-transform: rotate(3deg);-moz-transform: rotate(3deg);-o-transform:rotate(3deg);-ms-transform: rotate(3deg);}
 .rotateright3{-webkit-transform: rotate(5deg);-moz-transform: rotate(5deg);-o-transform:rotate(5deg);-ms-transform: rotate(5deg);}
 
+.nav {width:100%;float:left;padding:20px 0px;}
+
 .sidebar {float:right;font-size: 12px;line-height:18px;}
 .sidebar a {color:#999;}
 .sidebar a:hover {color:#32cd32;}

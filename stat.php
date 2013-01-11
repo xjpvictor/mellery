@@ -23,6 +23,6 @@ if (array_key_exists('update', $_GET) && verifykey($_GET['update'], $expire_imag
   file_put_contents($data_dir.$_GET['id'], $ori, LOCK_EX);
 }
 
-echo 'document.write("'.$ori.'")';
+echo 'document.write("'.$ori.' Views")';
 
 ?>
