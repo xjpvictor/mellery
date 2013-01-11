@@ -67,12 +67,30 @@ if (!empty($_POST) && array_key_exists('username',$_POST) && array_key_exists('p
 <body id="login-body">
 <div id="login">
 <div id="login-back">
+<div id="login-form">
+<p><b>Please log in</b></p>
+<form name="form1" method="post" action="login.php?ref=<?php echo urlencode($url); ?>">
+<p>Username:</p>
+<input required id="username" name="username"><br/>
+<p>Password:</p>
+<input required id="password" name="password" type="password"><br/>
+<p>Google Authenticator code:</p>
+<input id="otp" name="otp"><br/>
+<p class="small">* Leave blank if not enabled</p>
+<input class="button" type="submit" value="Log in" onclick="SubmitForm();">
+</form>
+<p class="small">* This page is valid for <span id="count-down"></span> s.</p>
+<p><a href="<?php echo $base_url; ?>admin/reset.php">Reset password</a></p>
+<br/><a href="<?php echo $base_url; ?>">&lt;&lt; Go Back to Homepage</a>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="<?php echo $base_url; ?>library/sha256.js"></script>
+<script type="text/javascript" src="<?php echo $base_url; ?>library/jquery.js"></script>
 <script type="text/javascript">
 function SubmitForm() {
   if (document.getElementById("password").value) {
-<?php
-echo 'document.getElementById("password").value = Sha256.hash(Sha256.hash(document.getElementById("password").value) + "'.$otp.'");'."\n";
-?>
+    document.getElementById("password").value = Sha256.hash(Sha256.hash(document.getElementById("password").value) + "<?php echo $otp; ?>");
   }
   if (document.getElementById("otp").value) {
     document.getElementById("otp").value = Sha256.hash(document.getElementById("otp").value);
@@ -92,43 +110,20 @@ function doUpdate(num)
 }
 Load();
 </script>
-<div id="login-form">
-<p><b>Please log in</b></p>
-<form name="form1" method="post" action="login.php?ref=<?php echo urlencode($url); ?>">
-<p>Username:</p>
-<input required id="username" name="username"><br/>
-<p>Password:</p>
-<input required id="password" name="password" type="password"><br/>
-<p>Google Authenticator code:</p>
-<input id="otp" name="otp"><br/>
-<p class="small">* Leave blank if not enabled</p>
-<input class="button" type="submit" value="Log in" onclick="SubmitForm();">
-</form>
-<p class="small">* This page is valid for <span id="count-down"></span> s.</p>
-<p><a href="<?php echo $base_url; ?>admin/reset.php">Reset password</a></p>
-<br/><a href="<?php echo $base_url; ?>">&lt;&lt; Go Back to Homepage</a>
+<?php if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) { ?>
+<div id="delaymessage">
+<?php echo $_SESSION['message']; $_SESSION['message'] = ''; ?>
 </div>
-</div>
-</div>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("#delaymessage").show("fast");
+    var to=setTimeout("hideDiv()",5000);
+  });
+  function hideDiv()
+  {
+    $("#delaymessage").hide("fast");
+  }
+</script>
+<?php } ?>
 </body>
-<script type="text/javascript" src="<?php echo $base_url; ?>library/sha256.js"></script>
-<script type="text/javascript" src="<?php echo $base_url; ?>library/jquery.js"></script>
-<?php
-if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) {
-  echo '<div id="delaymessage">';
-  echo $_SESSION['message'];
-  echo '</div>';
-  echo '<script type="text/javascript">'."\n";
-  echo '  $(document).ready( function(){'."\n";
-  echo '    $("#delaymessage").show("fast");'."\n";
-  echo '    var to=setTimeout("hideDiv()",5000);'."\n";
-  echo '  });'."\n";
-  echo '  function hideDiv()'."\n";
-  echo '  {'."\n";
-  echo '    $("#delaymessage").hide("fast");'."\n";
-  echo '  }'."\n";
-  echo '</script>';
-  $_SESSION['message'] = '';
-}
-?>
 </html>

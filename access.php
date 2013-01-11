@@ -102,14 +102,11 @@ if ($pass) {
 </div>
 </div>
 </div>
-</body>
 <script type="text/javascript" src="<?php echo $base_url; ?>library/sha256.js"></script>
 <script type="text/javascript">
 function SubmitForm() {
   if (document.getElementById("accesscode").value) {
-<?php
-echo 'document.getElementById("accesscode").value = Sha256.hash(Sha256.hash(document.getElementById("accesscode").value) + "'.$otp.'");'."\n";
-?>
+    document.getElementById("accesscode").value = Sha256.hash(Sha256.hash(document.getElementById("accesscode").value) + "<?php echo $otp; ?>");
   }
   document.form1.submit
 }
@@ -126,4 +123,5 @@ function doUpdate(num)
 }
 Load();
 </script>
+</body>
 </html>

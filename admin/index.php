@@ -22,6 +22,7 @@ $otp_session=getkey($expire_session);
 ?>
 
 <div class="site-config clearfix">
+
 <p>Hello <?php echo $username; ?>,</p>
 <?php
 if (array_key_exists('id-'.$box_root_folder_id, $folder_list))
@@ -70,25 +71,34 @@ if ($size < 1024) {
 ?>
 
 <p>You have <b><?php echo count($folder_list); ?></b> albums, and <b><?php echo $image_count; ?></b> images in the albums<span class="edit-admin"><a href="<?php echo $base_url; ?>admin/folder.php">Manage albums</a></span></p>
+
+<?php if ($new_count > 0) { ?>
+<p><b class="new"><?php echo $new_count; ?></b> new albums recently uploaded. New albums are kept private by default.</p>
+<?php } ?>
+
+<?php if (count($folder_list) > 0) { ?>
+<p>Recent albums:</p>
+<div id="recent-list">
 <?php
-if ($new_count > 0) {
-  echo '<p><b class="new">'.$new_count.'</b> new albums recently uploaded. New albums are kept private by default.</p>';
-}
-if (count($folder_list) > 0) {
-  echo '<p>Recent albums:</p>'."\n";
-  echo '<div id="recent-list">'."\n";
   $otp=getkey($expire_image);
   $i = 0;
   foreach ($folder_list as $folder) {
-    echo '<div><a href="'.$base_url.'admin/folder.php?id='.$folder['id'].'"><img class="admin-album" src="'.$base_url.'cover.php?id='.$folder['id'].'-'.$folder['sequence_id'].'&amp;w='.$w.'&amp;h='.$h.'&amp;otp='.$otp.'" alt="'.$folder['name'].'" title="'.$folder['name'].'" width="'.$w.'" height="'.$h.'" /></a></div>';
+?>
+<div>
+<a href="<?php echo $base_url; ?>admin/folder.php?id=<?php echo $folder['id']; ?>">
+<img class="admin-album" src="<?php echo $base_url; ?>cover.php?id=<?php echo $folder['id']; ?>-<?php echo $folder['sequence_id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=<?php echo $otp; ?>" alt="<?php echo $folder['name']; ?>" title="<?php echo $folder['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+</a>
+</div>
+<?php
     $i ++;
     if ($i >= 4)
       break;
   }
-  echo '<span class="edit-admin"><a href="'.$base_url.'admin/folder.php">More..</a></span>'."\n";
-  echo '</div>'."\n";
-}
 ?>
+<span class="edit-admin"><a href="<?php echo $base_url; ?>admin/folder.php">More..</a></span>
+</div>
+<?php } ?>
+
 </div>
 
 <div class="site-config clearfix">

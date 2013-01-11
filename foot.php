@@ -12,6 +12,7 @@ if (!defined('includeauth')) {
 <p><a href="<?php echo $base_url; ?>stat.php?dnt=1&amp;ref=<?php echo $url; ?>" title="Do Not Track">Do Not Track</a></p>
 <img id="cache-img" src="<?php echo $base_url; ?>admin/cache.php" width="1" height="1" alt="" />
 <?php if (!isset($my_page)) $my_page = include($data_dir.'my_page.php'); echo $my_page['foot']; ?>
+
 <div id="fb-root"></div>
 <script type="text/javascript" src="<?php echo $base_url; ?>library/jquery.js"></script>
 <script type="text/javascript">
@@ -20,7 +21,7 @@ if (!defined('includeauth')) {
     var js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return;
     js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=206236866085078";
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));
   (function() {

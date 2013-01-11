@@ -15,14 +15,14 @@ if (!defined('includeauth')) {
 <img id="cache-img" src="<?php echo $base_url; ?>admin/cache.php" width="1" height="1" alt="" />
 </div>
 </div>
-<script type="text/javascript" src="<?php echo $base_url; ?>library/jquery.js"></script>
 
-<?php if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])): ?>
+<script type="text/javascript" src="<?php echo $base_url; ?>library/jquery.js"></script>
+<?php if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) { ?>
 <div id="delaymessage">
 <?php echo $_SESSION['message']; $_SESSION['message'] = ''; ?>
 </div>
 <script type="text/javascript">
-  $(document).ready( function(){
+  $(document).ready(function(){
     $("#delaymessage").show("fast");
     var to=setTimeout("hideDiv()",5000);
   });
@@ -31,7 +31,7 @@ if (!defined('includeauth')) {
     $("#delaymessage").hide("fast");
   }
 </script>
-<?php endif; ?>
+<?php } ?>
 
 </body>
 </html>

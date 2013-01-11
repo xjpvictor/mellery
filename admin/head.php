@@ -13,7 +13,7 @@ if (!defined('includeauth')) {
 <title>Admin | <?php echo $site_name; ?></title>
 <link rel="profile" href="http://gmpg.org/xfn/11" />
 <link rel="stylesheet" href="<?php echo $base_url; ?>library/style.css" type="text/css" media="all" />
-<?php if (file_exists($data_dir.'my_style.css')) echo '<link rel="stylesheet" href="'.$base_url.'my_style.css" type="text/css" media="all" />'; ?>
+<?php if (file_exists($data_dir.'my_style.css')) echo '<link rel="stylesheet" href="',$base_url.'my_style.css" type="text/css" media="all" />'; ?>
 <link rel="shortcut icon" href="/favicon.ico" />
 <?php if (!isset($my_page)) $my_page = include($data_dir.'my_page.php'); echo $my_page['header']; ?>
 </head>
@@ -22,6 +22,4 @@ if (!defined('includeauth')) {
 <div class="logo">
 <h1><a href="<?php echo $base_url; ?>" title="<?php echo $site_name; ?>"><?php echo $site_name; ?></a></h1><p><?php echo $site_description; ?></p>
 </div>
-<?php
-echo '<div id="admin-nav"><a href="'.$base_url.'admin/">Dashboard</a><a href="'.$base_url.'admin/folder.php">Albums</a><a href="'.$base_url.'admin/customize.php">Customization</a><a href="'.$base_url.'admin/configure.php">Configuration</a><span id="logout" class="right"><a href="'.$base_url.'admin/logout.php">Log Out</a></span></div>';
-?>
+<div id="admin-nav"><a href="<?php echo $base_url; ?>admin/">Dashboard</a><a href="<?php echo $base_url; ?>admin/folder.php">Albums</a><a href="<?php echo $base_url; ?>admin/customize.php">Customization</a><a href="<?php echo $base_url; ?>admin/configure.php">Configuration</a><span id="logout" class="right"><a href="<?php echo $base_url; ?>admin/logout.php">Log Out</a></span></div>

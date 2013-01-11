@@ -82,19 +82,21 @@ include('head.php');
 $i = 0;
 if (array_key_exists('widget', $my_page)) {
   foreach ($my_page['widget'] as $key => $widget) {
-    echo '<div class="site-config clearfix">'."\n";
-    echo '<p>Widget '.($i + 1).'</p>'."\n";
-    echo '<form method="post" action="customize.php">'."\n";
-    echo '<p>Title (Optional):</p>'."\n";
-    echo '<textarea rows="1" class="custom" name="widget['.$key.'][title]">'."\n";
-    echo htmlentities($widget['title']);
-    echo '</textarea><br/><br/>'."\n";
-    echo '<textarea rows="10" class="custom" name="widget['.$key.'][content]">'."\n";
-    echo htmlentities($widget['content']);
-    echo '</textarea><br/><br/>'."\n";
-    echo '<input class="button right" type="submit" value="Update">'."\n";
-    echo '</form>'."\n";
-    echo '</div>'."\n";
+?>
+  <div class="site-config clearfix">
+  <p>Widget <?php echo ($i + 1); ?></p>
+  <form method="post" action="customize.php">
+  <p>Title (Optional):</p>
+  <textarea rows="1" class="custom" name="widget[<?php echo $key; ?>][title]">
+<?php echo htmlentities($widget['title']); ?>
+  </textarea><br/><br/>
+  <textarea rows="10" class="custom" name="widget[<?php echo $key; ?>][content]">
+<?php echo htmlentities($widget['content']); ?>
+  </textarea><br/><br/>
+  <input class="button right" type="submit" value="Update">
+  </form>
+  </div>
+<?php
     $i ++;
   }
 }

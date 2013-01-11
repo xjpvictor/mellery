@@ -44,14 +44,14 @@ if ($auth_admin !== 'pass') {
     $age = filemtime($page_cache);
     if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($base_dir.'config.php') && $age >= filemtime($data_dir.'my_page.php')) {
       $output = file_get_contents($page_cache);
-      $output = preg_replace('/#OTP#/', $otp, $output);
+      $output = str_replace('#OTP#', $otp, $output);
       preg_match_all('/#VIEW_COUNT_CHANGE_(\d+)#/', $output, $matches);
       foreach ($matches[1] as $match) {
         if (file_exists($data_dir.$match))
           $c = file_get_contents($data_dir.$match, true);
         else
           $c = '0';
-        $output = preg_replace('/#VIEW_COUNT_CHANGE_'.$match.'#/', $c, $output);
+        $output = str_replace('#VIEW_COUNT_CHANGE_'.$match.'#', $c, $output);
       }
       echo $output;
       if ($session_message) {
@@ -80,102 +80,158 @@ include($base_dir.'head.php');
 <body>
 <div id="main" class="clearfix">
 
-<?php
-echo '<div class="logo">'."\n".'<h1><a href="'. $base_url.'" title="'. $site_name.'">'. $site_name.'</a></h1><p>'. $site_description.'</p>'."\n".'</div>'."\n";
-?>
+<div class="logo">
+<h1><a href="<?php echo $base_url; ?>" title="<?php echo $site_name; ?>"><?php echo $site_name; ?></a></h1>
+<p><?php echo $site_description; ?></p>
+</div>
 
 <div id="content">
-<?php
-if ($folder_id !== $box_root_folder_id) {
-  if ($folder_list['id-'.$folder_id] !== 'error')
-    $folder_count=$folder_list['id-'.$folder_id]['total_count'];
-  else
-    $folder_count='null';
-  if ($folder_list['id-'.$folder_id]['parent']['id'] !== $box_root_folder_id)
-    echo '<div id="info"><div id="parent"><a href="'.$base_url.'index.php?id='.$folder_list['id-'.$folder_id]['parent']['id'].'">&lt;&lt;&nbsp;'.$folder_list['id-'.$folder_id]['parent']['name'].'</a></div><div id="foldername">'.$folder_name.' ('.$folder_count.' items)</div></div>'."\n";
-  else
-    echo '<div id="info"><div id="parent"><a href="'.$base_url.'">&lt;&lt;&nbsp;Home</a></div><div id="foldername">'.$folder_name.' ('.$folder_count.' items)</div></div>'."\n";
-}
-if ($folder_id !== $box_root_folder_id && !empty($folder_list['id-'.$folder_id]['description']))
-  echo '<div id="description">'.$folder_list['id-'.$folder_id]['description'].'</div>'."\n";
-if ($folder_id !== $box_root_folder_id) {
-  if ($auth_admin == 'pass')
-    echo '<div id="edit"><a href="'.$base_url.'admin/folder.php?id='.$folder_id.'">Edit</a></div>';
-  echo '<div class="view-count"><script src="'.$base_url.'stat.php?id='.$folder_id.'&amp;update=#OTP#"></script></div>'."\n";
-}
-echo '<div id="sharetop"><table><tr><td>'."\n".'<a href="https://twitter.com/share" class="twitter-share-button"></a>'."\n".'</td><td>'."\n".'<div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>'."\n".'</td>'."\n".'<td><div class="g-plusone" data-size="medium"></div></td>'."\n".'</tr></table></div>'."\n";
 
+<?php
+if ($folder_list['id-'.$folder_id] !== 'error')
+  $folder_count=$folder_list['id-'.$folder_id]['total_count'];
+else
+  $folder_count='0';
+if ($folder_id !== $box_root_folder_id) {
+?>
+<div id="info">
+<div id="parent"><a href="<?php echo $base_url; if ($folder_list['id-'.$folder_id]['parent']['id'] !== $box_root_folder_id) echo 'index.php?id=',$folder_list['id-'.$folder_id]['parent']['id']; ?>">&lt;&lt;&nbsp;<?php if ($folder_list['id-'.$folder_id]['parent']['id'] !== $box_root_folder_id) echo $folder_list['id-'.$folder_id]['parent']['name']; else echo 'Home'; ?></a></div>
+<div id="foldername"><?php echo $folder_name; ?> (<?php echo $folder_count; ?> items)</div>
+</div>
+<?php
+}
+?>
+
+<?php if ($folder_id !== $box_root_folder_id && !empty($folder_list['id-'.$folder_id]['description'])) { ?>
+<div id="description"><?php echo $folder_list['id-'.$folder_id]['description']; ?></div>
+<?php } ?>
+
+<?php if ($auth_admin == 'pass') { ?>
+<div id="edit"><a href="<?php echo $base_url; ?>admin/folder.php?id=<?php echo $folder_id; ?>">Edit</a></div>
+<?php } ?>
+
+<?php if ($folder_id !== $box_root_folder_id) { ?>
+<div class="view-count"><script src="<?php echo $base_url; ?>stat.php?id=<?php echo $folder_id; ?>&amp;update=#OTP#"></script></div>
+<?php } ?>
+
+<div id="sharetop"><table>
+<tr>
+<td><a href="https://twitter.com/share" class="twitter-share-button"></a></td>
+<td><div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div></td>
+<td><div class="g-plusone" data-size="medium"></div></td>
+</tr>
+</table></div>
+
+<?php
 $style=array('rotateleft1','rotateleft2','rotateleft3','rotateright1','rotateright2','rotateright3');
 foreach ($file_list as $entry) {
   $class=$style[rand(0,count($style) - 1)];
   if (array_key_exists('type',$entry) && $entry['type'] == 'file') {
     $name = substr($entry['name'], 0, strrpos($entry['name'], '.', -1));
-    echo '<div style="z-index:'.rand(1,6).'" class="'.$class.' container thumbnail tipTip" title="'.$name;
-    if (!empty($entry['description']))
-      echo '<br/><br/>'.$entry['description'];
-    echo '"><a href="'.$base_url.'image.php?id='.$entry['id'].'&amp;fid='.$folder_id.'"><img src="'.$base_url.'thumbnail.php?id='.$entry['id'].'-'.$entry['sequence_id'].'&amp;fid='.$folder_id.'&amp;w='.$w.'&amp;h='.$h.'&amp;otp=#OTP#" alt="'.$name.'" width="'.$w.'" height="'.$h.'" title="'.$name.'" /><span class="thumbtitle">'.$name.'<br/><br/>#VIEW_COUNT_CHANGE_'.$entry['id'].'# views</span></a></div>'."\n";
+?>
+  <div style="z-index:<?php echo rand(1,6); ?>" class="<?php echo $class; ?> container thumbnail tipTip" title="<?php echo $name; if (!empty($entry['description'])) echo '<br/><br/>',$entry['description']; ?>">
+  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $entry['id']; ?>&amp;fid=<?php echo $folder_id; ?>">
+    <img src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $entry['id']; ?>-<?php echo $entry['sequence_id']; ?>&amp;fid=<?php echo $folder_id; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" title="<?php echo $name; ?>" />
+    <span class="thumbtitle"><?php echo $name; ?><br/><br/>#VIEW_COUNT_CHANGE_<?php echo $entry['id']; ?># views</span>
+  </a>
+  </div>
+<?php
   } elseif (array_key_exists('type',$entry) && $entry['type'] == 'folder') {
     $folder=$folder_list['id-'.$entry['id']];
     if ($folder !== 'error')
       $count=$folder['total_count'];
     else
-      $count='null';
-    echo '<div style="z-index:'.rand(1,6).'" class="'.$class.' container album tipTip" title="'.$entry['name'];
-    if (!empty($entry['description']))
-      echo '<br/><br/>'.$entry['description'];
-    echo '"><a href="?id='.$entry['id'].'"><img src="'.$base_url.'cover.php?id='.$entry['id'].'-'.$entry['sequence_id'].'&amp;w='.$w.'&amp;h='.$h.'&amp;otp=#OTP#" alt="'.$entry['name'].'" width="'.$w.'" height="'.$h.'" /><span class="albumtitle">'.$entry['name'].'<br/><br/>'.$count.' items (#VIEW_COUNT_CHANGE_'.$entry['id'].'# views)</span></a></div>'."\n";
+      $count='0';
+?>
+  <div style="z-index:<?php echo rand(1,6); ?>" class="<?php echo $class; ?> container album tipTip" title="<?php echo $entry['name']; if (!empty($entry['description'])) echo '<br/><br/>',$entry['description'];?>">
+  <a href="?id=<?php echo $entry['id']; ?>">
+    <img src="<?php echo $base_url; ?>cover.php?id=<?php echo $entry['id']; ?>-<?php echo $entry['sequence_id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $entry['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+    <span class="albumtitle"><?php echo $entry['name']; ?><br/><br/><?php echo $count; ?> items (#VIEW_COUNT_CHANGE_<?php echo $entry['id']; ?># views)</span>
+  </a>
+  </div>
+<?php
   }
 }
-$np = $p + 1;
-echo '<a class="next_page" href="?id='.$folder_id.'&amp;p='.$np.'"></a>'."\n";
 ?>
 
+<?php $np = $p + 1; ?>
+<a class="next_page" href="?id=<?php echo $folder_id; ?>&amp;p=<?php echo $np; ?>"></a>
+
 <noscript><div class="nav">
-<?php if ($p > 0): ?>
+<?php if ($p > 0) { ?>
 <a class="left" href="?id=<?php echo $folder_id; ?>&amp;p=<?php echo ($p - 1); ?>">← Previous page</a>
-<?php endif; ?>
-<?php if ($np * $limit < $folder_list['id-'.$folder_id]['total_count']): ?>
+<?php } ?>
+<?php if ($np * $limit < $folder_count) { ?>
 <a class="right" href="?id=<?php echo $folder_id; ?>&amp;p=<?php echo $np; ?>">Next page →</a>
-<?php endif; ?>
+<?php } ?>
 </div></noscript>
 
 </div>
 
 <div id="sidebar" class="sidebar">
+
+<?php if (isset($home_page) && !empty($home_page)) { ?>
+<div class="widget-container">
+<h3 class="widget-title">About me</h3>
+<div><a href="<?php echo $home_page; ?>" target="_blank">My Home Page</a></div>
+</div>
+<?php } ?>
+
+<?php if ($folder_id !== $box_root_folder_id) { ?>
+<div class="widget-container">
+<h3 class="widget-title">Albums</h3>
+<div class="content-area">
+<div>
 <?php
-if (isset($home_page) && !empty($home_page))
-  echo '<div class="widget-container"><h3 class="widget-title">About me</h3>'."\n".'<div><a href="'.$home_page.'" target="_blank">My Home Page</a></div>'."\n".'</div>';
-if ($folder_id !== $box_root_folder_id) {
-  echo '<div class="widget-container"><h3 class="widget-title">Albums</h3><div class="content-area"><div>'."\n";
   if (array_key_exists('id-'.$box_root_folder_id, $folder_list))
     unset($folder_list['id-'.$box_root_folder_id]);
   foreach ($folder_list as $folder) {
     if ($folder !== 'error') {
       $count=$folder['total_count'];
-      $string='<div class="albumlist tipTip" title="'.$folder['name'];
-      if (!empty($folder['description']))
-        $string .= '<br/><br/>'.$folder['description'];
-      $string .= '"><a href="'.$base_url.'?id='.$folder['id'].'"><img src="'.$base_url.'cover.php?id='.$folder['id'].'-'.$folder['sequence_id'].'&amp;w='.$w.'&amp;h='.$h.'&amp;otp=#OTP#" alt="'.$folder['name'].'" width="'.$w.'" height="'.$h.'" /><span class="albumtitle">'.$folder['name'].'<br/><br/>'.$count.' images (#VIEW_COUNT_CHANGE_'.$folder['id'].'# views)</span></a></div>'."\n";
-      echo $string;
+?>
+    <div class="albumlist tipTip" title="<?php echo $folder['name']; if (!empty($folder['description'])) echo '<br/><br/>',$folder['description']; ?>">
+    <a href="<?php echo $base_url; ?>?id=<?php echo $folder['id']; ?>">
+      <img src="<?php echo $base_url; ?>cover.php?id=<?php echo $folder['id']; ?>-<?php echo $folder['sequence_id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $folder['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+      <span class="albumtitle"><?php echo $folder['name']; ?><br/><br/><?php echo $count; ?> images (#VIEW_COUNT_CHANGE_<?php echo $folder['id']; ?># views)</span>
+    </a>
+    </div>
+<?php
     }
   }
-  echo '</div></div></div>'."\n";
-}
-if (!isset($my_page)) $my_page = include($data_dir.'my_page.php');
-foreach ($my_page['widget'] as $widget) {
-  echo '<div class="widget-container"><h3 class="widget-title">'.$widget['title'].'</h3>'."\n";
-  echo $widget['content']."\n";
-  echo '</div>'."\n";
-}
-echo '<div class="widget-container"><h3 class="widget-title">Admin</h3><div>'."\n";
-echo '<div><a href="'.$base_url.'admin/">Dashboard</a></div>';
-if (auth($username) !== 'pass') {
-  echo '<div><a href="'.$base_url.'admin/login.php?ref='.getpageurl().'">Log in</a></div>';
-} else {
-  echo '<div><a href="'.$base_url.'admin/logout.php?ref='.getpageurl().'">Log out</a></div>';
-}
-echo '</div></div>'."\n";
 ?>
+</div>
+</div>
+</div>
+<?php
+}
+?>
+
+<?php
+if (!isset($my_page)) $my_page = include($data_dir.'my_page.php');
+if (isset($my_page['widget'])) {
+  foreach ($my_page['widget'] as $widget) {
+?>
+  <div class="widget-container">
+  <h3 class="widget-title"><?php echo $widget['title']; ?></h3>
+  <?php echo $widget['content']; ?>
+  </div>
+<?php
+  }
+}
+?>
+
+<div class="widget-container">
+<h3 class="widget-title">Admin</h3>
+<div>
+<div><a href="<?php echo $base_url; ?>admin/">Dashboard</a></div>
+<?php if (auth($username) !== 'pass') { ?>
+<div><a href="<?php echo $base_url; ?>admin/login.php?ref=<?php echo $url; ?>">Log in</a></div>
+<?php } else { ?>
+<div><a href="<?php echo $base_url; ?>admin/logout.php?ref=<?php echo $url; ?>">Log out</a></div>
+<?php } ?>
+</div>
+</div>
+
 </div>
 
 <div id="sharebottom"><table>
@@ -190,9 +246,7 @@ echo '</div></div>'."\n";
 
 <div id="footer">
 <div id="footer-content">
-<?php
-include($base_dir.'foot.php');
-?>
+<?php include($base_dir.'foot.php'); ?>
 </div>
 </div>
 
@@ -203,14 +257,14 @@ if ($auth_admin !== 'pass') {
   file_put_contents($page_cache,$output);
 }
 
-$output = preg_replace('/#OTP#/', $otp, $output);
+$output = str_replace('#OTP#', $otp, $output);
 preg_match_all('/#VIEW_COUNT_CHANGE_(\d+)#/', $output, $matches);
 foreach ($matches[1] as $match) {
   if (file_exists($data_dir.$match))
     $c = file_get_contents($data_dir.$match, true);
   else
     $c = '0';
-  $output = preg_replace('/#VIEW_COUNT_CHANGE_'.$match.'#/', $c, $output);
+  $output = str_replace('#VIEW_COUNT_CHANGE_'.$match.'#', $c, $output);
 }
 echo $output;
 

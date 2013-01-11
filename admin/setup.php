@@ -50,9 +50,9 @@ if (!empty($_POST)) {
 
   foreach ($config_key as $key) {
     if (($key == 'home_page' || $key == 'site_description' || $key == 'disqus_shortname') && array_key_exists($key,$_POST)) {
-      $$key = preg_replace('/"/','\"',$_POST[$key]);
+      $$key = str_replace('"','\"',$_POST[$key]);
     } elseif (array_key_exists($key,$_POST) && ($_POST[$key] == '0' || !empty($_POST[$key]))) {
-      $_POST[$key] = preg_replace('/"/','\"',$_POST[$key]);
+      $_POST[$key] = str_replace('"','\"',$_POST[$key]);
       if ($key == 'password') {
         if ($_POST[$key] == $_POST[$key.'_1'])
           $$key = $_POST[$key];
@@ -108,7 +108,7 @@ if (!empty($_POST)) {
 <link rel="stylesheet" href="../library/style.css" type="text/css" media="all" />
 <link rel="shortcut icon" href="/favicon.ico" />
 </head>
-<body><div id="delaymessage"><?php if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) echo $_SESSION['message']; ?></div>
+<body>
 <div id="wrap" class="clearfix">
 <div id="main">
 <div class="logo">
@@ -170,6 +170,9 @@ if (!empty($_POST)) {
 </div>
 </form>
 </div>
+</div>
+</div>
+</div>
 <script type="text/javascript" src="../library/sha256.js"></script>
 <script type="text/javascript" src="../library/jquery.js"></script>
 <script type="text/javascript">
@@ -183,23 +186,20 @@ if (!empty($_POST)) {
       document.form1.submit
     }
 </script>
+<?php if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) { ?>
+<div id="delaymessage">
+<?php echo $_SESSION['message']; $_SESSION['message'] = ''; ?>
 </div>
-</div>
-</div>
-<?php
-if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) {
-  echo '<script type="text/javascript">'."\n";
-  echo '  $(document).ready( function(){'."\n";
-  echo '    $("#delaymessage").show("fast");'."\n";
-  echo '    var to=setTimeout("hideDiv()",5000);'."\n";
-  echo '  });'."\n";
-  echo '  function hideDiv()'."\n";
-  echo '  {'."\n";
-  echo '    $("#delaymessage").hide("fast");'."\n";
-  echo '  }'."\n";
-  echo '</script>';
-  $_SESSION['message'] = '';
-}
-?>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("#delaymessage").show("fast");
+    var to=setTimeout("hideDiv()",5000);
+  });
+  function hideDiv()
+  {
+    $("#delaymessage").hide("fast");
+  }
+</script>
+<?php } ?>
 </body>
 </html>

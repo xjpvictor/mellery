@@ -36,9 +36,9 @@ if (!empty($_POST)) {
   $old_password_auth = true;
   foreach ($config_key as $key) {
     if (($key == 'home_page' || $key == 'site_description' || $key == 'disqus_shortname') && array_key_exists($key,$_POST)) {
-      $$key = preg_replace('/"/','\"',$_POST[$key]);
+      $$key = str_replace('"','\"',$_POST[$key]);
     } elseif (array_key_exists($key,$_POST) && ($_POST[$key] == '0' || !empty($_POST[$key])) && $_POST[$key] !== $$key) {
-      $_POST[$key] = preg_replace('/"/','\"',$_POST[$key]);
+      $_POST[$key] = str_replace('"','\"',$_POST[$key]);
       if ($key == 'password') {
         if ($old_password_auth && array_key_exists('old_password',$_POST) && $_POST['old_password'] == $password) {
           if ($_POST[$key] == $_POST[$key.'_1'])
@@ -138,13 +138,10 @@ $otp_session=getkey($expire_session);
 <tr><td><p>New password:</p></td><td><input id="password" type="password" name="password"></td></tr>
 <tr><td><p>Re-type new password:</p></td><td><input id="password-1" type="password" name="password_1"></td></tr>
 <tr><td><p<?php if (!isset($google_auth) || ($google_auth !== '0' && empty($google_auth))) {echo ' class="notset"'; $notify = true;} ?>>Use Google 2-step authentication:</p></td><td><input type="hidden" name="google_auth" value="0"><input class="checkbox" type="checkbox" name="google_auth" value="1"<?php if (isset($google_auth) && $google_auth == '1') echo " checked"; ?>></td></tr>
+<?php if (!empty($_SESSION) && array_key_exists('showotpqr', $_SESSION) && $_SESSION['showotpqr']) { ?>
+<tr><td style="vertical-align:top;"><p>Scan the QR code with Google Authenticator (This will only be shown once):</p></td><td><img width="200" height="200" src="https://chart.googleapis.com/chart?chs=200x200&amp;chld=L|0&amp;cht=qr&amp;chl=<?php echo urlencode('otpauth://totp/'); if (isset($site_name)) echo urlencode($site_name); echo urlencode('?secret='.$secret_key); ?>" alt="qr-code" /></td></tr>
+<tr><td style="vertical-align:top;"><p>One time recovery code for Google 2-step authentication (This will only be shown once):</p></td><td><?php echo $_SESSION['otp_recovery_code']; ?></td></tr>
 <?php
-if (!empty($_SESSION) && array_key_exists('showotpqr', $_SESSION) && $_SESSION['showotpqr']) {
-  echo '<tr><td style="vertical-align:top;"><p>Scan the QR code with Google Authenticator (This will only be shown once):</p></td><td><img width="200" height="200" src="https://chart.googleapis.com/chart?chs=200x200&amp;chld=L|0&amp;cht=qr&amp;chl='.urlencode('otpauth://totp/');
-  if (isset($site_name))
-    echo urlencode($site_name);
-  echo urlencode('?secret='.$secret_key).'" alt="qr-code" /></td></tr>';
-  echo '<tr><td style="vertical-align:top;"><p>One time recovery code for Google 2-step authentication (This will only be shown once):</p></td><td>'.$_SESSION['otp_recovery_code'].'</td></tr>';
   $_SESSION['showotpqr'] = false;
   $_SESSION['otp_recovery_code'] = '';
 }

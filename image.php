@@ -57,7 +57,7 @@ if ($auth_admin !== 'pass') {
     $age = filemtime($page_cache);
     if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($base_dir.'config.php') && $age >= filemtime($data_dir.'my_page.php')) {
       $output = file_get_contents($page_cache);
-      $output = preg_replace(array('/#OTP#/', '/#IMGURL#/'), array($otp, $match[1]), $output);
+      $output = str_replace(array('#OTP#', '#IMGURL#'), array($otp, $match[1]), $output);
       echo $output;
       if ($session_message) {
         echo $session_str;
@@ -90,8 +90,10 @@ include($base_dir."head.php");
 <?php
 $name=$file_list['id-'.$id]['name'];
 $name = substr($name, 0, strrpos($name, '.', -1));
-echo '<img id="mainimg-img" src="#IMGURL#" alt="'.$name.'"/><a title="Download original image" target="_blank" href="#IMGURL#"><div id="download">&nbsp;</div></a>';
+?>
+<img id="mainimg-img" src="#IMGURL#" alt="<?php echo $name; ?>"/><a title="Download original image" target="_blank" href="#IMGURL#"><div id="download">&nbsp;</div></a>
 
+<?php
 foreach ($file_list as $key => $value) {
   if ($file_list[$key]['type'] !== 'file')
     unset($file_list[$key]);
@@ -128,10 +130,8 @@ if ($seq && count($seq) > 1) {
 </div>
 
 <div class="widget-container">
+<div id="view-count" class="view-count"><script src="<?php echo $base_url; ?>stat.php?id=<?php echo $id; ?>&amp;update=#OTP#"></script></div>
 <div id="shareimg"><table>
-<tr>
-<td id="view-count" class="view-count"><script src="<?php echo $base_url; ?>stat.php?id=<?php echo $id; ?>&amp;update=#OTP#"></script></td><td></td>
-</tr>
 <tr>
 <td><a href="https://twitter.com/share" class="twitter-share-button"></a></td>
 <td><div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div></td>
@@ -145,65 +145,66 @@ if ($seq && count($seq) > 1) {
 </div>
 
 <div class="widget-container">
-<?php
-if ($auth_admin == 'pass')
-  echo '<div class="edit-img"><a href="'.$base_url.'admin/folder.php?id='.$folder_id.'&amp;p='.floor($k / $admin_folder_limit).'#'.$id.'">Edit</a></div><div class="edit-img"><a href="'.$base_url.'admin">Dashboard</a></div><div class="edit-img right"><a href="'.$base_url.'admin/logout.php?ref='.$url.'">Log out</a></div>';
-else
-  echo '<div class="edit-img"><a href="'.$base_url.'admin/login.php?ref='.$url.'">Log in</a></div>';
-?>
+<div class="edit-img">
+<?php if ($auth_admin == 'pass') { ?>
+<a href="<?php echo $base_url; ?>admin/folder.php?id=<?php echo $folder_id; ?>&amp;p=<?php echo floor($k / $admin_folder_limit); ?>#<?php echo $id; ?>">Edit</a></div><div class="edit-img"><a href="<?php echo $base_url; ?>admin">Dashboard</a></div><div class="edit-img right"><a href="<?php echo $base_url; ?>admin/logout.php?ref=<?php echo $url; ?>">Log out</a>
+<?php } else { ?>
+<a href="<?php echo $base_url; ?>admin/login.php?ref=<?php echo $url; ?>">Log in</a>
+<?php } ?>
+</div>
 </div>
 
-<?php
-if (isset($disqus_shortname) && !empty($disqus_shortname)) {
-  echo '<div id="disqus_thread"></div>'."\n";
-  echo '<script type="text/javascript">'."\n";
-  echo '  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */'."\n";
-  echo '  var disqus_shortname = \''.$disqus_shortname.'\'; // required: replace example with your forum shortname'."\n";
-  echo '  var disqus_identifier = \''.$_GET['id'].'\';'."\n";
-  echo '  var disqus_title = \''.$name.'\';'."\n";
-  echo '  /* * * DON\'T EDIT BELOW THIS LINE * * */'."\n";
-  echo '  (function() {'."\n";
-  echo '    var dsq = document.createElement(\'script\'); dsq.type = \'text/javascript\'; dsq.async = true;'."\n";
-  echo '    dsq.src = \'https://\' + disqus_shortname + \'.disqus.com/embed.js\';'."\n";
-  echo '    (document.getElementsByTagName(\'head\')[0] || document.getElementsByTagName(\'body\')[0]).appendChild(dsq);'."\n";
-  echo '  })();'."\n";
-  echo '</script>'."\n";
-  echo '<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>'."\n";
-  echo '<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>'."\n";
-}
-?>
+<?php if (isset($disqus_shortname) && !empty($disqus_shortname)) { ?>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = '<?php echo $disqus_shortname; ?>'; // required: replace example with your forum shortname
+  var disqus_identifier = '<?php echo $_GET['id']; ?>';
+  var disqus_title = '<?php echo $name; ?>';
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+<?php } ?>
 
 </div></div>
 
+<?php if ($seq && count($seq) > 1) { ?>
+  <div id="info-img-nav" class="info-img"><div id="imagename"><?php echo $name; ?> (<?php echo $k; ?> of <?php echo count($file_list); ?> images)</div>
+  <div id="nav-img">
 <?php
-if ($seq && count($seq) > 1) {
-  echo '<div id="info-img-nav" class="info-img"><div id="imagename">'.$name.' ('.$k.' of '.count($file_list).' images)</div>';
   $i=0;
-  echo '<div id="nav-img">';
   foreach($seq as $item) {
-    echo '<a href="'.$base_url.'image.php?id='.$item['id'].'&amp;fid='.$folder_id.'"><img class="item-img" ';
-    if ($item['id']==$id) {
-      echo 'id="current-img" ';
-      $n = $i;
-    }
     $i++;
     $name = substr($item['name'], 0, strrpos($item['name'], '.', -1));
-    echo 'src="'.$base_url.'thumbnail.php?id='.$item['id'].'-'.$item['sequence_id'].'&amp;fid='.$folder_id.'&amp;w='.$w.'&amp;h='.$h.'&amp;otp=#OTP#" alt="'.$name.'" title="'.$name.'" width="150" height="150" /></a>'."\n";
+?>
+  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $item['id']; ?>&amp;fid=<?php echo $folder_id; ?>"><img class="item-img" <?php if ($item['id']==$id) { echo 'id="current-img" '; $n = $i; } ?> src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $item['id']; ?>-<?php echo $item['sequence_id']; ?>&amp;fid=<?php echo $folder_id; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" title="<?php echo $name; ?>" width="150" height="150" /></a>
+<?php
   }
-  echo '</div>';
-  echo '<div id="shortcut-img">';
+?>
+  </div>
+  <div id="shortcut-img">
+<?php
   if (isset($prev_url))
     echo '<div id="prev"><a title="Previous" href="'.$prev_url.'">← Previous</a></div>';
   if (isset($next_url))
     echo '<div id="next"><a title="Next" href="'.$next_url.'">Next →</a></div>';
-  echo '</div>';
-} else
-  echo '<div id="info-img" class="info-img">><div id="imagename">'.$name.'</div>';
-echo '<div id="message-img">';
-include($base_dir."foot.php");
-echo '</div>'."\n";
-echo '</div>'."\n";
 ?>
+  </div>
+<?php } else { ?>
+  <div id="info-img" class="info-img">><div id="imagename"><?php echo $name; ?></div>
+<?php } ?>
+
+<div id="message-img">
+<?php include($base_dir."foot.php"); ?>
+</div>
+
+</div>
 
 </div>
 
@@ -248,7 +249,7 @@ if ($auth_admin !== 'pass') {
   file_put_contents($page_cache,$output);
 }
 
-$output = preg_replace(array('/#OTP#/', '/#IMGURL#/'), array($otp, $match[1]), $output);
+$output = str_replace(array('#OTP#', '#IMGURL#'), array($otp, $match[1]), $output);
 echo $output;
 
 ob_end_flush();

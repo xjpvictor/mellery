@@ -30,7 +30,7 @@ if (!empty($_POST)) {
     }
   } elseif ($change) {
     if (array_key_exists('password',$_POST) && array_key_exists('password_1',$_POST) && $_POST['password'] == $_POST['password_1']) {
-      $_POST['password'] = preg_replace('/"/','\"',$_POST['password']);
+      $_POST['password'] = str_replace('"','\"',$_POST['password']);
       changeconf(array('password' => $_POST['password']));
       $_SESSION['message'] = 'You have changed the password! Please log in';
       header("Location: $url".'login.php');
@@ -53,6 +53,35 @@ if (!empty($_POST)) {
 <body id="login-body">
 <div id="reset">
 <div id="login-back">
+<div id="reset-form">
+
+<?php if ($change) { ?>
+<form name="form1" method="post" action="reset.php?otp=<?php echo $otp_code; ?>">
+<p >New password:</p>
+<input id="password" name="password" type="password"><br/>
+<p >Verify new password:</p>
+<input id="password1" name="password_1" type="password"><br/>
+<input class="button" type="submit" value="Submit" onclick="SubmitForm();">
+</form>
+<?php } else { ?>
+<form name="form1" method="post" action="reset.php">
+<p >Username:</p>
+<input required name="username"><br/>
+<p >Email address:</p>
+<input required name="email"><br/>
+<p >Google Authenticator code:</p>
+<input id="googleauth" name="google_auth"><br/>
+<p class="small">* Leave blank if not enabled</p>
+<input class="button" type="submit" value="Submit" onclick="SubmitForm();">
+</form>
+<?php } ?>
+
+<p><a href="<?php echo $base_url; ?>admin/login.php">&lt;&lt; Login</a></p>
+<p><a href="<?php echo $base_url; ?>">&lt;&lt; Go Back to Homepage</a></p>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="<?php echo $base_url; ?>library/sha256.js"></script>
 <script type="text/javascript">
 function SubmitForm() {
   if (document.getElementById("password") && document.getElementById("password").value) {
@@ -67,36 +96,5 @@ function SubmitForm() {
   document.form1.submit
 }
 </script>
-<div id="reset-form">
-
-<?php
-if ($change) {
-  echo '<form name="form1" method="post" action="reset.php?otp='.$otp_code.'">'."\n";
-  echo '<p >New password:</p>'."\n";
-  echo '<input id="password" name="password" type="password"><br/>'."\n";
-  echo '<p >Verify new password:</p>'."\n";
-  echo '<input id="password1" name="password_1" type="password"><br/>'."\n";
-  echo '<input class="button" type="submit" value="Submit" onclick="SubmitForm();">'."\n";
-  echo '</form>'."\n";
-} else {
-  echo '<form name="form1" method="post" action="reset.php">'."\n";
-  echo '<p >Username:</p>'."\n";
-  echo '<input required name="username"><br/>'."\n";
-  echo '<p >Email address:</p>'."\n";
-  echo '<input required name="email"><br/>'."\n";
-  echo '<p >Google Authenticator code:</p>'."\n";
-  echo '<input id="googleauth" name="google_auth"><br/>'."\n";
-  echo '<p class="small">* Leave blank if not enabled</p>'."\n";
-  echo '<input class="button" type="submit" value="Submit" onclick="SubmitForm();">'."\n";
-  echo '</form>'."\n";
-}
-?>
-
-<p><a href="<?php echo $base_url; ?>admin/login.php">&lt;&lt; Login</a></p>
-<p><a href="<?php echo $base_url; ?>">&lt;&lt; Go Back to Homepage</a></p>
-</div>
-</div>
-</div>
 </body>
-<script type="text/javascript" src="<?php echo $base_url; ?>library/sha256.js"></script>
 </html>
