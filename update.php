@@ -1,5 +1,5 @@
 <?php
-include_once("functions.php");
+include_once('functions.php');
 
 ob_end_clean();
 header('HTTP/1.1 200 Ok');

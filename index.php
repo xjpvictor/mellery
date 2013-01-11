@@ -1,6 +1,6 @@
 <?php
 define('includeauth',true);
-include_once("functions.php");
+include_once('functions.php');
 if (array_key_exists('id',$_GET)) {
   $folder_id=$_GET['id'];
   if (array_key_exists('p',$_GET))
@@ -23,7 +23,7 @@ if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access
     header("HTTP/1.1 401 Unauthorized");
     $redirect_url = $base_url.'access.php?id='.$folder_id.'&ref='.$url;
     $redirect_message = 'Access restricted';
-    include($base_dir."library/redirect.php");
+    include($base_dir.'library/redirect.php');
     exit(0);
   }
 }
@@ -42,7 +42,7 @@ if ($auth_admin !== 'pass') {
   $page_cache=$cache_dir.$folder_id.'-'.$p.'.html';
   if (file_exists($page_cache)) {
     $age = filemtime($page_cache);
-    if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($base_dir.'config.php') && $age >= filemtime($data_dir.'my_page.php')) {
+    if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($data_dir.'config.php') && $age >= filemtime($data_dir.'my_page.php')) {
       $output = file_get_contents($page_cache);
       $output = str_replace('#OTP#', $otp, $output);
       preg_match_all('/#VIEW_COUNT_CHANGE_(\d+)#/', $output, $matches);
@@ -67,7 +67,7 @@ if ($auth_admin !== 'pass') {
 $file_list=getfilelist($folder_id,$limit,$p);
 if (!array_key_exists('id-'.$folder_id,$folder_list) || $file_list == 'error' || ($p !== '0' && empty($file_list))) {
   header("Status: 404 Not Found");
-  include($base_dir."library/404.php");
+  include($base_dir.'library/404.php');
   exit(0);
 }
 

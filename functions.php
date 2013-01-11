@@ -1,8 +1,8 @@
 <?php
-include_once('config.php');
+include_once('./data/config.php');
 function boxauth(){
   global $client_id, $client_secret, $box_token_file;
-  $config=include("$box_token_file");
+  $config=include($box_token_file);
   $expires=$config['expires'];
   $now=time();
   if (!isset($config) || !is_array($config) || empty($config))
@@ -45,7 +45,7 @@ function boxauth(){
 function boxcache() {
   global $header_string,$box_token_file;
   if (file_exists($box_token_file)) {
-    $config=include("$box_token_file");
+    $config=include($box_token_file);
     if (!is_array($config))
       return(1);
     if (isset($config['stream_position']))
@@ -605,8 +605,8 @@ function getpageurl() {
   return(urlencode($uri));
 }
 function changeconf($newSettings) {
-  global $base_dir;
-  include($base_dir.'config.php');
+  global $data_dir;
+  include($data_dir.'config.php');
   $fileSettings = get_defined_vars();
   $fileSettings = array_merge($fileSettings, $newSettings);
   $newFileStr = "<?php\n";
@@ -615,7 +615,7 @@ function changeconf($newSettings) {
       $newFileStr .= "$".$name." = ".var_export($val, TRUE).";\n";
   }
   $newFileStr .= '?>';
-  file_put_contents($base_dir.'config.php', $newFileStr);
+  file_put_contents($data_dir.'config.php', $newFileStr);
 }
 function ipblock($ip) {
   global $lock_timeout, $retry, $cache_dir;

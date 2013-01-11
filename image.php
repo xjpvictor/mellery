@@ -1,10 +1,10 @@
 <?php
 define('includeauth',true);
 define('isimage',true);
-include_once("functions.php");
+include_once('functions.php');
 if(!array_key_exists('id',$_GET) || !array_key_exists('fid',$_GET)) {
   header("Status: 404 Not Found");
-  include($base_dir."library/404.php");
+  include($base_dir.'library/404.php');
   exit(0);
 }
 $id=$_GET['id'];
@@ -22,7 +22,7 @@ curl_close($ch);
 preg_match('/Location:\ (\S+)/',$data,$match);
 if (empty($match)) {
   header("Status: 404 Not Found");
-  include($base_dir."library/404.php");
+  include($base_dir.'library/404.php');
   exit(0);
 }
 
@@ -36,7 +36,7 @@ if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access
     header("HTTP/1.1 401 Unauthorized");
     $redirect_url = $base_url.'access.php?id='.$folder_id.'&ref='.$url;
     $redirect_message = 'Access restricted';
-    include($base_dir."library/redirect.php");
+    include($base_dir.'library/redirect.php');
     exit(0);
   }
 }
@@ -55,7 +55,7 @@ if ($auth_admin !== 'pass') {
   $page_cache=$cache_dir.$folder_id.'-'.$id.'.html';
   if (file_exists($page_cache)) {
     $age = filemtime($page_cache);
-    if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($base_dir.'config.php') && $age >= filemtime($data_dir.'my_page.php')) {
+    if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($data_dir.'config.php') && $age >= filemtime($data_dir.'my_page.php')) {
       $output = file_get_contents($page_cache);
       $output = str_replace(array('#OTP#', '#IMGURL#'), array($otp, $match[1]), $output);
       echo $output;
@@ -72,14 +72,14 @@ if ($auth_admin !== 'pass') {
 $file_list=getfilelist($folder_id,null,null);
 if ($file_list == 'error' || !array_key_exists('id-'.$id,$file_list) || !array_key_exists('id-'.$folder_id,$folder_list)) {
   header("Status: 404 Not Found");
-  include($base_dir."library/404.php");
+  include($base_dir.'library/404.php');
   exit(0);
 }
 
 ob_start();
 
 $my_page = include($data_dir.'my_page.php');
-include($base_dir."head.php");
+include($base_dir.'head.php');
 ?>
 
 <body id="body-img">
@@ -201,7 +201,7 @@ if ($seq && count($seq) > 1) {
 <?php } ?>
 
 <div id="message-img">
-<?php include($base_dir."foot.php"); ?>
+<?php include($base_dir.'foot.php'); ?>
 </div>
 
 </div>

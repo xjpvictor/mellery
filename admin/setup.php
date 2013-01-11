@@ -1,7 +1,7 @@
 <?php
 
-if (file_exists('../config.php')) {
-  include('../config.php');
+if (file_exists('../data/config.php')) {
+  include('../data/config.php');
   header("Location: ".$base_url."admin/configure.php");
   exit(0);
 }
@@ -44,7 +44,7 @@ if (!empty($_POST)) {
     }
   }
   $config_key = include($base_dir.'admin/config_key.php');
-  $config_file = $base_dir.'config.php';
+  $config_file = $base_dir.'data/config.php';
   file_put_contents($config_file, '<?php'."\n", LOCK_EX);
   chmod($config_file, 0600);
 

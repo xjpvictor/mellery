@@ -8,7 +8,7 @@ if ($auth !== 'pass') {
   header("HTTP/1.1 401 Unauthorized");
   $redirect_url = $base_url.'admin/login.php?ref='.$url;
   $redirect_message = 'Access restricted';
-  include($base_dir."library/redirect.php");
+  include($base_dir.'library/redirect.php');
   exit(0);
 }
 
@@ -28,7 +28,7 @@ if (substr($base_url, -1) !== '/')
 
 if (!empty($_POST)) {
   $config_key = include($base_dir.'admin/config_key.php');
-  $config_file = $base_dir.'config.php';
+  $config_file = $base_dir.'data/config.php';
   file_put_contents($config_file, '<?php'."\n", LOCK_EX);
   chmod($config_file, 0600);
   $_SESSION['message'] = '';

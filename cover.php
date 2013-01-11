@@ -1,8 +1,8 @@
 <?php
-include_once("functions.php");
+include_once('functions.php');
 if(!array_key_exists('w',$_GET) || !array_key_exists('h',$_GET) || !array_key_exists('id',$_GET) || !array_key_exists('otp',$_GET) || !verifykey($_GET['otp'], $expire_image, null)) {
   header("HTTP/1.1 403 Forbidden");
-  include($base_dir."library/403.php");
+  include($base_dir.'library/403.php');
   exit(0);
 }
 
@@ -20,7 +20,7 @@ $folder_list=getfolderlist();
 
 if (!array_key_exists('id-'.$folder_id,$folder_list)) {
   header("Status: 404 Not Found");
-  include($base_dir."library/404.php");
+  include($base_dir.'library/404.php');
   exit(0);
 }
 

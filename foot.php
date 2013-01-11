@@ -1,5 +1,5 @@
 <?php
-include_once("config.php");
+include_once('./data/config.php');
 if (!defined('includeauth')) {
   header('Location: '.$base_url);
   exit(0);

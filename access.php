@@ -6,7 +6,7 @@ if (!empty($_GET) && array_key_exists('id',$_GET) && array_key_exists('ref',$_GE
   $url = urldecode($_GET['ref']);
 else {
   header("HTTP/1.1 403 Forbidden");
-  include($base_dir."library/403.php");
+  include($base_dir.'library/403.php');
   exit(0);
 }
 
@@ -14,7 +14,7 @@ if (ipblock($_SERVER['REMOTE_ADDR'])) {
   header("HTTP/1.1 401 Unauthorized");
   $redirect_url = $base_url;
   $redirect_message = 'Too many failures. Please wait for some time.';
-  include($base_dir."library/redirect.php");
+  include($base_dir.'library/redirect.php');
   exit(0);
 }
 
@@ -27,7 +27,7 @@ $folder_list=getfolderlist();
 $folder_id=$_GET['id'];
 if (!array_key_exists('id-'.$folder_id,$folder_list)) {
   header("Status: 404 Not Found");
-  include($base_dir."library/404.php");
+  include($base_dir.'library/404.php');
   exit(0);
 }
 

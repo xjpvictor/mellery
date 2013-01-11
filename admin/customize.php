@@ -8,7 +8,7 @@ if ($auth !== 'pass') {
   header("HTTP/1.1 401 Unauthorized");
   $redirect_url = $base_url.'admin/login.php?ref='.$url;
   $redirect_message = 'Access restricted';
-  include($base_dir."library/redirect.php");
+  include($base_dir.'library/redirect.php');
   exit(0);
 }
 

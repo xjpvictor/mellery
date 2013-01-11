@@ -25,7 +25,7 @@ if (!empty($_POST)) {
       mail($email,$site_name.' password reset',wordwrap('Hi '.$username.",<br/><br/>\r\n".'You are receiving this email from '.$site_name." for password reset<br/>\r\nYou can reset your password via the following url<br/><br/>\r\n".'<a href="'.$base_url.'admin/reset.php?otp='.$otp_code.'" target="_blank">'.$base_url.'admin/reset.php?otp='.$otp_code."</a><br/><br/>\r\nThis link is valid for 1 hour only<br/><br/>\r\nIf you did not request for this, please discard it\r\n", 70, "\r\n"),"MIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\n");
       $redirect_url = $base_url;
       $redirect_message = 'Link for password reset has been sent to your registered email address';
-      include($base_dir."library/redirect.php");
+      include($base_dir.'library/redirect.php');
       exit(0);
     }
   } elseif ($change) {
