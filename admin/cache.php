@@ -31,7 +31,10 @@ if (empty($_GET)) {
 }
 
 $timestamp_file = $cache_dir.'cache_timestamp';
-$timestamp = file_get_contents($timestamp_file, true);
+if (file_exists($timestamp_file))
+  $timestamp = file_get_contents($timestamp_file, true);
+else
+  $timestamp = 0;
 if ($cache_clean !== 'always' && ($cache_clean == '0' || time() - $timestamp < $cache_clean * 86400))
   exit(0);
 

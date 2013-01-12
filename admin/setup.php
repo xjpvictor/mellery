@@ -1,8 +1,12 @@
 <?php
 
-if (file_exists('../data/config.php')) {
+if (file_exists('../data/config.php') && file_exists('../box_token.php')) {
   include_once('../data/config.php');
   header("Location: ".$base_url."admin/configure.php");
+  exit(0);
+} elseif (file_exists('../data/config.php')) {
+  include_once('../data/config.php');
+  header("Location: ".$base_url.'admin/authbox.php');
   exit(0);
 }
 
