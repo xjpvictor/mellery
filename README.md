@@ -4,7 +4,7 @@ mellery
 A PHP photo gallery
 -------
 
-This is a simple photo gallery written with PHP. All information and image files are stored on [Box.com][b] and retrieved using the API provided.
+This is a simple photo gallery written with PHP. All information and image files are stored on [box.com][b] and retrieved using the API provided.
 
 ## Features ##
 
@@ -16,7 +16,7 @@ Cache is enabled for the following items for faster access and lower CPU/memory 
 
 * Pages that have been visited
 
-* Image lists and folder lists downloaded from [Box.com][b].
+* Image lists and folder lists downloaded from box.com.
 
 ### Security ###
 
@@ -51,10 +51,16 @@ Cache is enabled for the following items for faster access and lower CPU/memory 
 
 * Keyboard shortcut enabled for navigation
 
-[b]: https://www.box.com "Box.com"
+## Setup and backup ##
 
-### Notes ###
+Access _admin/setup.php_ to setup the site.
+
+All personal data is in the directory _data_. Backup is only needed for this directory.
+
+When restoring, access _admin/setup.php_ to reauthenticate with box.com.
+
+## Notes ##
 
 Box.com will expire the authentication if the token is not refreshed in 14 days. You may need to set up a cron job to access update.php at least once every 14 days. Update.php will do nothing but updating the token.
 
-All personal data is in the directory _data_. Backup is only needed for this directory.
+[b]: https://www.box.com "box.com"
