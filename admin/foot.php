@@ -6,6 +6,8 @@ if (!defined('includeauth')) {
 }
 ?>
 
+</div>
+
 <div id="footer">
 <div id="footer-content">
 <?php if (!isset($my_page) && file_exists($data_dir.'my_page.php')) $my_page = include($data_dir.'my_page.php'); echo $my_page['foot']; ?>

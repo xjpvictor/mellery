@@ -87,6 +87,7 @@ include($base_dir.'head.php');
 <p><?php echo $site_description; ?></p>
 </div>
 
+<div class="wrap clearfix">
 <div id="content">
 
 <?php
@@ -244,6 +245,7 @@ if (isset($my_page) && isset($my_page['widget'])) {
 </tr>
 </table></div>
 
+</div>
 </div>
 
 <div id="footer">
