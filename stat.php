@@ -1,5 +1,6 @@
 <?php
-include_once('functions.php');
+include_once('./data/config.php');
+include_once('./functions.php');
 
 if (array_key_exists('dnt', $_GET) && $_GET['dnt'] == '1') {
   $login = auth($username);

@@ -1,6 +1,7 @@
 <?php
 define('includeauth',true);
-include_once('functions.php');
+include_once('./data/config.php');
+include_once('./functions.php');
 if (array_key_exists('id',$_GET)) {
   $folder_id=$_GET['id'];
   if (array_key_exists('p',$_GET))

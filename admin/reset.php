@@ -1,6 +1,7 @@
 <?php
 define('includeauth',true);
-include('../functions.php');
+include_once('../data/config.php');
+include_once('../functions.php');
 
 $url = $base_url.'admin/';
 

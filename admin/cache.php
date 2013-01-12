@@ -1,4 +1,5 @@
 <?php
+include_once('../data/config.php');
 include_once('../functions.php');
 
 if (empty($_GET)) {

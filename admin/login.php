@@ -1,6 +1,7 @@
 <?php
 define('includeauth',true);
-include('../functions.php');
+include_once('../data/config.php');
+include_once('../functions.php');
 
 if (!empty($_GET) && array_key_exists('ref',$_GET))
   $url = urldecode($_GET['ref']);

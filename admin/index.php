@@ -1,5 +1,6 @@
 <?php
 define('includeauth',true);
+include_once('../data/config.php');
 include_once('../functions.php');
 
 $auth=auth($username);

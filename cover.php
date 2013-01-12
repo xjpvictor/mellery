@@ -1,5 +1,6 @@
 <?php
-include_once('functions.php');
+include_once('./data/config.php');
+include_once('./functions.php');
 if(!array_key_exists('w',$_GET) || !array_key_exists('h',$_GET) || !array_key_exists('id',$_GET) || !array_key_exists('otp',$_GET) || !verifykey($_GET['otp'], $expire_image, null)) {
   header("HTTP/1.1 403 Forbidden");
   include($base_dir.'library/403.php');

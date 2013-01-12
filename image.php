@@ -1,7 +1,8 @@
 <?php
 define('includeauth',true);
 define('isimage',true);
-include_once('functions.php');
+include_once('./data/config.php');
+include_once('./functions.php');
 if(!array_key_exists('id',$_GET) || !array_key_exists('fid',$_GET)) {
   header("Status: 404 Not Found");
   include($base_dir.'library/404.php');

@@ -1,5 +1,4 @@
 <?php
-include_once('./data/config.php');
 function boxauth(){
   global $client_id, $client_secret, $box_token_file;
   $config=include($box_token_file);
