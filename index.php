@@ -43,7 +43,7 @@ if ($auth_admin !== 'pass') {
   $page_cache=$cache_dir.$folder_id.'-'.$p.'.html';
   if (file_exists($page_cache)) {
     $age = filemtime($page_cache);
-    if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($data_dir.'config.php') && $age >= filemtime($data_dir.'my_page.php')) {
+    if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($data_dir.'config.php') && (!file_exists($data_dir.'my_page.php') || $age >= filemtime($data_dir.'my_page.php'))) {
       $output = file_get_contents($page_cache);
       $output = str_replace('#OTP#', $otp, $output);
       preg_match_all('/#VIEW_COUNT_CHANGE_(\d+)#/', $output, $matches);
@@ -74,7 +74,8 @@ if (!array_key_exists('id-'.$folder_id,$folder_list) || $file_list == 'error' ||
 
 ob_start();
 
-$my_page = include($data_dir.'my_page.php');
+if (file_exists($data_dir.'my_page.php'))
+  $my_page = include($data_dir.'my_page.php');
 include($base_dir.'head.php');
 ?>
 
@@ -208,8 +209,8 @@ foreach ($file_list as $entry) {
 ?>
 
 <?php
-if (!isset($my_page)) $my_page = include($data_dir.'my_page.php');
-if (isset($my_page['widget'])) {
+if (!isset($my_page) && file_exists($data_dir.'my_page.php')) $my_page = include($data_dir.'my_page.php');
+if (isset($my_page) && isset($my_page['widget'])) {
   foreach ($my_page['widget'] as $widget) {
 ?>
   <div class="widget-container">

@@ -234,7 +234,8 @@ if (!empty($_POST) && array_key_exists('otp',$_POST)) {
 ?>
 
 <?php
-$my_page = include($data_dir.'my_page.php');
+if (file_exists($data_dir.'my_page.php'))
+  $my_page = include($data_dir.'my_page.php');
 include('head.php');
 
 $otp=getkey($expire_image);

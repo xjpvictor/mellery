@@ -13,7 +13,8 @@ if ($auth !== 'pass') {
   exit(0);
 }
 
-$my_page = include($data_dir.'my_page.php');
+if (file_exists($data_dir.'my_page.php'))
+  $my_page = include($data_dir.'my_page.php');
 include('head.php');
 $header_string=boxauth();
 $box_cache=boxcache();

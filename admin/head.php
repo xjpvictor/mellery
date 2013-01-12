@@ -15,7 +15,7 @@ if (!defined('includeauth')) {
 <link rel="stylesheet" href="<?php echo $base_url; ?>library/style.css" type="text/css" media="all" />
 <?php if (file_exists($data_dir.'my_style.css')) echo '<link rel="stylesheet" href="',$base_url.'my_style.css" type="text/css" media="all" />'; ?>
 <link rel="shortcut icon" href="/favicon.ico" />
-<?php if (!isset($my_page)) $my_page = include($data_dir.'my_page.php'); echo $my_page['header']; ?>
+<?php if (!isset($my_page) && file_exists($data_dir.'my_page.php')) $my_page = include($data_dir.'my_page.php'); echo $my_page['header']; ?>
 </head>
 <body id="body-admin">
 <div id="main" class="clearfix">

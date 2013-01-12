@@ -14,7 +14,10 @@ if ($auth !== 'pass') {
 }
 
 $my_page_file = $data_dir.'my_page.php';
-$my_page = include($my_page_file);
+if (file_exists($my_page_file))
+  $my_page = include($my_page_file);
+else
+  $my_page = array('header' => '', 'foot' => '', 'widget' => '');
 $my_style_file = $data_dir.'my_style.css';
 if (file_exists($my_style_file))
   $my_style = file_get_contents($my_style_file, true);
@@ -55,7 +58,6 @@ if (!empty($_POST)) {
   }
 }
 
-$my_page = include($data_dir.'my_page.php');
 include('head.php');
 ?>
 

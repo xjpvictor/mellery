@@ -56,7 +56,7 @@ if ($auth_admin !== 'pass') {
   $page_cache=$cache_dir.$folder_id.'-'.$id.'.html';
   if (file_exists($page_cache)) {
     $age = filemtime($page_cache);
-    if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($data_dir.'config.php') && $age >= filemtime($data_dir.'my_page.php')) {
+    if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($data_dir.'config.php') && (!file_exists($data_dir.'my_page.php') || $age >= filemtime($data_dir.'my_page.php'))) {
       $output = file_get_contents($page_cache);
       $output = str_replace(array('#OTP#', '#IMGURL#'), array($otp, $match[1]), $output);
       echo $output;
@@ -79,7 +79,8 @@ if ($file_list == 'error' || !array_key_exists('id-'.$id,$file_list) || !array_k
 
 ob_start();
 
-$my_page = include($data_dir.'my_page.php');
+if (file_exists($data_dir.'my_page.php'))
+  $my_page = include($data_dir.'my_page.php');
 include($base_dir.'head.php');
 ?>
 

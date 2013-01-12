@@ -90,7 +90,8 @@ if (!empty($_POST)) {
   exit(0);
 }
 
-$my_page = include($data_dir.'my_page.php');
+if (file_exists($data_dir.'my_page.php'))
+  $my_page = include($data_dir.'my_page.php');
 include('head.php');
 
 $otp_session=getkey($expire_session);
