@@ -1,6 +1,8 @@
 <?php
 function boxauth(){
   global $client_id, $client_secret, $box_token_file;
+  if (!file_exists($box_token_file))
+    return(false);
   $config=include($box_token_file);
   $expires=$config['expires'];
   $now=time();
