@@ -1,6 +1,6 @@
 <?php
 function boxauth(){
-  global $client_id, $client_secret, $box_token_file;
+  global $client_id, $client_secret, $box_token_file, $email, $site_name, $username, $base_url;
   if (!file_exists($box_token_file))
     return(false);
   $config=include($box_token_file);
@@ -25,9 +25,15 @@ function boxauth(){
     curl_setopt($ch, CURLOPT_POSTFIELDS,$request_parameter);
     $response=json_decode(curl_exec($ch),true);
     curl_close($ch);
-    if (!isset($response) || !is_array($response) || empty($response) || array_key_exists('error',$response) || !array_key_exists('access_token',$response) || !array_key_exists('refresh_token',$response))
+    if (!isset($response) || !is_array($response) || empty($response) || !array_key_exists('access_token',$response) || !array_key_exists('refresh_token',$response)) {
       return(false);
-    else {
+    } elseif (array_key_exists('error', $response)) {
+      if (array_key_exists('error_description', $response) && $response['error_description'] == 'unauthorized_client') {
+        file_put_contents($box_token_file, "<?php return 'error' ; ?>", LOCK_EX);
+        mail($email,$site_name.' reauthentication needed',wordwrap('Hi '.$username.",<br/><br/>\r\n".'You are receiving this email from '.$site_name." because an error has been detected while trying to authenticate with box.com<br/>\r\nYou'll need to manually reauthenticate with box.com via this url<br/><br/>\r\n".'<a href="'.$base_url.'admin/authbox.php" target="_blank">'.$base_url."admin/authbox.php</a>\r\n", 70, "\r\n"),"MIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\n");
+      }
+      return(false);
+    } else {
       $access_token=$response['access_token'];
       $config['access_token']=$response['access_token'];
       $config['refresh_token']=$response['refresh_token'];
