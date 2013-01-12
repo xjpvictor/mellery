@@ -52,3 +52,7 @@ Cache is enabled for the following items for faster access and lower CPU/memory 
 * Keyboard shortcut enabled for navigation
 
 [b]: https://www.box.com "Box.com"
+
+### Notes ###
+
+Box.com will expire the authentication if the token is not refreshed in 14 days. You may need to set up a cron job to access update.php at least once every 14 days. Update.php will do nothing but updating the token.
