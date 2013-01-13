@@ -53,6 +53,8 @@ Cache is enabled for the following items for faster access and lower CPU/memory 
 
 ## Setup and backup ##
 
+PHP-GD required.
+
 Access _admin/setup.php_ to setup the site.
 
 All personal data is in the directory _data_. Backup is only needed for this directory.
