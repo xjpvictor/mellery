@@ -30,7 +30,7 @@ function boxauth(){
     } elseif (array_key_exists('error', $response)) {
       if (array_key_exists('error_description', $response) && $response['error_description'] == 'unauthorized_client') {
         file_put_contents($box_token_file, "<?php return 'error' ; ?>", LOCK_EX);
-        mail($email,$site_name.' reauthentication needed',wordwrap('Hi '.$username.",<br/><br/>\r\n".'You are receiving this email from '.$site_name." because an error has been detected while trying to authenticate with box.com<br/>\r\nYou'll need to manually reauthenticate with box.com via this url<br/><br/>\r\n".'<a href="'.$base_url.'admin/authbox.php" target="_blank">'.$base_url."admin/authbox.php</a>\r\n", 70, "\r\n"),"MIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\n");
+        mail($email,$site_name.' reauthentication needed',wordwrap('Hi '.$username.",<br/><br/>\r\n".'You are receiving this email from '.$site_name." because an error has been detected while trying to authenticate with box.com<br/>\r\nYou'll need to manually reauthenticate with box.com via this url<br/><br/>\r\n".'<a href="'.$base_url.'admin/authbox.php" target="_blank">'.$base_url."admin/authbox.php</a>\r\n", 70, "\r\n"),"From: \"Admin\" <admin@".preg_replace('#^www\.#', '', strtolower($_SERVER['SERVER_NAME'])).">\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\n");
       }
       return(false);
     } else {
