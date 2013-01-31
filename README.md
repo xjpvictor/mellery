@@ -65,4 +65,8 @@ When restoring, access _admin/setup.php_ to reauthenticate with box.com.
 
 Box.com will expire the authentication if the token is not refreshed in 14 days. You may need to set up a cron job to access update.php at least once every 14 days. Update.php will do nothing but updating the token.
 
+## License ##
+
+This work uses MIT license. Feel free to use, modify or distribute. I'll NOT be responsible for any loss caused by this work.
+
 [b]: https://www.box.com "box.com"
