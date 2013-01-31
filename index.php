@@ -115,7 +115,6 @@ if ($folder_id !== $box_root_folder_id) {
 
 <?php if ($folder_id !== $box_root_folder_id) { ?>
 <div class="view-count"><script src="<?php echo $base_url; ?>stat.php?id=<?php echo $folder_id; ?>&amp;update=#OTP#"></script></div>
-<?php } ?>
 
 <div id="sharetop"><table>
 <tr>
@@ -124,6 +123,8 @@ if ($folder_id !== $box_root_folder_id) {
 <td><div class="g-plusone" data-size="medium"></div></td>
 </tr>
 </table></div>
+
+<?php } ?>
 
 <?php
 $style=array('rotateleft1','rotateleft2','rotateleft3','rotateright1','rotateright2','rotateright3');
@@ -172,6 +173,17 @@ foreach ($file_list as $entry) {
 </div>
 
 <div id="sidebar" class="sidebar">
+
+<?php if ($folder_id == $box_root_folder_id) { ?>
+<div class="widget-container">
+<div id="shareside">
+<a href="https://twitter.com/share" class="twitter-share-button"></a>
+<div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+<div class="g-plusone" data-size="medium"></div>
+</div>
+</div>
+
+<?php } ?>
 
 <?php if (isset($home_page) && !empty($home_page)) { ?>
 <div class="widget-container">
