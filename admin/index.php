@@ -55,7 +55,7 @@ foreach ($files as $file) {
       $html += 1;
     elseif (preg_match('/\.php/', $file))
       $box += 1;
-    elseif (preg_match('/^[a-z0-9]+$/', $file))
+    elseif (preg_match('/^[a-z0-9\-]+$/', $file))
       $thumbnail += 1;
   }
 }

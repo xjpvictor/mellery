@@ -199,12 +199,12 @@ function createthumbnail($dimg,$source_file,$nw,$nh) {
   }
   return($dimg);
 }
-function getthumb($file_name,$nw,$nh) {
+function getthumb($file_id,$nw,$nh) {
   global $header_string,$secret_key,$cache_dir,$base_dir;
   $thumb_na=$base_dir.'library/na.jpg';
-  preg_match('/(\d+)-(\d+)/',$file_name,$match);
+  preg_match('/(\d+)-(\d+)/',$file_id,$match);
   $id=$match[1];
-  $file=substr(hash('sha256',$secret_key.$file_name),2,10);
+  $file=substr(hash('sha256',$secret_key.$file_id),2,10).'-'.$nw.'-'.$nh;
   if (!file_exists($cache_dir.$file)) {
     $tmp_file='/tmp/'.$id;
     downloadfile($tmp_file,$id);
