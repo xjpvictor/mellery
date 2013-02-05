@@ -8,7 +8,7 @@ if(!array_key_exists('w',$_GET) || !array_key_exists('h',$_GET) || !array_key_ex
 }
 
 if ($_GET['otp'] == substr(hash('sha256', $secret_key.$_GET['id'].'-'.$_GET['fid']), 13, 15)) {
-  if (empty($_SERVER['HTTP_REFERER']) || false === stripos(file_get_contents($referers), parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST))) {
+  if (!empty($_SERVER['HTTP_REFERER']) && false === stripos(file_get_contents($referers), parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST))) {
     header("HTTP/1.1 403 Forbidden");
     include($base_dir.'library/403.php');
     exit(0);
