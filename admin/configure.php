@@ -27,6 +27,16 @@ elseif (!isset($base_url) || empty($base_url))
 if (substr($base_url, -1) !== '/')
   $base_url .= '/';
 
+if (!empty($_POST) && array_key_exists('referers',$_POST)) {
+  if (file_exists($referers))
+    $referer = file_get_contents($referers);
+  else
+    $referer = '';
+  if ($referer !== $_POST['referers']) {
+    file_put_contents($referers, $_POST['referers']);
+  }
+}
+
 if (!empty($_POST)) {
   $config_key = include($base_dir.'admin/config_key.php');
   $config_file = $base_dir.'data/config.php';
@@ -79,7 +89,7 @@ if (!empty($_POST)) {
     file_put_contents($config_file, '$'.$key.' = "'.$$key.'";'."\n", FILE_APPEND | LOCK_EX);
   }
 
-  file_put_contents($config_file, '$admin_folder_limit = \''.$admin_folder_limit.'\';'."\n".'$secret_key = \''.$secret_key.'\';'."\n".'$otp_recovery_code = \''.hash('sha256',$otp_recovery_code).'\';'."\n".'$w = \'150\';'."\n".'$h = \'150\';'."\n".'$cache_dir = $base_dir.\'cache/\';'."\n".'$data_dir = $base_dir.\'data/\';'."\n".'$box_token_file = $base_dir.\'box_token.php\';'."\n".'?>', FILE_APPEND | LOCK_EX);
+  file_put_contents($config_file, '$admin_folder_limit = \''.$admin_folder_limit.'\';'."\n".'$secret_key = \''.$secret_key.'\';'."\n".'$otp_recovery_code = \''.hash('sha256',$otp_recovery_code).'\';'."\n".'$w = \'150\';'."\n".'$h = \'150\';'."\n".'$cache_dir = $base_dir.\'cache/\';'."\n".'$data_dir = $base_dir.\'data/\';'."\n".'$referers = $data_dir.\'referers\';'."\n".'$box_token_file = $base_dir.\'box_token.php\';'."\n".'?>', FILE_APPEND | LOCK_EX);
   if (isset($notify) && $notify)
     $_SESSION['message'] = $_SESSION['message'].'Please fill up the highlighted parts';
   else
@@ -106,6 +116,8 @@ $otp_session=getkey($expire_session);
 <tr><td><p<?php if (!isset($base_url) || ($base_url !== '0' && empty($base_url))) {echo ' class="notset"'; $notify = true;} ?>>Base url for Mellery:</p></td><td><input required name="base_url" value="<?php if (isset($base_url)) echo htmlentities($base_url); ?>"></td></tr>
 <tr><td><p<?php if (!isset($base_dir) || ($base_dir !== '0' && empty($base_dir))) {echo ' class="notset"'; $notify = true;} ?>>Installation directory for Mellery:</p></td><td><input required name="base_dir" value="<?php if (isset($base_dir)) echo htmlentities($base_dir); ?>"></td></tr>
 <tr><td><p>Disqus shortname (Optional):</p></td><td><input name="disqus_shortname" value="<?php if (isset($disqus_shortname)) echo htmlentities($disqus_shortname); ?>"></td></tr>
+<tr><td><p<?php if (!isset($w_max) || ($w_max !== '0' && empty($w_max))) {echo ' class="notset"'; $notify = true;} ?>>Maximum width of thumbnails:</p></td><td><input required name="w_max" value="<?php if (isset($w_max)) echo htmlentities($w_max); ?>"></td></tr>
+<tr><td><p<?php if (!isset($h_max) || ($h_max !== '0' && empty($h_max))) {echo ' class="notset"'; $notify = true;} ?>>Maximum height of thumbnails:</p></td><td><input required name="h_max" value="<?php if (isset($h_max)) echo htmlentities($h_max); ?>"></td></tr>
 <tr><td><p<?php if (!isset($limit) || ($limit !== '0' && empty($limit))) {echo ' class="notset"'; $notify = true;} ?>>Thumbnails shown per page:</p></td><td><input required name="limit" value="<?php if (isset($limit)) echo htmlentities($limit); ?>"></td></tr>
 <tr><td><p<?php if (!isset($expire_image) || ($expire_image !== '0' && empty($expire_image))) {echo ' class="notset"'; $notify = true;} ?>>Thumbnail expiration time (s, 0 for not expiring):</p></td><td><input required name="expire_image" value="<?php if (isset($expire_image)) echo htmlentities($expire_image); ?>"></td></tr>
 <tr><td><p<?php if (!isset($cache_expire) || ($cache_expire !== '0' && empty($cache_expire))) {echo ' class="notset"'; $notify = true;} ?>>Cache expiration time (days):</p></td><td><input required name="cache_expire" value="<?php if (isset($cache_expire)) echo htmlentities($cache_expire); ?>"></td></tr>
@@ -160,6 +172,7 @@ $otp_session=getkey($expire_session);
 <tr><td><p<?php if (!isset($https) || ($https !== '0' && empty($https))) {echo ' class="notset"'; $notify = true;} ?>>Use cookie on HTTPS only:</p></td><td><input type="hidden" name="https" value="0"><input class="checkbox" type="checkbox" name="https" value="1"<?php if (isset($https) && $https == '1') echo " checked"; ?>></td></tr>
 <tr><td><p<?php if (!isset($retry) || ($retry !== '0' && empty($retry))) {echo ' class="notset"'; $notify = true;} ?>>Maximum access retry in one minutes (0 for unlimited):</p></td><td><input required name="retry" value="<?php if (isset($retry)) echo htmlentities($retry); ?>"></td></tr>
 <tr><td><p<?php if (!isset($lock_timeout) || ($lock_timeout !== '0' && empty($lock_timeout))) {echo ' class="notset"'; $notify = true;} ?>>Exessive access retry lock down period (s, 0 for always locked):</p></td><td><input required name="lock_timeout" value="<?php if (isset($lock_timeout)) echo htmlentities($lock_timeout); ?>"></td></tr>
+<tr><td style="vertical-align:top;"><p>Valid referers for thumbnails display:</p></td><td><textarea rows="5" style="width:100%;" name="referers"><?php if (file_exists($referers)) echo htmlentities(file_get_contents($referers)); ?></textarea></td></tr>
 </table>
 </div>
 

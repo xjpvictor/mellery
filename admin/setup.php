@@ -88,7 +88,7 @@ if (!empty($_POST)) {
     file_put_contents($config_file, '$'.$key.' = "'.$$key.'";'."\n", FILE_APPEND | LOCK_EX);
   }
 
-  file_put_contents($config_file, '$admin_folder_limit = \'25\';'."\n".'$secret_key = \''.$secret_key.'\';'."\n".'$otp_recovery_code = \''.hash('sha256',$otp_recovery_code).'\';'."\n".'$w = \'150\';'."\n".'$h = \'150\';'."\n".'$cache_dir = $base_dir.\'cache/\';'."\n".'$data_dir = $base_dir.\'data/\';'."\n".'$box_token_file = $base_dir.\'box_token.php\';'."\n".'?>', FILE_APPEND | LOCK_EX);
+  file_put_contents($config_file, '$admin_folder_limit = \'25\';'."\n".'$secret_key = \''.$secret_key.'\';'."\n".'$otp_recovery_code = \''.hash('sha256',$otp_recovery_code).'\';'."\n".'$w = \'150\';'."\n".'$h = \'150\';'."\n".'$cache_dir = $base_dir.\'cache/\';'."\n".'$data_dir = $base_dir.\'data/\';'."\n".'$referers = $data_dir.\'referers\';'."\n".'$box_token_file = $base_dir.\'box_token.php\';'."\n".'?>', FILE_APPEND | LOCK_EX);
   session_destroy();
   session_name('_mellery');
   session_start();
@@ -129,6 +129,8 @@ if (!empty($_POST)) {
 <tr><td><p>Base url for Mellery:</p></td><td><input required name="base_url" value="<?php echo $_SERVER['SERVER_NAME']; ?>"></td></tr>
 <tr><td><p>Installation directory for Mellery:</p></td><td><input required name="base_dir" value="<?php echo realpath('../').'/'; ?>"></td></tr>
 <tr><td><p>Disqus shortname (Optional):</p></td><td><input name="disqus_shortname"></td></tr>
+<tr><td><p>Maximum width of thumbnails:</p></td><td><input required name="w_max" value="300"></td></tr>
+<tr><td><p>Maximum height of thumbnails:</p></td><td><input required name="h_max" value="300"></td></tr>
 <tr><td><p>Thumbnails shown per page:</p></td><td><input required name="limit" value="25"></td></tr>
 <tr><td><p>Image expiration time (s, 0 for not expiring):</p></td><td><input required name="expire_image" value="86400"></td></tr>
 <tr><td><p>Cache expiration time (days):</p></td><td><input required name="cache_expire" value="1"></td></tr>

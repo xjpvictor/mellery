@@ -1,7 +1,19 @@
 <?php
 include_once('./data/config.php');
 include_once('./functions.php');
-if(!array_key_exists('w',$_GET) || !array_key_exists('h',$_GET) || !array_key_exists('id',$_GET) || !array_key_exists('fid',$_GET) || !array_key_exists('otp',$_GET) || !verifykey($_GET['otp'],$expire_image,null)) {
+if(!array_key_exists('w',$_GET) || !array_key_exists('h',$_GET) || !array_key_exists('id',$_GET) || !array_key_exists('fid',$_GET) || !array_key_exists('otp',$_GET)) {
+  header("HTTP/1.1 403 Forbidden");
+  include($base_dir.'library/403.php');
+  exit(0);
+}
+
+if ($_GET['otp'] == substr(hash('sha256', $secret_key.$_GET['id'].'-'.$_GET['fid']), 13, 15)) {
+  if (empty($_SERVER['HTTP_REFERER']) || false === stripos(file_get_contents($referers), parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST))) {
+    header("HTTP/1.1 403 Forbidden");
+    include($base_dir.'library/403.php');
+    exit(0);
+  }
+} elseif (!verifykey($_GET['otp'], $expire_image, null)) {
   header("HTTP/1.1 403 Forbidden");
   include($base_dir.'library/403.php');
   exit(0);

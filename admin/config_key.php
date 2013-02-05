@@ -5,6 +5,8 @@ return array(
     'base_url',
     'base_dir',
     'disqus_shortname',
+    'w_max',
+    'h_max',
     'limit',
     'expire_image',
     'expire_session',
@@ -21,6 +23,6 @@ return array(
     'google_auth',
     'general_access_code',
     'retry',
-    'lock_timeout'
+    'lock_timeout',
   );
 ?>

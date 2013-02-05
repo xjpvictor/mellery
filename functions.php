@@ -200,10 +200,12 @@ function createthumbnail($dimg,$source_file,$nw,$nh) {
   return($dimg);
 }
 function getthumb($file_id,$nw,$nh) {
-  global $header_string,$secret_key,$cache_dir,$base_dir;
+  global $header_string,$secret_key,$cache_dir,$base_dir,$w_max,$h_max;
   $thumb_na=$base_dir.'library/na.jpg';
   preg_match('/(\d+)-(\d+)/',$file_id,$match);
   $id=$match[1];
+  $nw = min($nw, $w_max);
+  $nh = min($nh, $h_max);
   $file=substr(hash('sha256',$secret_key.$file_id),2,10).'-'.$nw.'-'.$nh;
   if (!file_exists($cache_dir.$file)) {
     $tmp_file='/tmp/'.$id;
@@ -491,21 +493,21 @@ function oathhotp($timestamp) {
 }
 function getkey($expire_time) {
   if ($expire_time == 0)
-    return('notexpire');
+    return '1';
   $timeStamp = gettimestamp($expire_time);
   return(oathhotp($timeStamp));
 }
 function getprevkey($expire_time) {
   if ($expire_time == 0)
-    return('notexpire');
+    return '1';
   $timeStamp = gettimestamp($expire_time) - 1;
   return(oathhotp($timeStamp));
 }
 function verifykey($key, $expire_time, $login) {
-  if (!isset($key))
-    return false;
   if ($expire_time == 0)
     return true;
+  if (!isset($key))
+    return false;
   if (isset($login) && $login == 1) {
     $key = substr($key,13,15);
     $window=4;

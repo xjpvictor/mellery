@@ -332,6 +332,8 @@ if ($single) {
 </select>
 </div>
 
+<br/><p>Embed:</p><input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?id='.$folder['id'].'" target="_blank"><img src="'.$base_url.'cover.php?id='.$folder['id'].'-'.$folder['sequence_id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$folder['id'].'-'.$folder['sequence_id']), 13, 15).'" alt="'.$folder['name'].'" title="'.$folder['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>"><br/>
+
 <br/><input class="button" type="submit" name="single[<?php echo $folder['id']; ?>][submit]" value="Update">
 <input class="button right delete" type="submit" name="single[<?php echo $folder['id']; ?>][submit]" value="Delete" onclick="return confirmAct();">
 
@@ -482,6 +484,13 @@ if (($p + 1) * $admin_folder_limit < $n)
 <?php echo str_replace($item['parent']['id'].'"', $item['parent']['id'].'" selected', $move_list); ?>
   </select>
   </div>
+
+<?php if ($item !== 'error' && $item['type'] == 'folder') { ?>
+  <br/><p>Embed:</p><input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?id='.$item['id'].'" target="_blank"><img src="'.$base_url.'cover.php?id='.$item['id'].'-'.$item['sequence_id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$item['id'].'-'.$item['sequence_id']), 13, 15).'" alt="'.$item['name'].'" title="'.$item['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>"><br/>
+<?php } elseif ($item !== 'error' && $item['type'] == 'file') { ?>
+  <br/><p>Embed:</p><input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'image.php?id='.$item['id'].'&fid='.$item['parent']['id'].'" target="_blank"><img src="'.$base_url.'thumbnail.php?id='.$item['id'].'-'.$item['sequence_id'].'&fid='.$item['parent']['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$item['id'].'-'.$item['sequence_id'].'-'.$item['parent']['id']), 13, 15).'" alt="'.$item['name'].'" title="'.$item['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>"><br/>
+<?php } ?>
+
   <br/><input class="button" type="submit" name="single[<?php echo $item['id']; ?>][submit]" value="Update">
   <input class="button right delete" type="submit" name="single[<?php echo $item['id']; ?>][submit]" value="Delete" onclick="return confirmAct();">
   <div class="clear"></div>
