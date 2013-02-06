@@ -52,6 +52,8 @@ if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSI
   $session_message = false;
 }
 
+$fullscreen_style = '@media screen and (min-width: 480px) {#sidebar-img{display:none;}'."\n".'#content-img{width:100%;}'."\n".'.info-img{display:none;}}';
+
 if ($auth_admin !== 'pass') {
   $page_cache=$cache_dir.$folder_id.'-'.$id.'.html';
   if (file_exists($page_cache)) {
@@ -59,6 +61,8 @@ if ($auth_admin !== 'pass') {
     if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($data_dir.'config.php') && (!file_exists($data_dir.'my_page.php') || $age >= filemtime($data_dir.'my_page.php'))) {
       $output = file_get_contents($page_cache);
       $output = str_replace(array('#OTP#', '#IMGURL#'), array($otp, $match[1]), $output);
+      if ($_COOKIE['_mellery_fullscreen'] == $folder_id)
+        $output = str_replace('#FULLSCREENSTYLE#', $fullscreen_style, $output);
       echo $output;
       if ($session_message) {
         echo $session_str;
@@ -93,7 +97,9 @@ include($base_dir.'head.php');
 $name=$file_list['id-'.$id]['name'];
 $name = substr($name, 0, strrpos($name, '.', -1));
 ?>
-<img id="mainimg-img" src="#IMGURL#" alt="<?php echo $name; ?>"/><a title="Download original image" target="_blank" href="#IMGURL#"><div id="download">&nbsp;</div></a>
+<img id="mainimg-img" src="#IMGURL#" alt="<?php echo $name; ?>"/>
+<a title="Download original image" target="_blank" href="#IMGURL#"><div id="download">&nbsp;</div></a>
+<a id="fullscreen-a" title="Fullscreen" href="javascript:;" onclick="togglefull('<?php echo $folder_id; ?>')"><img src="<?php echo $base_url; ?>library/fullscreen.png" alt="fullscreen" id="fullscreen"/></a>
 
 <?php
 foreach ($file_list as $key => $value) {
@@ -232,12 +238,47 @@ if ($seq && count($seq) > 1) {
   o.appendChild(p); 
   o.appendChild(n); 
 })(); 
+function full() {
+    document.getElementById("sidebar-img").style.display = "none";
+    document.getElementById("content-img").style.width = "100%";
+    if (document.getElementById("info-img-nav")) {
+      document.getElementById("info-img-nav").style.display = "none";
+    } else {
+      document.getElementById("info-img").style.display = "none";
+    }
+}
+function small() {
+  document.getElementById("sidebar-img").style.display = "block";
+  document.getElementById("content-img").style.width = "60%";
+  if (document.getElementById("info-img-nav")) {
+    document.getElementById("info-img-nav").style.display = "block";
+  } else {
+    document.getElementById("info-img").style.display = "block";
+  }
+}
+function togglefull(id) {
+  if ((document.getElementById("sidebar-img").style.display) == "block") {
+    full();
+    document.cookie="_mellery_fullscreen=" + id;
+  } else {
+    small();
+    document.cookie="_mellery_fullscreen=0";
+  }
+  $(window).resize();
+}
+$(document).ready(function () {$(document).bind('keydown', 'shift+f', function() {togglefull('<?php echo $folder_id; ?>');});});
 $(window).load(function(){$(window).resize(function(){
   if($(window).width()>480){
     $('#mainimg-img').css({ 
       position:'absolute', 
       left: ($('#imgbox').outerWidth() - $('#mainimg-img').outerWidth())/2, 
       top: ($('#imgbox').outerHeight() - $('#mainimg-img').outerHeight())/2 + $(document).scrollTop() 
+    });
+    $('#download').css({ 
+      left: ($('#imgbox').outerWidth() - $('#mainimg-img').outerWidth())/2, 
+      top: ($('#imgbox').outerHeight() - $('#mainimg-img').outerHeight())/2 + $(document).scrollTop(),
+      width: $('#mainimg-img').outerWidth(),
+      height: $('#mainimg-img').outerHeight()
     });
   };
 }); 
@@ -252,6 +293,8 @@ if ($auth_admin !== 'pass') {
 }
 
 $output = str_replace(array('#OTP#', '#IMGURL#'), array($otp, $match[1]), $output);
+if ($_COOKIE['_mellery_fullscreen'] == $folder_id)
+  $output = str_replace('#FULLSCREENSTYLE#', $fullscreen_style, $output);
 echo $output;
 
 ob_end_flush();
