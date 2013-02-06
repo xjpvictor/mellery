@@ -2,7 +2,7 @@
 html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, img, ol, ul, li, form, table, tr, td {
 margin: 0;
 padding: 0;
-font-size: 100%;
+font-size: 16px;
 vertical-align: baseline;
 border: 0;
 outline: 0;
@@ -14,6 +14,8 @@ html{height:100%;}
 body {color: #4c4c4c;width:100%;min-width:1000px;height:100%;margin:0px;padding:0px;background-color:#efefef;background:url('bg.jpg');}
 a {text-decoration:none;color:#32cd32;}
 a:hover {text-decoration:underline;}
+input{vertical-align:middle;}
+input, textarea{font-family:'Droid Sans', arial, Helvetica, sans-serif;font-size:13px;}
 
 .clear {clear:both;display:block;overflow:hidden;visibility:hidden;width:0;height:0;}
 .clearfix:after {clear:both;content:' ';display:block;font-size:0;line-height:0;visibility:hidden;width:0;height:0}
@@ -28,6 +30,7 @@ a:hover {text-decoration:underline;}
 
 .logo{padding:20px 40px 0px;margin:0px 0px 10px 0px;}
 .logo h1 {padding:5px 0px 5px 0px;font-size:30px;line-height:35px;}
+.logo h1 a{font-size:30px;}
 .logo h1 a:hover {text-decoration:none;}
 .logo p {font-style:italic;font-size:13px;}
 
@@ -61,7 +64,7 @@ a:hover {text-decoration:underline;}
 .nav {width:100%;float:left;padding:20px 0px;}
 
 .sidebar {float:right;font-size: 12px;line-height:18px;}
-.sidebar a {color:#999;}
+.sidebar a {color:#999;font-size:12px;}
 .sidebar a:hover {color:#32cd32;}
 #sidebar {width:150px;padding:0px 0px 20px 0px;margin:0px 10px;}
 .widget-container {margin:0px 0px 10px 0px;padding:0px 0px 10px 0px;border-bottom:1px dotted #4C4C4C;overflow:hidden;line-height:23px;}
@@ -71,9 +74,9 @@ a:hover {text-decoration:underline;}
 .albumlist span{font-size:13px;}
 
 #footer {width: 100%;border-width:1px 0px 0px 0px;border-style:dotted;background-color:#ffffff;font-size: 12px;overflow:hidden;position:relative;z-index:999;clear:both;}
-#footer a {color:#999;}
+#footer a {color:#999;font-size: 12px;}
 #footer a:hover {color:#32cd32;}
-#footer p {line-height:19px;}
+#footer p {line-height:19px;font-size: 12px;}
 #cache-img {display:none;}
 #footer-content {width: 90%;margin:auto auto 20px auto;position:relative;text-align:center;padding:20px 10px 0px 10px;}
 
@@ -113,13 +116,14 @@ a:hover {text-decoration:underline;}
 .prev a,.next a,#prev a,#next a{color:#999;}
 
 #message-img{text-align:center;padding:20px 20px 0px 20px;}
-#message-img a{color:#4c4c4c;}
+#message-img a{color:#4c4c4c;font-size:12px;}
 #message-img p{line-height:16px;font-size:12px;color:#4c4c4c;}
 
 #sidebar-img {width:40%;margin:0px;height:100%;max-height:100%;float:right;position:static;overflow:auto;}
 #sidebar-wrap-img {padding:20px;margin:10px;border:2px solid rgba(0,0,0,0.9);border-radius:5px;box-shadow:0 0 10px #fff;background:#fff;}
 #view-count{padding-bottom:10px;}
 #description-img{font-size:14px;line-height:1.5em;padding:0px;font-style:italic;}
+#description-img span, #description-img a{font-size:14px;}
 .edit-img{width:50px;padding:0px;float:left;}
 .edit-img a{color:#32cd32 !important;}
 #disqus_thread iframe{min-height:550px !important;}
@@ -135,13 +139,12 @@ a:hover {text-decoration:underline;}
 .site-config{padding:10px;margin:10px 20px;border: 1px solid rgba(255,255,255,0.25);border-radius: 3px;box-shadow: 0 0 3px #555;word-wrap:break-word;word-break:break-all;}
 .new{color:red;padding-left:10px;}
 .edit-admin{padding-left:20px;font-size:13px;font-style:italic;}
-.edit-admin a{color:#999;}
+.edit-admin a{color:#999;font-size:13px;}
 .extra{border:1px solid #000;padding:10px;margin:5px 0px 5px 0px;display:none;}
-input{vertical-align:middle;}
 label:hover{cursor:pointer;}
 .button{color:#000;font-size:13px !important;padding:2px 10px !important;height:21px !important;background:#fdfdfd;background: -webkit-linear-gradient(top, #fdfdfd, #e0e0e0);background: -moz-linear-gradient(top, #fdfdfd, #e0e0e0);background: -ms-linear-gradient(top, #fdfdfd, #e0e0e0);background: -o-linear-gradient(top, #fdfdfd, #e0e0e0);border:1px solid #838383;box-shadow:0px 1px 2px #c6c6c6;border-radius:3px;text-align:center;}
 .button:hover{background:#a3dcfc;cursor:pointer;background: -webkit-linear-gradient(top, #a3dcfc, #56a5f8);background: -moz-linear-gradient(top, #a3dcfc, #56a5f8);background: -ms-linear-gradient(top, #a3dcfc, #56a5f8);background: -o-linear-gradient(top, #a3dcfc, #56a5f8);}
-.button a{color:#000;text-decoration:none;}
+.button a{color:#000;text-decoration:none;font-size:13px;}
 p.button {line-height:15px !important;font-size:13px;height:15px !important;}
 .button-right{margin-left:20px;}
 .checkbox{appearance:none;-moz-appearance:none;-webkit-appearance:none;color:#32cd32;background:#fff;font-size:10px;border:1px solid #838383;box-shadow:0px 1px 2px #c6c6c6;border-radius:2px;width:15px !important;height:15px;margin-right:8px;}
