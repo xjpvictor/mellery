@@ -105,7 +105,8 @@ if (array_key_exists('widget', $my_page)) {
 }
 ?>
 
-<div class="site-config clearfix">
+<p class="button site-config" style="width:150px;"><a href="javascript:;" onclick="show('new-widget')">New sidebar widget</a></p>
+<div class="site-config clearfix" id="new-widget">
 <p>New sidebar widget</p>
 <form method="post" action="customize.php">
 <p>Title (Optional):</p>
@@ -128,6 +129,16 @@ if (array_key_exists('widget', $my_page)) {
 </div>
 
 </div>
+
+<script type="text/javascript">
+function show(id) {
+  if ((document.getElementById(id).style.display) == "block") {
+    document.getElementById(id).style.display = "none";
+  } else {
+    document.getElementById(id).style.display = "block";
+  }
+};
+</script>
 
 <?php
 include('foot.php');

@@ -24,6 +24,7 @@ input, textarea{font-family:'Droid Sans', arial, Helvetica, sans-serif;font-size
 .left{float:left;}
 .small{font-size:13px;line-height:25px;}
 #delaymessage{width:400px;margin-left:-160px;padding:10px;position:fixed;top:0px;left:50%;text-align:center;background:rgba(0,0,0,0.7);color:#fff;border: 1px solid #32cd32;box-shadow: 0 0 3px #007dff;border-radius:3px;display:none;z-index:1000;}
+#hotkeytip{font-size:13px;line-height:1.5em;}
 
 /** index.php **/
 #main {width:90%;max-width:1160px;margin:0px auto;min-height:100%;float:none;background: rgba(255,255,255,0.6);position: relative;z-index: 1;padding:0px 0px 50px;}
@@ -194,6 +195,7 @@ span.multiform{line-height:1.5em;font-size:16px;vertical-align:text-bottom;}
 
 /** Page customization **/
 .custom{width:100%;}
+#new-widget{display:none;}
 
 /** Site configuration **/
 .config-title{text-transform:uppercase;}
