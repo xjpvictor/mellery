@@ -60,7 +60,7 @@ ob_start();
 <!--
 @import url(https://fonts.googleapis.com/css?family=Droid+Sans:400,700);
 html, body, div, span, p, a {font-family:'Droid Sans', arial, Helvetica, sans-serif;}
-body{background:rgba(255,255,255,0.8);padding:0px;margin:0px;}
+body{background:rgba(255,255,255,0.8);padding:0px;margin:0px;font-size:16px;line-height:1.0em;}
 #main{padding:10px 15px;border:1px solid #999;}
 .thumb{margin:5px;border: 1px solid rgba(255,255,255,0.25);border-radius: 3px;box-shadow: 0 0 3px #555;}
 .thumb:hover{border: 1px solid rgba(255,255,255,0.75);box-shadow: 0 0 6px #555;}
@@ -68,7 +68,7 @@ a{text-decoration:none;color:#32cd32;}
 #title a:hover{text-decoration:underline;}
 #more a{color:#999;}
 #more a:hover{text-decoration:underline;color:#32cd32;}
-#footer{text-align:right;color:#999;font-size:10px;}
+#footer{text-align:right;color:#999;font-size:12px;}
 #footer a{color:#999;}
 #footer a:hover{text-decoration:underline;}
 -->
@@ -101,7 +101,7 @@ foreach ($file_list as $entry) {
 <a href="<?php echo $base_url,'?id=',$folder_id; ?>" target="_blank">More...</a>
 </p>
 <p id="footer">
-Powered by <a href="https://github.com/xjpvictor/mellery" target="_blank">mellery</a> and <a href="https://www.box.com/" target="_blank">box</a>.
+Powered by <a href="https://github.com/xjpvictor/mellery" target="_blank">mellery</a> and <a href="https://www.box.com/" target="_blank">box</a>
 </p>
 </div>
 </body>
