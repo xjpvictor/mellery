@@ -1,13 +1,7 @@
 <?php
 include_once('./data/config.php');
 include_once('./functions.php');
-if(!array_key_exists('id',$_GET) || !array_key_exists('limit',$_GET) || !array_key_exists('otp',$_GET)) {
-  header("HTTP/1.1 403 Forbidden");
-  include($base_dir.'library/403.php');
-  exit(0);
-}
-
-if ($_GET['otp'] !== substr(hash('sha256', $secret_key.$_GET['id']), 13, 15) && !verifykey($_GET['otp'], $expire_image, null)) {
+if(!array_key_exists('id',$_GET) || !array_key_exists('limit',$_GET)) {
   header("HTTP/1.1 403 Forbidden");
   include($base_dir.'library/403.php');
   exit(0);
@@ -32,11 +26,14 @@ if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access
   }
 }
 
+$otp=getkey($expire_image);
+
 $page_cache=$cache_dir.$folder_id.'-'.$_GET['limit'].'-embed.html';
 if (file_exists($page_cache)) {
   $age = filemtime($page_cache);
   if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($data_dir.'config.php')) {
     $output = file_get_contents($page_cache);
+    $output = str_replace('#OTP#', $otp, $output);
     echo $output;
     exit(0);
   }
@@ -88,13 +85,13 @@ foreach ($file_list as $entry) {
     $name = substr($entry['name'], 0, strrpos($entry['name'], '.', -1));
 ?>
   <a href="<?php echo $base_url; ?>image.php?id=<?php echo $entry['id']; ?>&amp;fid=<?php echo $folder_id; ?>" target="_blank">
-    <img class="thumb" src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $entry['id']; ?>-<?php echo $entry['sequence_id']; ?>&amp;fid=<?php echo $folder_id; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=<?php echo substr(hash('sha256', $secret_key.$entry['id'].'-'.$entry['sequence_id'].'-'.$entry['parent']['id']), 13, 15); ?>" alt="<?php echo $name; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" title="<?php echo $name; ?>" />
+    <img class="thumb" src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $entry['id']; ?>-<?php echo $entry['sequence_id']; ?>&amp;fid=<?php echo $folder_id; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" title="<?php echo $name; ?>" />
   </a>
 <?php
   } elseif (array_key_exists('type',$entry) && $entry['type'] == 'folder') {
 ?>
   <a href="?id=<?php echo $entry['id']; ?>" target="_blank">
-    <img class="thumb" src="<?php echo $base_url; ?>cover.php?id=<?php echo $entry['id']; ?>-<?php echo $entry['sequence_id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=<?php echo substr(hash('sha256', $secret_key.$entry['id'].'-'.$folder['sequence_id']), 13, 15); ?>" alt="<?php echo $entry['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+    <img class="thumb" src="<?php echo $base_url; ?>cover.php?id=<?php echo $entry['id']; ?>-<?php echo $entry['sequence_id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $entry['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
   </a>
 <?php
   }
@@ -114,6 +111,7 @@ Powered by <a href="https://github.com/xjpvictor/mellery" target="_blank">meller
 $output = ob_get_contents();
 ob_clean();
 file_put_contents($page_cache,$output);
+$output = str_replace('#OTP#', $otp, $output);
 echo $output;
 ob_end_flush();
 ?>
