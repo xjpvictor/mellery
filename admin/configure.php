@@ -27,16 +27,6 @@ elseif (!isset($base_url) || empty($base_url))
 if (substr($base_url, -1) !== '/')
   $base_url .= '/';
 
-if (!empty($_POST) && array_key_exists('referers',$_POST)) {
-  if (file_exists($referers))
-    $referer = file_get_contents($referers);
-  else
-    $referer = '';
-  if ($referer !== $_POST['referers']) {
-    file_put_contents($referers, $_POST['referers']);
-  }
-}
-
 if (!empty($_POST)) {
   $config_key = include($base_dir.'admin/config_key.php');
   $config_file = $base_dir.'data/config.php';
@@ -89,7 +79,7 @@ if (!empty($_POST)) {
     file_put_contents($config_file, '$'.$key.' = "'.$$key.'";'."\n", FILE_APPEND | LOCK_EX);
   }
 
-  file_put_contents($config_file, '$admin_folder_limit = \''.$admin_folder_limit.'\';'."\n".'$secret_key = \''.$secret_key.'\';'."\n".'$otp_recovery_code = \''.hash('sha256',$otp_recovery_code).'\';'."\n".'$w = \'150\';'."\n".'$h = \'150\';'."\n".'$cache_dir = $base_dir.\'cache/\';'."\n".'$data_dir = $base_dir.\'data/\';'."\n".'$referers = $data_dir.\'referers\';'."\n".'$box_token_file = $base_dir.\'box_token.php\';'."\n".'?>', FILE_APPEND | LOCK_EX);
+  file_put_contents($config_file, '$admin_folder_limit = \''.$admin_folder_limit.'\';'."\n".'$secret_key = \''.$secret_key.'\';'."\n".'$otp_recovery_code = \''.hash('sha256',$otp_recovery_code).'\';'."\n".'$w = \'150\';'."\n".'$h = \'150\';'."\n".'$cache_dir = $base_dir.\'cache/\';'."\n".'$data_dir = $base_dir.\'data/\';'."\n".'$box_token_file = $base_dir.\'box_token.php\';'."\n".'?>', FILE_APPEND | LOCK_EX);
   if (isset($notify) && $notify)
     $_SESSION['message'] = $_SESSION['message'].'Please fill up the highlighted parts';
   else
@@ -172,7 +162,6 @@ $otp_session=getkey($expire_session);
 <tr><td><p<?php if (!isset($https) || ($https !== '0' && empty($https))) {echo ' class="notset"'; $notify = true;} ?>>Use cookie on HTTPS only:</p></td><td><input type="hidden" name="https" value="0"><input class="checkbox" type="checkbox" name="https" value="1"<?php if (isset($https) && $https == '1') echo " checked"; ?>></td></tr>
 <tr><td><p<?php if (!isset($retry) || ($retry !== '0' && empty($retry))) {echo ' class="notset"'; $notify = true;} ?>>Maximum access retry in one minutes (0 for unlimited):</p></td><td><input required name="retry" value="<?php if (isset($retry)) echo htmlentities($retry); ?>"></td></tr>
 <tr><td><p<?php if (!isset($lock_timeout) || ($lock_timeout !== '0' && empty($lock_timeout))) {echo ' class="notset"'; $notify = true;} ?>>Exessive access retry lock down period (s, 0 for always locked):</p></td><td><input required name="lock_timeout" value="<?php if (isset($lock_timeout)) echo htmlentities($lock_timeout); ?>"></td></tr>
-<tr><td style="vertical-align:top;"><p>Valid referers for thumbnails display:</p></td><td><textarea rows="5" style="width:100%;" name="referers"><?php if (file_exists($referers)) echo htmlentities(file_get_contents($referers)); ?></textarea></td></tr>
 </table>
 </div>
 

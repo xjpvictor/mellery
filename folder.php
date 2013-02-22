@@ -7,13 +7,7 @@ if(!array_key_exists('id',$_GET) || !array_key_exists('limit',$_GET) || !array_k
   exit(0);
 }
 
-if ($_GET['otp'] == substr(hash('sha256', $secret_key.$_GET['id']), 13, 15)) {
-  if (!empty($_SERVER['HTTP_REFERER']) && false === stripos(file_get_contents($referers), parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST))) {
-    header("HTTP/1.1 403 Forbidden");
-    include($base_dir.'library/403.php');
-    exit(0);
-  }
-} elseif (!verifykey($_GET['otp'], $expire_image, null)) {
+if ($_GET['otp'] !== substr(hash('sha256', $secret_key.$_GET['id']), 13, 15) && !verifykey($_GET['otp'], $expire_image, null)) {
   header("HTTP/1.1 403 Forbidden");
   include($base_dir.'library/403.php');
   exit(0);
