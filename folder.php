@@ -60,6 +60,9 @@ ob_start();
 <link rel="profile" href="http://gmpg.org/xfn/11" />
 <link rel="shortcut icon" href="/favicon.ico" />
 <style type="text/css" media="all">
+<!--
+@import url(https://fonts.googleapis.com/css?family=Droid+Sans:400,700);
+html, body, div, span, p, a {font-family:'Droid Sans', arial, Helvetica, sans-serif;}
 body{background:rgba(255,255,255,0.8);padding:0px;margin:0px;}
 #main{padding:10px 15px;border:1px solid #999;}
 .thumb{margin:5px;border: 1px solid rgba(255,255,255,0.25);border-radius: 3px;box-shadow: 0 0 3px #555;}
@@ -71,6 +74,7 @@ a{text-decoration:none;color:#32cd32;}
 #footer{text-align:right;color:#999;font-size:10px;}
 #footer a{color:#999;}
 #footer a:hover{text-decoration:underline;}
+-->
 </style>
 </head>
 <body>

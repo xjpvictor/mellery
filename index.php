@@ -250,8 +250,12 @@ if (isset($my_page) && isset($my_page['widget'])) {
 </div>
 
 <div id="sharebottom">
-<p>Embed:</p>
-<input class="name-conf" value="<?php echo htmlentities('<iframe src="'.$base_url.'folder.php?id='.$folder['id'].'-'.$folder['sequence_id'].'&limit=6&otp='.substr(hash('sha256', $secret_key.$folder['id'].'-'.$folder['sequence_id']), 13, 15).'" width="540" height="480" allowtransparency="true" scrolling="auto" seamless scrolling="no" frameborder="0">'.$folder['name'].'</iframe>'); ?>" onclick="this.select()"><br/><br/>
+<?php
+if ($folder_id !== $box_root_folder_id) {
+  echo '<p>Embed:</p>';
+  echo '<input class="name-conf" value="',htmlentities('<iframe src="'.$base_url.'folder.php?id='.$folder['id'].'-'.$folder['sequence_id'].'&limit=6&otp='.substr(hash('sha256', $secret_key.$folder['id'].'-'.$folder['sequence_id']), 13, 15).'" width="540" height="480" allowtransparency="true" scrolling="auto" seamless scrolling="no" frameborder="0">'.$folder['name'].'</iframe>'),'" onclick="this.select()"><br/><br/>';
+}
+?>
 <table>
 <tr>
 <td><a href="https://twitter.com/share" class="twitter-share-button"></a></td>
