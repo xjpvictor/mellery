@@ -7,9 +7,7 @@ if(!array_key_exists('id',$_GET) || !array_key_exists('limit',$_GET)) {
   exit(0);
 }
 
-$id=$_GET['id'];
-preg_match('/(\d+)-(\d+)/',$id,$match);
-$folder_id=$match[1];
+$folder_id=$_GET['id'];
 
 $header_string=boxauth();
 $box_cache=boxcache();
