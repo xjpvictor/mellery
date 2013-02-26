@@ -34,14 +34,14 @@ if (isset($auth) && ($auth !== 'pass')) {
 }
 
 $folder=getfilelist($folder_id,null,null);
-preg_match('/(\d+)-(\d+)/',$_GET['id'],$match);
-if ($folder == 'error' || !array_key_exists('id-'.$match[1],$folder)) {
+if ($folder == 'error' || !array_key_exists('id-'.$_GET['id'],$folder)) {
   header("Status: 404 Not Found");
   include($base_dir.'library/404.php');
   exit(0);
 }
 
-$file=getthumb($_GET['id'],$_GET['w'],$_GET['h']);
+$seq_id = $folder['id-'.$_GET['id']]['sequence_id'];
+$file=getthumb($_GET['id'].'-'.$seq_id,$_GET['w'],$_GET['h']);
 if ($file) {
   header('Content-type: image/jpeg');
   readfile($file);

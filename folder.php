@@ -83,13 +83,13 @@ foreach ($file_list as $entry) {
     $name = substr($entry['name'], 0, strrpos($entry['name'], '.', -1));
 ?>
   <a href="<?php echo $base_url; ?>image.php?id=<?php echo $entry['id']; ?>&amp;fid=<?php echo $folder_id; ?>" target="_blank">
-    <img class="thumb" src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $entry['id']; ?>-<?php echo $entry['sequence_id']; ?>&amp;fid=<?php echo $folder_id; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" title="<?php echo $name; ?>" />
+    <img class="thumb" src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $entry['id']; ?>&amp;fid=<?php echo $folder_id; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" title="<?php echo $name; ?>" />
   </a>
 <?php
   } elseif (array_key_exists('type',$entry) && $entry['type'] == 'folder') {
 ?>
   <a href="?id=<?php echo $entry['id']; ?>" target="_blank">
-    <img class="thumb" src="<?php echo $base_url; ?>cover.php?id=<?php echo $entry['id']; ?>-<?php echo $entry['sequence_id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $entry['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+    <img class="thumb" src="<?php echo $base_url; ?>cover.php?id=<?php echo $entry['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $entry['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
   </a>
 <?php
   }

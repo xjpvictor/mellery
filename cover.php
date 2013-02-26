@@ -15,9 +15,7 @@ if ($_GET['otp'] !== substr(hash('sha256', $secret_key.$_GET['id']), 13, 15) && 
 
 $nw = $_GET['w'];
 $nh = $_GET['h'];
-$id=$_GET['id'];
-preg_match('/(\d+)-(\d+)/',$id,$match);
-$folder_id=$match[1];
+$folder_id=$_GET['id'];
 $dest='/tmp/'.$folder_id;
 $thumb_lock=$base_dir.'library/lock.png';
 

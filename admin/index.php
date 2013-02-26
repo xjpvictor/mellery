@@ -88,7 +88,7 @@ if ($size < 1024) {
 ?>
 <div>
 <a href="<?php echo $base_url; ?>admin/folder.php?id=<?php echo $folder['id']; ?>">
-<img class="admin-album" src="<?php echo $base_url; ?>cover.php?id=<?php echo $folder['id']; ?>-<?php echo $folder['sequence_id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=<?php echo $otp; ?>" alt="<?php echo $folder['name']; ?>" title="<?php echo $folder['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+<img class="admin-album" src="<?php echo $base_url; ?>cover.php?id=<?php echo $folder['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=<?php echo $otp; ?>" alt="<?php echo $folder['name']; ?>" title="<?php echo $folder['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
 </a>
 </div>
 <?php

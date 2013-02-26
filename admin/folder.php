@@ -302,7 +302,7 @@ if ($single) {
 
 <div class="admin-folder clearfix" id="admin-folder-<?php echo $folder['id']; ?>" style="display:none;">
 
-<img class="admin-album" src="<?php echo $base_url; ?>cover.php?id=<?php echo $folder['id']; ?>-<?php echo $folder['sequence_id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=<?php echo $otp; ?>" alt="<?php echo $folder['name']; ?>" title="<?php echo $folder['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+<img class="admin-album" src="<?php echo $base_url; ?>cover.php?id=<?php echo $folder['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=<?php echo $otp; ?>" alt="<?php echo $folder['name']; ?>" title="<?php echo $folder['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
 
 <div class="admin-access">
 <form style="padding:10px;line-height:25px;vertical-align:middle;" method="POST" action="folder.php?ref=<?php echo $url; ?>">
@@ -334,7 +334,7 @@ if ($single) {
 
 <br/><p>Embed:</p>
 <p>Folder cover</p>
-<input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?id='.$folder['id'].'" target="_blank"><img src="'.$base_url.'cover.php?id='.$folder['id'].'-'.$folder['sequence_id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$folder['id'].'-'.$folder['sequence_id']), 13, 15).'" alt="'.$folder['name'].'" title="'.$folder['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
+<input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?id='.$folder['id'].'" target="_blank"><img src="'.$base_url.'cover.php?id='.$folder['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$folder['id']), 13, 15).'" alt="'.$folder['name'].'" title="'.$folder['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
 <p>Folder preview</p>
 <input class="name-conf" value="<?php echo htmlentities('<iframe src="'.$base_url.'folder.php?id='.$folder['id'].'&limit=6" width="540" height="480" allowtransparency="true" seamless scrolling="auto" frameborder="0">'.$folder['name'].'</iframe>'); ?>" onclick="this.select()"><br/>
 
@@ -439,7 +439,7 @@ if (($p + 1) * $admin_folder_limit < $n)
 <?php } ?>
 
    <span class="edit-admin"><a href="folder.php?id=<?php echo $item['id']; ?>">Manage Album</a></span>
-   <br/><img class="admin-album" src="<?php echo $base_url; ?>cover.php?id=<?php echo $item['id']; ?>-<?php echo $item['sequence_id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=<?php echo $otp; ?>" alt="<?php echo $item['name']; ?>" title="<?php echo $item['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+   <br/><img class="admin-album" src="<?php echo $base_url; ?>cover.php?id=<?php echo $item['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=<?php echo $otp; ?>" alt="<?php echo $item['name']; ?>" title="<?php echo $item['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
 
 <?php
   } elseif ($item !== 'error' && $item['type'] == 'file') {
@@ -450,7 +450,7 @@ if (($p + 1) * $admin_folder_limit < $n)
 <?php
     $item['name'] = substr($item['name'], 0, strrpos($item['name'], '.', -1));
 ?>
-  <br/><img class="admin-img" src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $item['id']; ?>-<?php echo $item['sequence_id']; ?>&amp;fid=<?php echo $_GET['id']; ?>&amp;w=150&amp;h=150&amp;otp=<?php echo $otp; ?>" alt="<?php echo $item['name']; ?>" title="<?php echo $item['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+  <br/><img class="admin-img" src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $item['id']; ?>&amp;fid=<?php echo $_GET['id']; ?>&amp;w=150&amp;h=150&amp;otp=<?php echo $otp; ?>" alt="<?php echo $item['name']; ?>" title="<?php echo $item['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
 
 <?php
   }
@@ -492,11 +492,11 @@ if (($p + 1) * $admin_folder_limit < $n)
 <?php if ($item !== 'error' && $item['type'] == 'folder') { ?>
   <br/><p>Embed:</p>
   <p>Folder cover</p>
-  <input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?id='.$item['id'].'" target="_blank"><img src="'.$base_url.'cover.php?id='.$item['id'].'-'.$item['sequence_id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$item['id'].'-'.$item['sequence_id']), 13, 15).'" alt="'.$item['name'].'" title="'.$item['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
+  <input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?id='.$item['id'].'" target="_blank"><img src="'.$base_url.'cover.php?id='.$item['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$item['id']), 13, 15).'" alt="'.$item['name'].'" title="'.$item['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
   <p>Folder preview</p>
   <input class="name-conf" value="<?php echo htmlentities('<iframe src="'.$base_url.'folder.php?id='.$item['id'].'&limit=6" width="540" height="480" allowtransparency="true" scrolling="auto" seamless frameborder="0">'.$item['name'].'</iframe>'); ?>" onclick="this.select()"><br/>
 <?php } elseif ($item !== 'error' && $item['type'] == 'file') { ?>
-  <br/><p>Embed:</p><p>Image Thumbnail</p><input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'image.php?id='.$item['id'].'&fid='.$item['parent']['id'].'" target="_blank"><img src="'.$base_url.'thumbnail.php?id='.$item['id'].'-'.$item['sequence_id'].'&fid='.$item['parent']['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$item['id'].'-'.$item['sequence_id'].'-'.$item['parent']['id']), 13, 15).'" alt="'.$item['name'].'" title="'.$item['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
+  <br/><p>Embed:</p><p>Image Thumbnail</p><input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'image.php?id='.$item['id'].'&fid='.$item['parent']['id'].'" target="_blank"><img src="'.$base_url.'thumbnail.php?id='.$item['id'].'&fid='.$item['parent']['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$item['id'].'-'.$item['parent']['id']), 13, 15).'" alt="'.$item['name'].'" title="'.$item['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
 <?php } ?>
 
   <br/><input class="button" type="submit" name="single[<?php echo $item['id']; ?>][submit]" value="Update">

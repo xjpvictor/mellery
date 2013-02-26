@@ -191,7 +191,7 @@ if ($seq && count($seq) > 1) {
     $i++;
     $name = substr($item['name'], 0, strrpos($item['name'], '.', -1));
 ?>
-  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $item['id']; ?>&amp;fid=<?php echo $folder_id; ?>"><img class="item-img" <?php if ($item['id']==$id) { echo 'id="current-img" '; $n = $i; } ?> src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $item['id']; ?>-<?php echo $item['sequence_id']; ?>&amp;fid=<?php echo $folder_id; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" title="<?php echo $name; ?>" width="150" height="150" /></a>
+  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $item['id']; ?>&amp;fid=<?php echo $folder_id; ?>"><img class="item-img" <?php if ($item['id']==$id) { echo 'id="current-img" '; $n = $i; } ?> src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $item['id']; ?>&amp;fid=<?php echo $folder_id; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" title="<?php echo $name; ?>" width="150" height="150" /></a>
 <?php
   }
 ?>
