@@ -253,7 +253,7 @@ if (isset($my_page) && isset($my_page['widget'])) {
 <?php
 if ($folder_id !== $box_root_folder_id) {
   echo '<p>Embed:</p>';
-  echo '<input class="name-conf" value="',htmlentities('<iframe src="'.$base_url.'folder.php?id='.$folder_id.'&limit=6" width="540" height="480" allowtransparency="true" seamless scrolling="auto" frameborder="0">'.$folder['name'].'</iframe>'),'" onclick="this.select()"><br/><br/>';
+  echo '<input class="name-conf" value="',htmlentities('<iframe src="'.$base_url.'frame.php?id='.$folder_id.'&limit=6" width="540" height="480" allowtransparency="true" seamless scrolling="auto" frameborder="0">'.$folder['name'].'</iframe>'),'" onclick="this.select()"><br/><br/>';
 }
 ?>
 <table>
