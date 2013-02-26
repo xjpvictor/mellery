@@ -105,8 +105,8 @@ input, textarea{font-family:'Droid Sans', arial, Helvetica, sans-serif;font-size
 #left:hover,#right:hover,#fullscreen:hover{opacity:1.0;}
 
 .info-img{position:absolute;left:0;bottom:0;overflow:hidden;width:60%;height:31px;padding:20px 0px 10px 0px;background:#0a0a0a;opacity:0.7;text-align:center;vertical-align:middle;color:#fff;border-width:1px 1px 0px 0px;border-style:solid;border-color:rgba(255,255,255,0.25);z-index:999;display:block;}
-#info-img:hover{height:140px;opacity:0.9;}
-#info-img-nav:hover{height:368px;opacity:0.9;}
+#info-img:hover{height:100px;opacity:0.9;}
+#info-img-nav:hover{height:328px;opacity:0.9;}
 #imagename{text-align:center;font-style:italic;font-weight:bold;text-decoration:underline;width:100%;word-wrap:break-word;word-break:break-all;color:#999;line-height:23px;font-size:14px;}
 #nav-img{width:100%;margin:0px auto 0px auto;padding:20px 0px;}
 #nav-img img{padding:5px;margin:0px 10px;background:#000;border: 1px solid rgba(255,255,255,0.25);box-shadow: 0 0 3px #999;}
