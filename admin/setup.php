@@ -53,8 +53,8 @@ if (!empty($_POST)) {
   chmod($config_file, 0600);
 
   foreach ($config_key as $key) {
-    if (($key == 'home_page' || $key == 'site_description' || $key == 'disqus_shortname') && array_key_exists($key,$_POST)) {
-      $$key = str_replace('"','\"',$_POST[$key]);
+    if ($key == 'home_page' || $key == 'site_description' || $key == 'mapbox_id' || $key == 'disqus_shortname') {
+      $$key = '';
     } elseif (array_key_exists($key,$_POST) && ($_POST[$key] == '0' || !empty($_POST[$key]))) {
       $_POST[$key] = str_replace('"','\"',$_POST[$key]);
       if ($key == 'password') {
@@ -125,10 +125,8 @@ if (!empty($_POST)) {
 <p class="config-title">Site Configuration</p>
 <table>
 <tr><td><p>Site name:</p></td><td><input required name="site_name"></td></tr>
-<tr><td><p>Site description (Optional):</p></td><td><input name="site_description"></td></tr>
 <tr><td><p>Base url for Mellery:</p></td><td><input required name="base_url" value="<?php echo $_SERVER['SERVER_NAME']; ?>"></td></tr>
 <tr><td><p>Installation directory for Mellery:</p></td><td><input required name="base_dir" value="<?php echo realpath('../').'/'; ?>"></td></tr>
-<tr><td><p>Disqus shortname (Optional):</p></td><td><input name="disqus_shortname"></td></tr>
 <tr><td><p>Maximum width of thumbnails:</p></td><td><input required name="w_max" value="300"></td></tr>
 <tr><td><p>Maximum height of thumbnails:</p></td><td><input required name="h_max" value="300"></td></tr>
 <tr><td><p>Thumbnails shown per page:</p></td><td><input required name="limit" value="25"></td></tr>
@@ -153,7 +151,6 @@ if (!empty($_POST)) {
 <table>
 <tr><td><p>Username:</p></td><td><input required name="username"></td></tr>
 <tr><td><p>Email:</p></td><td><input required name="email"></td></tr>
-<tr><td><p>Your homepage (Optional):</p></td><td><input name="home_page"></td></tr>
 <tr><td><p>Password:</p></td><td><input required id="password" type="password" name="password"></td></tr>
 <tr><td><p>Re-type password:</p></td><td><input required id="password-1" type="password" name="password_1"></td></tr>
 <tr><td><p>Use Google 2-step authentication:</p></td><td><input type="hidden" name="google_auth" value="0"><input class="checkbox" type="checkbox" name="google_auth" value="1" checked></td></tr>

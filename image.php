@@ -61,7 +61,7 @@ if ($auth_admin !== 'pass') {
     if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($data_dir.'config.php') && (!file_exists($data_dir.'my_page.php') || $age >= filemtime($data_dir.'my_page.php'))) {
       $output = file_get_contents($page_cache);
       $output = str_replace(array('#OTP#', '#IMGURL#'), array($otp, $match[1]), $output);
-      if ($_COOKIE['_mellery_fullscreen'] == $folder_id)
+      if (isset($_COOKIE['_mellery_fullscreen']) && $_COOKIE['_mellery_fullscreen'] == $folder_id)
         $output = str_replace('#FULLSCREENSTYLE#', $fullscreen_style, $output);
       echo $output;
       if ($session_message) {
@@ -94,8 +94,9 @@ include($base_dir.'head.php');
 <div id="content-img">
 <div id="imgbox">
 <?php
-$name=$file_list['id-'.$id]['name'];
-$name = substr($name, 0, strrpos($name, '.', -1));
+$file_name=$file_list['id-'.$id]['name'];
+$sequence_id=$file_list['id-'.$id]['sequence_id'];
+$name = substr($file_name, 0, strrpos($file_name, '.', -1));
 ?>
 <img id="mainimg-img" src="#IMGURL#" alt="<?php echo $name; ?>"/>
 <a title="Download original image" target="_blank" href="#IMGURL#"><div id="download">&nbsp;</div></a>
@@ -131,14 +132,114 @@ if ($seq && count($seq) > 1) {
 </div>
 </div>
 
+<div id="image-exif"><a class="close" href="javascript:;" onclick="show('image-exif')">[Close]</a><br/>
+<?php
+$info = getexif($id);
+if ($info) {
+  $size = $info['size'];
+  $fsize = $info['fsize'];
+  if (isset($info['exif'])) {
+    $exif = $info['exif'];
+    if (isset($mapbox_id) && !empty($mapbox_id) && isset($exif['GPSLongitude']) && isset($exif['GPSLongitudeRef']) && isset($exif['GPSLatitude']) && isset($exif['GPSLatitude'])) {
+      $lng = getGps($exif["GPSLongitude"], $exif['GPSLongitudeRef']);
+      $lat = getGps($exif["GPSLatitude"], $exif['GPSLatitudeRef']);
+      $coordinates=array($lng,$lat);
+      $geometry=array("type" => "Point", "coordinates" => $coordinates);
+      $place=array("type" => "Feature", "geometry" => $geometry, "properties" => array("name" => 'Latitude: '.round($lat,1).' | Longitude: '.round($lng,1)));
+      echo '<div id="exif-m">';
+      $map = true;
+    }
+  }
+  echo '<ul id="exif-ul-1"><li>File name:<span class="right">',$file_name,'</span></li>';
+  echo '<li>File size:<span class="right">',$fsize,'</span></li>';
+  echo '<li>Type:<span class="right">',$size['mime'],'</span></li>';
+  echo '</ul>';
+  echo '<ul><li>Dimensions:<span class="right">',$size[0],' x ',$size[1],'</span></li>';
+  if (isset($exif) && $exif) {
+    if (isset($exif['DateTimeOriginal']))
+      echo '<li>Date:<span class="right">',$exif['DateTimeOriginal'],'</span></li>';
+    echo '</ul>';
+    $str = '';
+    if (isset($exif['Make']) && isset($exif['Model']))
+      $str .= '<li>Device:<span class="right">'.$exif['Make'].' '.$exif['Model'].'</span></li>';
+    if (isset($exif['ExposureTime'])) {
+      if (preg_match('/(\d+)\/(\d+)/',$exif['ExposureTime'],$et))
+        $str .= '<li>Exposure time:<span class="right">1/'. floor($et[2] / $et[1]) .' s</span></li>';
+      elseif (is_numeric($exif['ExposureTime']))
+        $str .= '<li>Exposure time:<span class="right">1/'.$exif['ExposureTime'].' s</span></li>';
+      else
+        $str .= '<li>Exposure time:<span class="right">1/'.$exif['ExposureTime'].'</span></li>';
+    }
+    if (isset($exif['FNumber'])) {
+      if (preg_match('/(\d+)\/(\d+)/',$exif['FNumber'],$fn))
+        $str .= '<li>F-Number:<span class="right">F/'. round($fn[1] / $fn[2],1) .'</span></li>';
+      elseif (is_numeric($exif['FNumber']))
+        $str .= '<li>F-Number:<span class="right">F/'.$exif['FNumber'].'</span></li>';
+      else
+        $str .= '<li>F-Number:<span class="right">'.$exif['FNumber'].'</span></li>';
+    }
+    if (isset($exif['FocalLength'])) {
+      if (preg_match('/(\d+)\/(\d+)/',$exif['FocalLength'],$fl))
+        $str .= '<li>Focal length:<span class="right">'. round($fl[1] / $fl[2],1) .' mm</span></li>';
+      elseif (is_numeric($exif['FocalLength']))
+        $str .= '<li>Focal length:<span class="right">'.$exif['FocalLength'].' mm</span></li>';
+      else
+        $str .= '<li>Focal length:<span class="right">'.$exif['FocalLength'].'</span></li>';
+    }
+    if (isset($exif['ISOSpeedRatings']))
+      $str .= '<li>ISO:<span class="right">'.$exif['ISOSpeedRatings'].'</span></li>';
+    if (isset($exif['Flash'])) {
+      switch($exif['Flash']) {
+      case '0':
+        $str .= '<li>Flash:<span class="right">No</span></li>';
+        break;
+      case '1':
+        $str .= '<li>Flash:<span class="right">Yes</span></li>';
+        break;
+      case '5':
+        $str .= '<li>Flash:<span class="right">flash fired but strobe return light not detected</span></li>';
+        break;
+      case '7':
+        $str .= '<li>Flash:<span class="right">flash fired and strobe return light detected</span></li>';
+        break;
+      }
+    }
+    if (isset($exif['ExposureBiasValue']))
+      $str .= '<li>Exposure bias:<span class="right">'.$exif['ExposureBiasValue'].'</span></li>';
+    if (isset($exif['WhiteBalance']) && $exif['WhiteBalance'] == '1')
+      $str .= '<li>White balance:<span class="right">Manual</span></li>';
+    if (isset($exif['WhiteBalance']) && $exif['WhiteBalance'] == '0')
+      $str .= '<li>White balance:<span class="right">Auto</span></li>';
+    if (isset($exif['MeteringMode']) && $exif['MeteringMode'] == '1')
+      $str .= '<li>Metering mode:<span class="right">Manual</span></li>';
+    if (isset($exif['MeteringMode']) && $exif['MeteringMode'] == '0')
+      $str .= '<li>Metering mode:<span class="right">Auto</span></li>';
+    if (isset($exif['ExposureMode']) && $exif['ExposureMode'] == '1')
+      $str .= '<li>Exposure mode:<span class="right">Manual</span></li>';
+    if (isset($exif['ExposureMode']) && $exif['ExposureMode'] == '0')
+      $str .= '<li>Exposure mode:<span class="right">Auto</span></li>';
+    if (!empty($str))
+      echo '<ul>',$str;
+    echo '</ul>';
+    if (isset($map) && $map) {
+      echo '</div><div id="mapbox"></div>';
+    }
+  }
+}
+?>
+</div>
+
 <div id="sidebar-img" class="sidebar"><div id="sidebar-wrap-img">
 
 <div class="widget-container">
-<p id="parent"><a href="<?php echo $base_url; ?>?id=<?php echo $folder_id; ?>">&lt;&lt;&nbsp;Back to <?php echo $folder_name; ?></a></p>
+<p id="parent"><a href="<?php echo $base_url; ?>?id=<?php echo $folder_id; ?>">&lt;&lt;&nbsp;Back to <?php if ($folder_id !== $box_root_folder_id) echo $folder_name; else echo 'Home page'; ?></a></p>
 </div>
 
 <div class="widget-container">
-<div id="view-count" class="view-count"><script src="<?php echo $base_url; ?>stat.php?id=<?php echo $id; ?>&amp;update=#OTP#"></script></div>
+<div id="view-count" class="view-count"><script src="<?php echo $base_url; ?>stat.php?id=<?php echo $id; ?>&amp;update=#OTP#"></script>
+<span class="right" id="exif"><a href="javascript:;" onclick="show('image-exif')">Image details</a></span>
+</div>
+
 <div id="shareimg"><table>
 <tr>
 <td><a href="https://twitter.com/share" class="twitter-share-button"></a></td>
@@ -205,7 +306,7 @@ if ($seq && count($seq) > 1) {
 ?>
   </div>
 <?php } else { ?>
-  <div id="info-img" class="info-img">><div id="imagename"><?php echo $name; ?></div>
+  <div id="info-img" class="info-img"><div id="imagename"><?php echo $name; ?></div>
 <?php } ?>
 
 <div id="message-img">
@@ -215,6 +316,12 @@ if ($seq && count($seq) > 1) {
 </div>
 
 </div>
+
+<?php
+if (isset($map) && $map) {
+  echo '<link rel="stylesheet" href="',$base_url,'library/map/leaflet.css" /><script src="',$base_url,'library/map/leaflet.js"></script><script src="',$base_url,'library/map/wax.leaf.min.js"></script>';
+}
+?>
 
 <script type="text/javascript"> 
 (function(){ 
@@ -283,6 +390,24 @@ $(window).load(function(){$(window).resize(function(){
   };
 }); 
 $(window).resize();});
+function show(id) {
+  if ((document.getElementById(id).style.display) == "block") {
+    document.getElementById(id).style.display = "none";
+  } else {
+    document.getElementById(id).style.display = "block";
+  }
+<?php if (isset($map) && $map) echo 'showmap();'; ?>
+};
+<?php
+if (isset($map) && $map) {
+  echo 'showmap();';
+  echo 'function showmap() {';
+  echo 'if (window.innerWidth <= 480 || (document.getElementById("image-exif").style.display) == "block") {';
+  echo 'var url = "http://a.tiles.mapbox.com/v3/',$mapbox_id,'.jsonp";var map = new L.Map("mapbox").setView(new L.LatLng(',$lat,', ',$lng,'), 12);wax.tilejson(url, function(tilejson) {map.addLayer(new wax.leaf.connector(tilejson));});var data = ',json_encode(array("type" => "FeatureCollection", "features" => array($place))),';var geojsonLayer = new L.GeoJSON();geojsonLayer.on("featureparse", function (e) {if (e.properties && e.properties.name){e.layer.bindPopup(e.properties.name);}});geojsonLayer.addGeoJSON(data);map.addLayer(geojsonLayer);';
+  echo '}';
+  echo '};';
+}
+?>
 </script> 
 
 <?php
@@ -293,7 +418,7 @@ if ($auth_admin !== 'pass') {
 }
 
 $output = str_replace(array('#OTP#', '#IMGURL#'), array($otp, $match[1]), $output);
-if ($_COOKIE['_mellery_fullscreen'] == $folder_id)
+if (isset($_COOKIE['_mellery_fullscreen']) && $_COOKIE['_mellery_fullscreen'] == $folder_id)
   $output = str_replace('#FULLSCREENSTYLE#', $fullscreen_style, $output);
 echo $output;
 
@@ -303,6 +428,9 @@ if ($session_message) {
   echo $session_str;
   $_SESSION['message'] = '';
 }
+$tmp_file='/tmp/'.$id;
+if (file_exists($tmp_file))
+  unlink($tmp_file);
 ?>
 
 </body></html>

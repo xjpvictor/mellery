@@ -59,17 +59,7 @@ foreach ($files as $file) {
       $thumbnail += 1;
   }
 }
-if ($size < 1024) {
-    $size = $size .' B';
-} elseif ($size < 1048576) {
-    $size = round($size / 1024, 2) .' KiB';
-} elseif ($size < 1073741824) {
-    $size = round($size / 1048576, 2) . ' MiB';
-} elseif ($size < 1099511627776) {
-    $size = round($size / 1073741824, 2) . ' GiB';
-} elseif ($size < 1125899906842624) {
-    $size = round($size / 1099511627776, 2) .' TiB';
-}
+$size = getsize($size);
 ?>
 
 <p>You have <b><?php echo count($folder_list); ?></b> albums, and <b><?php echo $image_count; ?></b> images in the albums<span class="edit-admin"><a href="<?php echo $base_url; ?>admin/folder.php">Manage albums</a></span></p>

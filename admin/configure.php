@@ -36,7 +36,7 @@ if (!empty($_POST)) {
 
   $old_password_auth = true;
   foreach ($config_key as $key) {
-    if (($key == 'home_page' || $key == 'site_description' || $key == 'disqus_shortname') && array_key_exists($key,$_POST)) {
+    if (($key == 'home_page' || $key == 'site_description' || $key == 'mapbox_id' || $key == 'disqus_shortname') && array_key_exists($key,$_POST)) {
       $$key = str_replace('"','\"',$_POST[$key]);
     } elseif (array_key_exists($key,$_POST) && ($_POST[$key] == '0' || !empty($_POST[$key])) && $_POST[$key] !== $$key) {
       $_POST[$key] = str_replace('"','\"',$_POST[$key]);
@@ -105,13 +105,15 @@ $otp_session=getkey($expire_session);
 <tr><td><p>Site description (Optional):</p></td><td><input name="site_description" value="<?php if (isset($site_description)) echo htmlentities($site_description); ?>"></td></tr>
 <tr><td><p<?php if (!isset($base_url) || ($base_url !== '0' && empty($base_url))) {echo ' class="notset"'; $notify = true;} ?>>Base url for Mellery:</p></td><td><input required name="base_url" value="<?php if (isset($base_url)) echo htmlentities($base_url); ?>"></td></tr>
 <tr><td><p<?php if (!isset($base_dir) || ($base_dir !== '0' && empty($base_dir))) {echo ' class="notset"'; $notify = true;} ?>>Installation directory for Mellery:</p></td><td><input required name="base_dir" value="<?php if (isset($base_dir)) echo htmlentities($base_dir); ?>"></td></tr>
-<tr><td><p>Disqus shortname (Optional):</p></td><td><input name="disqus_shortname" value="<?php if (isset($disqus_shortname)) echo htmlentities($disqus_shortname); ?>"></td></tr>
 <tr><td><p<?php if (!isset($w_max) || ($w_max !== '0' && empty($w_max))) {echo ' class="notset"'; $notify = true;} ?>>Maximum width of thumbnails:</p></td><td><input required name="w_max" value="<?php if (isset($w_max)) echo htmlentities($w_max); ?>"></td></tr>
 <tr><td><p<?php if (!isset($h_max) || ($h_max !== '0' && empty($h_max))) {echo ' class="notset"'; $notify = true;} ?>>Maximum height of thumbnails:</p></td><td><input required name="h_max" value="<?php if (isset($h_max)) echo htmlentities($h_max); ?>"></td></tr>
 <tr><td><p<?php if (!isset($limit) || ($limit !== '0' && empty($limit))) {echo ' class="notset"'; $notify = true;} ?>>Thumbnails shown per page:</p></td><td><input required name="limit" value="<?php if (isset($limit)) echo htmlentities($limit); ?>"></td></tr>
 <tr><td><p<?php if (!isset($expire_image) || ($expire_image !== '0' && empty($expire_image))) {echo ' class="notset"'; $notify = true;} ?>>Thumbnail expiration time (s, 0 for not expiring):</p></td><td><input required name="expire_image" value="<?php if (isset($expire_image)) echo htmlentities($expire_image); ?>"></td></tr>
 <tr><td><p<?php if (!isset($cache_expire) || ($cache_expire !== '0' && empty($cache_expire))) {echo ' class="notset"'; $notify = true;} ?>>Cache expiration time (days):</p></td><td><input required name="cache_expire" value="<?php if (isset($cache_expire)) echo htmlentities($cache_expire); ?>"></td></tr>
 <tr><td><p<?php if (!isset($cache_clean) || ($cache_clean !== '0' && empty($cache_clean))) {echo ' class="notset"'; $notify = true;} ?>>Expired cache clean frequency (days, 0 for manually cleaning):</p></td><td><input required name="cache_clean" value="<?php if (isset($cache_clean)) echo htmlentities($cache_clean); ?>"></td></tr>
+<tr><td><p>Disqus shortname (Optional):</p></td><td><input name="disqus_shortname" value="<?php if (isset($disqus_shortname)) echo htmlentities($disqus_shortname); ?>"></td></tr>
+<tr><td><p>Mapbox map ID (Optional):</p></td><td><input name="mapbox_id" value="<?php if (isset($mapbox_id)) echo htmlentities($mapbox_id); ?>"></td></tr>
+<tr><td></td><td><p class="small">* Required to display a map when geolocation is available. Register and create a map at mapbox.com, obtain the Map ID.</p></td></tr>
 <tr><td></td><td><p class="button" style="width:200px;"><a href="<?php echo $base_url; ?>admin/cache.php?option=all&amp;ref=<?php echo $url; ?>">Clean all cache files now</a></p></td><td></td></tr>
 </table>
 </div>

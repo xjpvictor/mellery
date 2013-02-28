@@ -152,6 +152,7 @@ function imagecreatefrombmp($p_sFile) {
   return $image; 
 }
 function createthumbnail($dimg,$source_file,$nw,$nh) {
+  global $cache_dir;
   $size = getimagesize($source_file);
   $w = $size[0];
   $h = $size[1];
@@ -164,6 +165,8 @@ function createthumbnail($dimg,$source_file,$nw,$nh) {
     break;
   case 'jpeg':
     $simg = imagecreatefromjpeg($source_file);
+    break;
+  case 'tiff':
     break;
   case 'png':
     $simg = imagecreatefrompng($source_file);
@@ -178,7 +181,7 @@ function createthumbnail($dimg,$source_file,$nw,$nh) {
     $simg = imagecreatefrombmp($source_file);
     break;
   }
-  if (!$simg)
+  if (!isset($simg) || !$simg)
     return(false);
   $wm = $w/$nw;
   $hm = $h/$nh;
@@ -199,6 +202,69 @@ function createthumbnail($dimg,$source_file,$nw,$nh) {
   }
   return($dimg);
 }
+function getsize($fsize) {
+  if ($fsize < 1024) {
+      $fsize = $fsize .' B';
+  } elseif ($fsize < 1048576) {
+      $fsize = round($fsize / 1024, 2) .' KiB';
+  } elseif ($fsize < 1073741824) {
+      $fsize = round($fsize / 1048576, 2) . ' MiB';
+  } elseif ($fsize < 1099511627776) {
+      $fsize = round($fsize / 1073741824, 2) . ' GiB';
+  } elseif ($fsize < 1125899906842624) {
+      $fsize = round($fsize / 1099511627776, 2) .' TiB';
+  }
+  return $fsize;
+}
+function getexif($id) {
+  global $cache_dir,$secret_key;
+  $exif_file=$cache_dir.substr(hash('sha256',$secret_key.$id),2,10).'-exif';
+  if (file_exists($exif_file))
+    $info = include($exif_file);
+  else {
+    $tmp_file='/tmp/'.$id;
+    downloadfile($tmp_file,$id);
+    if (file_exists($tmp_file) && filesize($tmp_file) !== 0) {
+      $size = getimagesize($tmp_file);
+      $type=$size['mime'];
+      $stype = explode("/", $type);
+      $stype = $stype[count($stype)-1];
+      switch($stype) {
+      case 'jpeg':
+        $exif = exif_read_data($tmp_file,'FILE,COMPUTED,ANY_TAG,IFD0,COMMENT,EXIF',0);
+        break;
+      case 'tiff':
+        $exif = exif_read_data($tmp_file,'FILE,COMPUTED,ANY_TAG,IFD0,COMMENT,EXIF',0);
+        break;
+      }
+      $fsize = filesize($tmp_file);
+      $fsize = getsize($fsize);
+      if (isset($exif) && $exif) {
+        $info = array('size' => $size, 'fsize' => $fsize, 'exif' => $exif);
+      } else {
+        $info = array('size' => $size, 'fsize' => $fsize);
+      }
+      file_put_contents($exif_file, '<?php return '.var_export($info, true).';');
+    } else
+      return false;
+  }
+  return $info;
+}
+function getGps($exifCoord, $hemi) {
+    $degrees = count($exifCoord) > 0 ? gps2Num($exifCoord[0]) : 0;
+    $minutes = count($exifCoord) > 1 ? gps2Num($exifCoord[1]) : 0;
+    $seconds = count($exifCoord) > 2 ? gps2Num($exifCoord[2]) : 0;
+    $flip = ($hemi == 'W' or $hemi == 'S') ? -1 : 1;
+    return $flip * ($degrees + $minutes / 60 + $seconds / 3600);
+}
+function gps2Num($coordPart) {
+    $parts = explode('/', $coordPart);
+    if (count($parts) <= 0)
+        return 0;
+    if (count($parts) == 1)
+        return $parts[0];
+    return floatval($parts[0]) / floatval($parts[1]);
+}
 function getthumb($file_id,$nw,$nh) {
   global $header_string,$secret_key,$cache_dir,$base_dir,$w_max,$h_max;
   $thumb_na=$base_dir.'library/na.jpg';
@@ -206,10 +272,12 @@ function getthumb($file_id,$nw,$nh) {
   $id=$match[1];
   $nw = min($nw, $w_max);
   $nh = min($nh, $h_max);
-  $file=substr(hash('sha256',$secret_key.$file_id),2,10).'-'.$nw.'-'.$nh;
+  $file_id_hash=substr(hash('sha256',$secret_key.$file_id),2,10);
+  $file=$file_id_hash.'-'.$nw.'-'.$nh;
   if (!file_exists($cache_dir.$file)) {
     $tmp_file='/tmp/'.$id;
     downloadfile($tmp_file,$id);
+    getexif($id);
     if ((file_exists($tmp_file) && filesize($tmp_file) !== 0)) {
       $dimg = imagecreatetruecolor($nw, $nh);
       imagefill($dimg,0,0,imagecolorallocate($dimg,255,255,255));
@@ -402,6 +470,8 @@ function coverbordercompose($dimg,$nw,$nh,$nbw,$nbh,$border_width,$thumb,$i) {
 }
 function downloadfile($file,$id) {
   global $header_string;
+  if (isset($file) && file_exists($file) && filesize($file) !== 0)
+    return true;
   $ch=curl_init();
   curl_setopt($ch, CURLOPT_URL,"https://api.box.com/2.0/files/".$id."/content");
   curl_setopt($ch, CURLOPT_HEADER,true);
