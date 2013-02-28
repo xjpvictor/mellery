@@ -51,6 +51,8 @@ Cache is enabled for the following items for faster access and lower CPU/memory 
 
 * Keyboard shortcut enabled for navigation
 
+* Display exif information and geolocation when available _(Need to create account at [mapbox.com][m] in order to show maps)_
+
 ## Setup and backup ##
 
 PHP-GD required.
@@ -70,3 +72,4 @@ Box.com will expire the authentication if the token is not refreshed in 14 days.
 This work uses MIT license. Feel free to use, modify or distribute. I'll NOT be responsible for any loss caused by this work.
 
 [b]: https://www.box.com "box.com"
+[m]: http://mapbox.com "mapbox.com"
