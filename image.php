@@ -52,7 +52,7 @@ if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSI
   $session_message = false;
 }
 
-$fullscreen_style = '@media screen and (min-width: 480px) {#sidebar-img{display:none;}'."\n".'#content-img{width:100%;}'."\n".'.info-img{display:none;}}';
+$fullscreen_style = '@media screen and (min-width: 480px) {#sidebar-img{display:none;}'."\n".'#content-img{width:100%;}'."\n".'.info-img{width:100%;border-width:1px 0px 0px 0px;}}';
 
 if ($auth_admin !== 'pass') {
   $page_cache=$cache_dir.$folder_id.'-'.$id.'.html';
@@ -346,21 +346,25 @@ if (isset($map) && $map) {
   o.appendChild(n); 
 })(); 
 function full() {
-    document.getElementById("sidebar-img").style.display = "none";
-    document.getElementById("content-img").style.width = "100%";
-    if (document.getElementById("info-img-nav")) {
-      document.getElementById("info-img-nav").style.display = "none";
-    } else {
-      document.getElementById("info-img").style.display = "none";
-    }
+  document.getElementById("sidebar-img").style.display = "none";
+  document.getElementById("content-img").style.width = "100%";
+  if (document.getElementById("info-img-nav")) {
+    document.getElementById("info-img-nav").style.width = "100%";
+    document.getElementById("info-img-nav").style.borderWidth = "1px 0px 0px 0px";
+  } else {
+    document.getElementById("info-img").style.width = "100%";
+    document.getElementById("info-img").style.borderWidth = "1px 0px 0px 0px";
+  }
 }
 function small() {
   document.getElementById("sidebar-img").style.display = "block";
   document.getElementById("content-img").style.width = "60%";
   if (document.getElementById("info-img-nav")) {
-    document.getElementById("info-img-nav").style.display = "block";
+    document.getElementById("info-img-nav").style.width = "60%";
+    document.getElementById("info-img-nav").style.borderWidth = "1px 1px 0px 0px";
   } else {
-    document.getElementById("info-img").style.display = "block";
+    document.getElementById("info-img").style.width = "60%";
+    document.getElementById("info-img").style.borderWidth = "1px 1px 0px 0px";
   }
 }
 function togglefull() {
