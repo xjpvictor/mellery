@@ -270,14 +270,18 @@ if ($_GET['id'] !== $box_root_folder_id) {
 } else {
   if (array_key_exists('id-'.$box_root_folder_id, $folder_list))
     unset($folder_list['id-'.$box_root_folder_id]);
+  $list = getfilelist($_GET['id'], null, null);
+  $n1 = count($folder_list);
+  $n2 = count($list) - $n1;
+  $folder_list = array_merge($list, $folder_list);
+  $n = count($folder_list);
   $new = array();
   foreach ($folder_list as $id => $folder) {
-    if ($folder['new'] == 1)
+    if (isset($folder['new']) && $folder['new'] == 1)
       $new = array_merge($new, array($id => $folder));
   }
   $folder_list = array_merge($new, $folder_list);
-  $n = count($folder_list);
-  $list = array_slice($folder_list, $p * $admin_folder_limit, $admin_folder_limit);
+  $list = array_slice($list, $p * $admin_folder_limit, $admin_folder_limit);
   $single = false;
 }
 
@@ -362,7 +366,7 @@ if ($single) {
 } else {
 ?>
 <div class="admin-folder-nav clearfix">
-Albums list (<?php echo $n; ?> albums)
+Albums list (<?php echo $n1; ?> albums<?php if ($n2 > 0) echo ', ',$n2,' images'; ?>)
 <form class="right" method="post" action="folder.php?ref=<?php echo urlencode($base_url.'admin/folder.php?id='.$_GET['id']); ?>">
 <input name="name">
 <input class="button" type="submit" name="new" value="New Album">
