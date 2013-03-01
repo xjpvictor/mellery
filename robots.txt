@@ -3,6 +3,8 @@ Disallow: /cache/
 Disallow: /data/
 Disallow: /admin/
 Disallow: /library/
+Disallow: */thumbnail.php*
+Disallow: */cover.php*
 Disallow: /*.ico$
 Disallow: /*.jpg$
 Disallow: /*.jpeg$
