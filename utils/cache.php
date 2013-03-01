@@ -1,6 +1,6 @@
 <?php
 include_once('../data/config.php');
-include_once('../functions.php');
+include_once($base_dir.'functions.php');
 
 if (empty($_GET)) {
   ob_end_clean();

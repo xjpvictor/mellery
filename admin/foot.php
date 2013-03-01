@@ -14,7 +14,7 @@ if (!defined('includeauth')) {
 <p>&copy; <?php echo date("Y"); ?> <a href="<?php echo $base_url; ?>"><?php echo $site_name; ?></a></p>
 <p>Powered by <a href="https://github.com/xjpvictor/mellery" target="_blank">mellery</a> and <a href="https://www.box.com" target="_blank">box</a></p>
 <p><a class="tipTip" title="<span id='hotkeytip'>Available keyboard shortcuts<br/><br/>? - Display this help<br/>j/k - Scroll down/up<br/>J/K - Scroll to bottom/top<br/>h/l - Page down/up<br/>H/L - Scroll left/right<br/>Left/Right - Go to Previous/Next page<br/>U - Back to parent folder</span>" id="shortcut">Keyboard shortcuts</a></p>
-<img id="cache-img" src="<?php echo $base_url; ?>admin/cache.php" width="1" height="1" alt="" />
+<img id="cache-img" src="<?php echo $base_url; ?>utils/cache.php" width="1" height="1" alt="" />
 </div>
 </div>
 

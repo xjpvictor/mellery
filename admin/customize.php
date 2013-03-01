@@ -1,7 +1,7 @@
 <?php
 define('includeauth',true);
 include_once('../data/config.php');
-include_once('../functions.php');
+include_once($base_dir.'functions.php');
 
 $auth=auth($username);
 $url=getpageurl();

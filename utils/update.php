@@ -1,6 +1,6 @@
 <?php
 include_once('./data/config.php');
-include_once('./functions.php');
+include_once($base_dir.'functions.php');
 
 ob_end_clean();
 header('HTTP/1.1 200 Ok');

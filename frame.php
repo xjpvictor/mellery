@@ -1,6 +1,6 @@
 <?php
 include_once('./data/config.php');
-include_once('./functions.php');
+include_once($base_dir.'functions.php');
 if(!array_key_exists('id',$_GET) || !array_key_exists('limit',$_GET)) {
   header("HTTP/1.1 403 Forbidden");
   include($base_dir.'library/403.php');

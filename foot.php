@@ -7,8 +7,8 @@ if (!defined('includeauth')) {
 ?>
 <p>&copy; <?php echo date("Y"); ?> <a href="<?php echo $base_url; ?>"><?php echo $site_name; ?></a></p>
 <p>Powered by <a href="https://github.com/xjpvictor/mellery" target="_blank">mellery</a> and <a href="https://www.box.com" target="_blank">box</a></p>
-<p><a class="tipTip" title="<span id='hotkeytip'>Available keyboard shortcuts<br/><br/>? - Display this help<br/>j/k - Scroll down/up<br/>J/K - Scroll to bottom/top<br/>h/l - Page down/up<br/>H/L - Scroll left/right<br/>Left/Right - Go to Previous/Next image<br/>U - Back to parent folder<br/>F - Toggle fullscreen</span>" id="shortcut">Keyboard shortcuts</a> | <a href="<?php echo $base_url; ?>stat.php?dnt=1&amp;ref=<?php echo $url; ?>" title="Do Not Track">Do Not Track</a></p>
-<img id="cache-img" src="<?php echo $base_url; ?>admin/cache.php" width="1" height="1" alt="" />
+<p><a class="tipTip" title="<span id='hotkeytip'>Available keyboard shortcuts<br/><br/>? - Display this help<br/>j/k - Scroll down/up<br/>J/K - Scroll to bottom/top<br/>h/l - Page down/up<br/>H/L - Scroll left/right<br/>Left/Right - Go to Previous/Next image<br/>U - Back to parent folder<br/>F - Toggle fullscreen</span>" id="shortcut">Keyboard shortcuts</a> | <a href="<?php echo $base_url; ?>utils/stat.php?dnt=1&amp;ref=<?php echo $url; ?>" title="Do Not Track">Do Not Track</a></p>
+<img id="cache-img" src="<?php echo $base_url; ?>utils/cache.php" width="1" height="1" alt="" />
 <?php if (!isset($my_page) && file_exists($data_dir.'my_page.php')) $my_page = include($data_dir.'my_page.php'); echo $my_page['foot']; ?>
 
 <div id="fb-root"></div>

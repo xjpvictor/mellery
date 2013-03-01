@@ -1,7 +1,7 @@
 <?php
 define('includeauth',true);
 include_once('../data/config.php');
-include_once('../functions.php');
+include_once($base_dir.'functions.php');
 
 $auth=auth($username);
 $url=getpageurl();
@@ -94,10 +94,10 @@ $size = getsize($size);
 </div>
 
 <div class="site-config clearfix">
-<p>Cache files taking up <b><?php echo $size; ?></b> disk space<span class="button button-right"><a href="<?php echo $base_url; ?>admin/cache.php?option=all&amp;ref=<?php echo $url; ?>">Clean all cache files now</a></span></p>
-<p style="padding-left:10px;"><b><?php echo $thumbnail; ?></b> cached thumbnail images<span class="button button-right"><a href="<?php echo $base_url; ?>admin/cache.php?option=thumbnail&amp;ref=<?php echo $url; ?>">Clean</a></span></p>
-<p style="padding-left:10px;"><b><?php echo $html; ?></b> cached html pages<span class="button button-right"><a href="<?php echo $base_url; ?>admin/cache.php?option=html&amp;ref=<?php echo $url; ?>">Clean</a></span></p>
-<p style="padding-left:10px;"><b><?php echo $box; ?></b> cached box.com file list<span class="button button-right"><a href="<?php echo $base_url; ?>admin/cache.php?option=box&amp;ref=<?php echo $url; ?>">Clean</a></span></p>
+<p>Cache files taking up <b><?php echo $size; ?></b> disk space<span class="button button-right"><a href="<?php echo $base_url; ?>utils/cache.php?option=all&amp;ref=<?php echo $url; ?>">Clean all cache files now</a></span></p>
+<p style="padding-left:10px;"><b><?php echo $thumbnail; ?></b> cached thumbnail images<span class="button button-right"><a href="<?php echo $base_url; ?>utils/cache.php?option=thumbnail&amp;ref=<?php echo $url; ?>">Clean</a></span></p>
+<p style="padding-left:10px;"><b><?php echo $html; ?></b> cached html pages<span class="button button-right"><a href="<?php echo $base_url; ?>utils/cache.php?option=html&amp;ref=<?php echo $url; ?>">Clean</a></span></p>
+<p style="padding-left:10px;"><b><?php echo $box; ?></b> cached box.com file list<span class="button button-right"><a href="<?php echo $base_url; ?>utils/cache.php?option=box&amp;ref=<?php echo $url; ?>">Clean</a></span></p>
 <p class="small">* This may take some time.</p><br/>
 <p>Clean obsolete files<span class="button button-right"><a href="<?php echo $base_url; ?>admin/clean.php">Clean</a></span></p>
 <p class="small">* Data files are leftover when images are deleted from Box.com directly. Cleaning may take some time.</p>

@@ -2,7 +2,7 @@
 define('includeauth',true);
 define('isimage',true);
 include_once('./data/config.php');
-include_once('./functions.php');
+include_once($base_dir.'functions.php');
 if(!array_key_exists('id',$_GET) || !array_key_exists('fid',$_GET)) {
   header("Status: 404 Not Found");
   include($base_dir.'library/404.php');
@@ -61,7 +61,7 @@ if ($auth_admin !== 'pass') {
     if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($data_dir.'config.php') && (!file_exists($data_dir.'my_page.php') || $age >= filemtime($data_dir.'my_page.php'))) {
       $output = file_get_contents($page_cache);
       $output = str_replace(array('#OTP#', '#IMGURL#'), array($otp, $match[1]), $output);
-      if (isset($_COOKIE['_mellery_fullscreen']) && $_COOKIE['_mellery_fullscreen'] == $folder_id)
+      if (isset($_SESSION['fullscreen']['id-'.$folder_id]))
         $output = str_replace('#FULLSCREENSTYLE#', $fullscreen_style, $output);
       echo $output;
       if ($session_message) {
@@ -100,7 +100,7 @@ $name = substr($file_name, 0, strrpos($file_name, '.', -1));
 ?>
 <img id="mainimg-img" src="#IMGURL#" alt="<?php echo $name; ?>"/>
 <a title="Download original image" target="_blank" href="#IMGURL#"><div id="download">&nbsp;</div></a>
-<a id="fullscreen-a" title="Fullscreen" href="javascript:;" onclick="togglefull('<?php echo $folder_id; ?>')"><img src="<?php echo $base_url; ?>library/fullscreen.png" alt="fullscreen" id="fullscreen"/></a>
+<a id="fullscreen-a" title="Fullscreen" href="javascript:;" onclick="togglefull()"><img src="<?php echo $base_url; ?>library/fullscreen.png" alt="fullscreen" id="fullscreen"/></a>
 
 <?php
 foreach ($file_list as $key => $value) {
@@ -232,11 +232,11 @@ if ($info) {
 <div id="sidebar-img" class="sidebar"><div id="sidebar-wrap-img">
 
 <div class="widget-container">
-<p id="parent"><a href="<?php echo $base_url; ?>?id=<?php echo $folder_id; ?>">&lt;&lt;&nbsp;Back to <?php if ($folder_id !== $box_root_folder_id) echo $folder_name; else echo 'Home page'; ?></a></p>
+<p id="parent"><a href="<?php echo $base_url; ?>?id=<?php echo $folder_id; ?>">&lt;&lt;&nbsp;Back to <?php if ($folder_id !== $box_root_folder_id) echo $folder_name; else echo 'homepage'; ?></a></p>
 </div>
 
 <div class="widget-container">
-<div id="view-count" class="view-count"><script src="<?php echo $base_url; ?>stat.php?id=<?php echo $id; ?>&amp;update=#OTP#"></script>
+<div id="view-count" class="view-count"><script src="<?php echo $base_url; ?>utils/stat.php?id=<?php echo $id; ?>&amp;update=#OTP#"></script>
 <span class="right" id="exif"><a href="javascript:;" onclick="show('image-exif')">Image details</a></span>
 </div>
 
@@ -363,17 +363,17 @@ function small() {
     document.getElementById("info-img").style.display = "block";
   }
 }
-function togglefull(id) {
+function togglefull() {
   if ((document.getElementById("sidebar-img").style.display) == "block") {
     full();
-    document.cookie="_mellery_fullscreen=" + id;
+    $.get("<?php echo $base_url.'utils/sess-mod.php?fid='.$folder_id.'&option=fullscreen&set=1'; ?>");
   } else {
     small();
-    document.cookie="_mellery_fullscreen=0";
+    $.get("<?php echo $base_url.'utils/sess-mod.php?fid='.$folder_id.'&option=fullscreen&set=0'; ?>");
   }
   $(window).resize();
 }
-$(document).ready(function () {$(document).bind('keydown', 'shift+f', function() {togglefull('<?php echo $folder_id; ?>');});});
+$(document).ready(function () {$(document).bind('keydown', 'shift+f', function() {togglefull();});});
 $(window).load(function(){$(window).resize(function(){
   if($(window).width()>480){
     $('#mainimg-img').css({ 
@@ -418,7 +418,7 @@ if ($auth_admin !== 'pass') {
 }
 
 $output = str_replace(array('#OTP#', '#IMGURL#'), array($otp, $match[1]), $output);
-if (isset($_COOKIE['_mellery_fullscreen']) && $_COOKIE['_mellery_fullscreen'] == $folder_id)
+if (isset($_SESSION['fullscreen']['id-'.$folder_id]))
   $output = str_replace('#FULLSCREENSTYLE#', $fullscreen_style, $output);
 echo $output;
 

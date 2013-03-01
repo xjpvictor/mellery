@@ -1,7 +1,7 @@
 <?php
 define('includeauth',true);
 include_once('../data/config.php');
-include_once('../functions.php');
+include_once($base_dir.'functions.php');
 
 $auth=auth($username);
 $url=getpageurl();
@@ -111,10 +111,10 @@ $otp_session=getkey($expire_session);
 <tr><td><p<?php if (!isset($expire_image) || ($expire_image !== '0' && empty($expire_image))) {echo ' class="notset"'; $notify = true;} ?>>Thumbnail expiration time (s, 0 for not expiring):</p></td><td><input required name="expire_image" value="<?php if (isset($expire_image)) echo htmlentities($expire_image); ?>"></td></tr>
 <tr><td><p<?php if (!isset($cache_expire) || ($cache_expire !== '0' && empty($cache_expire))) {echo ' class="notset"'; $notify = true;} ?>>Cache expiration time (days):</p></td><td><input required name="cache_expire" value="<?php if (isset($cache_expire)) echo htmlentities($cache_expire); ?>"></td></tr>
 <tr><td><p<?php if (!isset($cache_clean) || ($cache_clean !== '0' && empty($cache_clean))) {echo ' class="notset"'; $notify = true;} ?>>Expired cache clean frequency (days, 0 for manually cleaning):</p></td><td><input required name="cache_clean" value="<?php if (isset($cache_clean)) echo htmlentities($cache_clean); ?>"></td></tr>
+<tr><td></td><td><p class="button" style="width:200px;"><a href="<?php echo $base_url; ?>utils/cache.php?option=all&amp;ref=<?php echo $url; ?>">Clean all cache files now</a></p></td><td></td></tr>
 <tr><td><p>Disqus shortname (Optional):</p></td><td><input name="disqus_shortname" value="<?php if (isset($disqus_shortname)) echo htmlentities($disqus_shortname); ?>"></td></tr>
 <tr><td><p>Mapbox map ID (Optional):</p></td><td><input name="mapbox_id" value="<?php if (isset($mapbox_id)) echo htmlentities($mapbox_id); ?>"></td></tr>
 <tr><td></td><td><p class="small">* Required to display a map when geolocation is available. Register and create a map at mapbox.com, obtain the Map ID.</p></td></tr>
-<tr><td></td><td><p class="button" style="width:200px;"><a href="<?php echo $base_url; ?>admin/cache.php?option=all&amp;ref=<?php echo $url; ?>">Clean all cache files now</a></p></td><td></td></tr>
 </table>
 </div>
 

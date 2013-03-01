@@ -1,7 +1,7 @@
 <?php
 define('includeauth',true);
 include_once('./data/config.php');
-include_once('./functions.php');
+include_once($base_dir.'functions.php');
 if (array_key_exists('id',$_GET)) {
   $folder_id=$_GET['id'];
   if (array_key_exists('p',$_GET))
@@ -114,7 +114,7 @@ if ($folder_id !== $box_root_folder_id) {
 <?php } ?>
 
 <?php if ($folder_id !== $box_root_folder_id) { ?>
-<div class="view-count"><script src="<?php echo $base_url; ?>stat.php?id=<?php echo $folder_id; ?>&amp;update=#OTP#"></script></div>
+<div class="view-count"><script src="<?php echo $base_url; ?>utils/stat.php?id=<?php echo $folder_id; ?>&amp;update=#OTP#"></script></div>
 
 <div id="sharetop"><table>
 <tr>

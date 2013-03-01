@@ -3,11 +3,8 @@ Disallow: /cache/
 Disallow: /data/
 Disallow: /admin/
 Disallow: /library/
-Disallow: *?*
-Disallow: /*.php$
 Disallow: /*.ico$
 Disallow: /*.jpg$
 Disallow: /*.jpeg$
 Disallow: /*.png$
 Disallow: /*.gif$
-Disallow: /*.md$
