@@ -15,9 +15,11 @@ $folder_list=getfolderlist();
 $url=getpageurl();
 
 $auth=auth(array($username,'id-'.$folder_id));
-if ($auth !== 'pass') {
-  header("HTTP/1.1 401 Unauthorized");
-  exit(0);
+if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access']['public'][0] !== '1') {
+  if ($auth !== 'pass') {
+    header("HTTP/1.1 401 Unauthorized");
+    exit(0);
+  }
 }
 
 ob_end_clean();
