@@ -3,6 +3,7 @@ Disallow: /cache/
 Disallow: /data/
 Disallow: /admin/
 Disallow: /library/
+Disallow: /utils/
 Disallow: */thumbnail.php*
 Disallow: */cover.php*
 Disallow: /*.ico$
