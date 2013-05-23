@@ -36,7 +36,7 @@ if (!empty($_POST)) {
 
   $old_password_auth = true;
   foreach ($config_key as $key) {
-    if (($key == 'home_page' || $key == 'site_description' || $key == 'mapbox_id' || $key == 'disqus_shortname') && array_key_exists($key,$_POST)) {
+    if (($key == 'home_page' || $key == 'site_description' || $key == 'disqus_shortname') && array_key_exists($key,$_POST)) {
       $$key = str_replace('"','\"',$_POST[$key]);
     } elseif (array_key_exists($key,$_POST) && ($_POST[$key] == '0' || !empty($_POST[$key])) && $_POST[$key] !== $$key) {
       $_POST[$key] = str_replace('"','\"',$_POST[$key]);
@@ -112,9 +112,8 @@ $otp_session=getkey($expire_session);
 <tr><td><p<?php if (!isset($cache_expire) || ($cache_expire !== '0' && empty($cache_expire))) {echo ' class="notset"'; $notify = true;} ?>>Cache expiration time (days):</p></td><td><input required name="cache_expire" value="<?php if (isset($cache_expire)) echo htmlentities($cache_expire); ?>"></td></tr>
 <tr><td><p<?php if (!isset($cache_clean) || ($cache_clean !== '0' && empty($cache_clean))) {echo ' class="notset"'; $notify = true;} ?>>Expired cache clean frequency (days, 0 for manually cleaning):</p></td><td><input required name="cache_clean" value="<?php if (isset($cache_clean)) echo htmlentities($cache_clean); ?>"></td></tr>
 <tr><td></td><td><p class="button" style="width:200px;"><a href="<?php echo $base_url; ?>utils/cache.php?option=all&amp;ref=<?php echo $url; ?>">Clean all cache files now</a></p></td><td></td></tr>
+<tr><td><p<?php if (!isset($usemap) || ($usemap !== '0' && empty($usemap))) {echo ' class="notset"'; $notify = true;} ?>>Show map if geolocation is available:</p></td><td><input type="hidden" name="usemap" value="0"><input class="checkbox" type="checkbox" name="usemap" value="1"<?php if (isset($usemap) && $usemap == '1') echo " checked"; ?>></td></tr>
 <tr><td><p>Disqus shortname (Optional):</p></td><td><input name="disqus_shortname" value="<?php if (isset($disqus_shortname)) echo htmlentities($disqus_shortname); ?>"></td></tr>
-<tr><td><p>Mapbox map ID (Optional):</p></td><td><input name="mapbox_id" value="<?php if (isset($mapbox_id)) echo htmlentities($mapbox_id); ?>"></td></tr>
-<tr><td></td><td><p class="small">* Required to display a map when geolocation is available. Register and create a map at mapbox.com, obtain the Map ID.</p></td></tr>
 </table>
 </div>
 

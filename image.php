@@ -140,7 +140,7 @@ if ($info) {
   $fsize = $info['fsize'];
   if (isset($info['exif'])) {
     $exif = $info['exif'];
-    if (isset($mapbox_id) && !empty($mapbox_id) && isset($exif['GPSLongitude']) && isset($exif['GPSLongitudeRef']) && isset($exif['GPSLatitude']) && isset($exif['GPSLatitude'])) {
+    if (isset($usemap) && $usemap && isset($exif['GPSLongitude']) && isset($exif['GPSLongitudeRef']) && isset($exif['GPSLatitude']) && isset($exif['GPSLatitude'])) {
       $lng = getGps($exif["GPSLongitude"], $exif['GPSLongitudeRef']);
       $lat = getGps($exif["GPSLatitude"], $exif['GPSLatitudeRef']);
       $coordinates=array($lng,$lat);
@@ -222,7 +222,7 @@ if ($info) {
       echo '<ul>',$str;
     echo '</ul>';
     if (isset($map) && $map) {
-      echo '</div><div id="mapbox"></div>';
+      echo '</div><div id="map"></div>';
     }
   }
 }
@@ -265,20 +265,6 @@ if ($info) {
 
 <?php if (isset($disqus_shortname) && !empty($disqus_shortname)) { ?>
 <div id="disqus_thread"></div>
-<script type="text/javascript">
-  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-  var disqus_shortname = '<?php echo $disqus_shortname; ?>'; // required: replace example with your forum shortname
-  var disqus_identifier = '<?php echo $_GET['id']; ?>';
-  var disqus_title = '<?php echo $name; ?>';
-  /* * * DON'T EDIT BELOW THIS LINE * * */
-  (function() {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 <?php } ?>
 
 </div></div>
@@ -319,7 +305,7 @@ if ($info) {
 
 <?php
 if (isset($map) && $map) {
-  echo '<link rel="stylesheet" href="',$base_url,'library/map/leaflet.css" /><script src="',$base_url,'library/map/leaflet.js"></script><script src="',$base_url,'library/map/wax.leaf.min.js"></script>';
+  echo '<link rel="stylesheet" href="',$base_url,'library/map/leaflet.css" /><script src="',$base_url,'library/map/leaflet.js"></script>';
 }
 ?>
 
@@ -346,7 +332,7 @@ if (isset($map) && $map) {
   o.appendChild(n); 
 })(); 
 function full() {
-  document.getElementById("sidebar-img").style.display = "none";
+  show('sidebar-img');
   document.getElementById("content-img").style.width = "100%";
   if (document.getElementById("info-img-nav")) {
     document.getElementById("info-img-nav").style.width = "100%";
@@ -357,7 +343,7 @@ function full() {
   }
 }
 function small() {
-  document.getElementById("sidebar-img").style.display = "block";
+  show('sidebar-img');
   document.getElementById("content-img").style.width = "60%";
   if (document.getElementById("info-img-nav")) {
     document.getElementById("info-img-nav").style.width = "60%";
@@ -400,19 +386,36 @@ function show(id) {
   } else {
     document.getElementById(id).style.display = "block";
   }
-<?php if (isset($map) && $map) echo 'showmap();'; ?>
-};
-<?php
-if (isset($map) && $map) {
-  echo 'showmap();';
-  echo 'function showmap() {';
-  echo 'if (window.innerWidth <= 480 || (document.getElementById("image-exif").style.display) == "block") {';
-  echo 'var url = "http://a.tiles.mapbox.com/v3/',$mapbox_id,'.jsonp";var map = new L.Map("mapbox").setView(new L.LatLng(',$lat,', ',$lng,'), 12);wax.tilejson(url, function(tilejson) {map.addLayer(new wax.leaf.connector(tilejson));});var data = ',json_encode(array("type" => "FeatureCollection", "features" => array($place))),';var geojsonLayer = new L.GeoJSON();geojsonLayer.on("featureparse", function (e) {if (e.properties && e.properties.name){e.layer.bindPopup(e.properties.name);}});geojsonLayer.addGeoJSON(data);map.addLayer(geojsonLayer);';
-  echo '}';
-  echo '};';
+<?php if (isset($map) && $map) echo 'if (id == "image-exif") {showmap();}'; ?>
 }
-?>
-</script> 
+<?php if (isset($map) && $map) { ?>
+showmap();
+function showmap() {
+  if (window.innerWidth <= 480 || (document.getElementById("image-exif").style.display) == "block") {
+    var mapquestosmUrl='https://{s}-s.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png',mapquestsatUrl='https://{s}-s.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png',subDomains=['otile1','otile2','otile3','otile4'],mapquestAttrib='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors | &copy; Tiles Courtesy of  <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img style="vertical-align:middle;" src="https://developer.mapquest.com/content/osm/mq_logo.png"> | &copy; Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency';
+    var osm=L.tileLayer(mapquestosmUrl,{attribution:mapquestAttrib,subdomains:subDomains,maxZoom:18}),sat=L.tileLayer(mapquestsatUrl,{attribution:mapquestAttrib,subdomains:subDomains,maxZoom:11});
+    var map=L.map('map',{center: new L.LatLng(<?php echo $lat; ?>,<?php echo $lng; ?>),zoom:14,layers:[sat,osm]});
+    var baseMaps={"Satellite View":sat,"Map":osm};
+    L.control.layers(baseMaps).addTo(map);
+    var geojsonFeature=<?php echo json_encode(array("type" => "FeatureCollection", "features" => array($place))); ?>;
+    var geojsonLayer=L.geoJson().addTo(map);
+    geojsonLayer.addData(geojsonFeature);
+    function onEachFeature(feature,layer){if(feature.properties && feature.properties.name){layer.bindPopup(feature.properties.name);}}
+    L.geoJson(geojsonFeature,{onEachFeature:onEachFeature}).addTo(map);
+  }
+}
+<?php } ?>
+<?php if (isset($disqus_shortname) && !empty($disqus_shortname)) { ?>
+var disqus_shortname = '<?php echo $disqus_shortname; ?>';
+var disqus_identifier = '<?php echo $_GET['id']; ?>';
+var disqus_title = '<?php echo $name; ?>';
+(function () {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+<?php } ?>
+</script>
 
 <?php
 $output = ob_get_contents();

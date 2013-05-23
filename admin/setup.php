@@ -53,7 +53,7 @@ if (!empty($_POST)) {
   chmod($config_file, 0600);
 
   foreach ($config_key as $key) {
-    if ($key == 'home_page' || $key == 'site_description' || $key == 'mapbox_id' || $key == 'disqus_shortname') {
+    if ($key == 'home_page' || $key == 'site_description' || $key == 'disqus_shortname') {
       $$key = '';
     } elseif (array_key_exists($key,$_POST) && ($_POST[$key] == '0' || !empty($_POST[$key]))) {
       $_POST[$key] = str_replace('"','\"',$_POST[$key]);
@@ -133,6 +133,7 @@ if (!empty($_POST)) {
 <tr><td><p>Image expiration time (s, 0 for not expiring):</p></td><td><input required name="expire_image" value="86400"></td></tr>
 <tr><td><p>Cache expiration time (days):</p></td><td><input required name="cache_expire" value="1"></td></tr>
 <tr><td><p>Expired cache clean frequency (days, 0 for manually cleaning):</p></td><td><input required name="cache_clean" value="1"</td></tr>
+<tr><td><p>Show map if geolocation is available:</p></td><td><input type="hidden" name="usemap" value="0"><input class="checkbox" type="checkbox" name="usemap" value="1" checked></td></tr>
 </table>
 </div>
 
