@@ -9,5 +9,6 @@ Disallow: */cover.php*
 Disallow: /*.ico$
 Disallow: /*.jpg$
 Disallow: /*.jpeg$
+Disallow: /*.svg$
 Disallow: /*.png$
 Disallow: /*.gif$
