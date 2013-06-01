@@ -429,7 +429,7 @@ if (($p + 1) * $admin_folder_limit < $n)
 
 <?php foreach ($list as $id => $item) { ?>
 <div class="site-config clearfix" id="<?php echo $item['id']; ?>">
-<input class="checkbox" type="checkbox" name="multiple[]" value="'.$item['id'].'">
+<input class="checkbox" type="checkbox" name="multiple[]" value="<?php echo $item['id']; ?>">
 
 <?php
   if ($item !== 'error' && $item['type'] == 'folder') {
