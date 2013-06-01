@@ -1,0 +1,6 @@
+.*
+data/*
+cache/*
+box_token.php
+!*/.gitkeep
+!.gitignore
