@@ -280,7 +280,7 @@ if ($_GET['id'] !== $box_root_folder_id) {
     if (isset($folder['new']) && $folder['new'] == 1)
       $new = array_merge($new, array($id => $folder));
   }
-  $folder_list = array_merge($new, $folder_list);
+  $list = array_merge($new, $list);
   $list = array_slice($list, $p * $admin_folder_limit, $admin_folder_limit);
   $single = false;
 }
