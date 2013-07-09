@@ -90,6 +90,7 @@ include($base_dir.'head.php');
 
 <body id="body-img">
 <div id="main-img">
+<div id="ss">&nbsp;</div>
 
 <div id="content-img">
 <div id="imgbox">
@@ -237,7 +238,9 @@ if ($info) {
 
 <div class="widget-container">
 <div id="view-count" class="view-count"><script src="<?php echo $base_url; ?>utils/stat.php?id=<?php echo $id; ?>&amp;update=#OTP#"></script>
+<?php if ($info) { ?>
 <span class="right" id="exif"><a href="javascript:;" onclick="show('image-exif')">Image details</a></span>
+<?php } ?>
 </div>
 
 <div id="shareimg"><table>
@@ -364,22 +367,22 @@ function togglefull() {
   $(window).resize();
 }
 $(document).ready(function () {$(document).bind('keydown', 'shift+f', function() {togglefull();});});
-$(window).load(function(){$(window).resize(function(){
-  if($(window).width()>480){
+<?php if (!$info) {echo '$(window).load(function(){';} ?>$(window).resize(function(){
+  if (window.innerWidth > document.getElementById("ss").offsetWidth) {
     $('#mainimg-img').css({ 
       position:'absolute', 
-      left: ($('#imgbox').outerWidth() - $('#mainimg-img').outerWidth())/2, 
-      top: ($('#imgbox').outerHeight() - $('#mainimg-img').outerHeight())/2 + $(document).scrollTop() 
+      left: ($('#imgbox').outerWidth() - <?php if ($info) {echo 'Math.min('.$size[0].',';} ?>$('#mainimg-img').outerWidth()<?php if ($info) {echo ')';} ?>)/2, 
+      top: ($('#imgbox').outerHeight() - <?php if ($info) {echo 'Math.min('.$size[1].',';} ?>$('#mainimg-img').outerHeight()<?php if ($info) {echo ')';} ?>)/2 + $(document).scrollTop() 
     });
     $('#download').css({ 
-      left: ($('#imgbox').outerWidth() - $('#mainimg-img').outerWidth())/2, 
-      top: ($('#imgbox').outerHeight() - $('#mainimg-img').outerHeight())/2 + $(document).scrollTop(),
+      left: ($('#imgbox').outerWidth() - <?php if ($info) {echo 'Math.min('.$size[0].',';} ?>$('#mainimg-img').outerWidth()<?php if ($info) {echo ')';} ?>)/2, 
+      top: ($('#imgbox').outerHeight() - <?php if ($info) {echo 'Math.min('.$size[1].',';} ?>$('#mainimg-img').outerHeight()<?php if ($info) {echo ')';} ?>)/2 + $(document).scrollTop(),
       width: $('#mainimg-img').outerWidth(),
       height: $('#mainimg-img').outerHeight()
     });
   };
 }); 
-$(window).resize();});
+$(window).resize();<?php if (!$info) {echo '});';} ?>
 function show(id) {
   if ((document.getElementById(id).style.display) == "block") {
     document.getElementById(id).style.display = "none";
@@ -391,7 +394,7 @@ function show(id) {
 <?php if (isset($map) && $map) { ?>
 showmap();
 function showmap() {
-  if (window.innerWidth <= 480 || (document.getElementById("image-exif").style.display) == "block") {
+  if (window.innerWidth <= document.getElementById("ss").offsetWidth || (document.getElementById("image-exif").style.display) == "block") {
     var mapquestosmUrl='https://{s}-s.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png',mapquestsatUrl='https://{s}-s.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png',subDomains=['otile1','otile2','otile3','otile4'],mapquestAttrib='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors | &copy; Tiles Courtesy of  <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img style="vertical-align:middle;" src="https://developer.mapquest.com/content/osm/mq_logo.png"> | &copy; Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency';
     var osm=L.tileLayer(mapquestosmUrl,{attribution:mapquestAttrib,subdomains:subDomains,maxZoom:18}),sat=L.tileLayer(mapquestsatUrl,{attribution:mapquestAttrib,subdomains:subDomains,maxZoom:11});
     var map=L.map('map',{center: new L.LatLng(<?php echo $lat; ?>,<?php echo $lng; ?>),zoom:14,layers:[sat,osm]});
