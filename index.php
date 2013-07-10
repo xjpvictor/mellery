@@ -81,6 +81,7 @@ include($base_dir.'head.php');
 
 <body>
 <div id="main" class="clearfix">
+<div id="ss">&nbsp;</div>
 
 <div class="logo">
 <h1><a href="<?php echo $base_url; ?>" title="<?php echo $site_name; ?>"><?php echo $site_name; ?></a></h1>
@@ -114,7 +115,7 @@ if ($folder_id !== $box_root_folder_id) {
 <?php } ?>
 
 <?php if ($folder_id !== $box_root_folder_id) { ?>
-<div class="view-count"><script src="<?php echo $base_url; ?>utils/stat.php?id=<?php echo $folder_id; ?>&amp;update=#OTP#"></script></div>
+<div class="view-count"><script src="<?php echo $base_url; ?>utils/view.php?id=<?php echo $folder_id; ?>&amp;update=#OTP#"></script></div>
 
 <div id="sharetop"><table>
 <tr>

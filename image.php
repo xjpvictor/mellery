@@ -237,7 +237,7 @@ if ($info) {
 </div>
 
 <div class="widget-container">
-<div id="view-count" class="view-count"><script src="<?php echo $base_url; ?>utils/stat.php?id=<?php echo $id; ?>&amp;update=#OTP#"></script>
+<div id="view-count" class="view-count"><script src="<?php echo $base_url; ?>utils/view.php?id=<?php echo $id; ?>&amp;update=#OTP#"></script>
 <?php if ($info) { ?>
 <span class="right" id="exif"><a href="javascript:;" onclick="show('image-exif')">Image details</a></span>
 <?php } ?>
@@ -366,19 +366,33 @@ function togglefull() {
   }
   $(window).resize();
 }
-$(document).ready(function () {$(document).bind('keydown', 'shift+f', function() {togglefull();});});
+if (window.innerWidth > document.getElementById("ss").offsetWidth) {
+  $(document).ready(function () {$(document).bind('keydown', 'shift+f', function() {togglefull();});});
+}
 <?php if (!$info) {echo '$(window).load(function(){';} ?>$(window).resize(function(){
   if (window.innerWidth > document.getElementById("ss").offsetWidth) {
+    var imgboxW = $('#imgbox').outerWidth();
+    var imgboxH = $('#imgbox').outerHeight();
+  <?php if ($info) { ?>
+    var mainimgImgR = <?php echo $size[0]; ?> / <?php echo $size[1]; ?>;
+    if ( mainimgImgR >= imgboxW / imgboxH) {
+      var mainimgImgW = Math.min(<?php echo $size[0]; ?>,imgboxW * 0.95);
+      var mainimgImgH = mainimgImgW / mainimgImgR;
+    } else {
+      var mainimgImgH = Math.min(<?php echo $size[1]; ?>,imgboxH * 0.95);
+      var mainimgImgW = mainimgImgH * mainimgImgR;
+    }
+  <?php } ?>
     $('#mainimg-img').css({ 
       position:'absolute', 
-      left: ($('#imgbox').outerWidth() - <?php if ($info) {echo 'Math.min('.$size[0].',';} ?>$('#mainimg-img').outerWidth()<?php if ($info) {echo ')';} ?>)/2, 
-      top: ($('#imgbox').outerHeight() - <?php if ($info) {echo 'Math.min('.$size[1].',';} ?>$('#mainimg-img').outerHeight()<?php if ($info) {echo ')';} ?>)/2 + $(document).scrollTop() 
+      left: ($('#imgbox').outerWidth() - <?php if ($info) {echo 'mainimgImgW';} else {echo '$(\'#mainimg-img\').outerWidth()';} ?>)/2, 
+      top: ($('#imgbox').outerHeight() - <?php if ($info) {echo 'mainimgImgH';} else {echo '$(\'#mainimg-img\').outerHeight()';} ?>)/2 + $(document).scrollTop() 
     });
     $('#download').css({ 
-      left: ($('#imgbox').outerWidth() - <?php if ($info) {echo 'Math.min('.$size[0].',';} ?>$('#mainimg-img').outerWidth()<?php if ($info) {echo ')';} ?>)/2, 
-      top: ($('#imgbox').outerHeight() - <?php if ($info) {echo 'Math.min('.$size[1].',';} ?>$('#mainimg-img').outerHeight()<?php if ($info) {echo ')';} ?>)/2 + $(document).scrollTop(),
-      width: $('#mainimg-img').outerWidth(),
-      height: $('#mainimg-img').outerHeight()
+      left: ($('#imgbox').outerWidth() - <?php if ($info) {echo 'mainimgImgW';} else {echo '$(\'#mainimg-img\').outerWidth()';} ?>)/2, 
+      top: ($('#imgbox').outerHeight() - <?php if ($info) {echo 'mainimgImgH';} else {echo '$(\'#mainimg-img\').outerHeight()';} ?>)/2 + $(document).scrollTop(),
+      width: <?php if ($info) {echo 'mainimgImgW';} else {echo '$(\'#mainimg-img\').outerWidth()';} ?>,
+      height: <?php if ($info) {echo 'mainimgImgH';} else {echo '$(\'#mainimg-img\').outerHeight()';} ?>
     });
   };
 }); 
