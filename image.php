@@ -52,8 +52,6 @@ if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSI
   $session_message = false;
 }
 
-$fullscreen_style = '@media screen and (min-width: 480px) {#sidebar-img{display:none;}'."\n".'#content-img{width:100%;}'."\n".'.info-img{width:100%;border-width:1px 0px 0px 0px;}}';
-
 if ($auth_admin !== 'pass') {
   $page_cache=$cache_dir.$folder_id.'-'.$id.'.html';
   if (file_exists($page_cache)) {
@@ -62,7 +60,9 @@ if ($auth_admin !== 'pass') {
       $output = file_get_contents($page_cache);
       $output = str_replace(array('#OTP#', '#IMGURL#'), array($otp, $match[1]), $output);
       if (isset($_SESSION['fullscreen']['id-'.$folder_id]))
-        $output = str_replace('#FULLSCREENSTYLE#', $fullscreen_style, $output);
+        $output = str_replace(array('#FULLSCREENSTYLE#', '#FULLSCREENCLASS#'), array($fullscreen_style, 'fullscreen'), $output);
+      else
+        $output = str_replace(array('#FULLSCREENCLASS#', '#FULLSCREENSIDEBAR#'), array('', 'style="display:block;"'), $output);
       echo $output;
       if ($session_message) {
         echo $session_str;
@@ -92,14 +92,14 @@ include($base_dir.'head.php');
 <div id="main-img">
 <div id="ss">&nbsp;</div>
 
-<div id="content-img">
+<div id="content-img" class="#FULLSCREENCLASS#">
 <div id="imgbox">
 <?php
 $file_name=$file_list['id-'.$id]['name'];
 $sequence_id=$file_list['id-'.$id]['sequence_id'];
 $name = substr($file_name, 0, strrpos($file_name, '.', -1));
 ?>
-<img id="mainimg-img" src="#IMGURL#" alt="<?php echo $name; ?>"/>
+<img id="mainimg-img" src="#IMGURL#" alt="<?php echo $name; ?>" style="max-width:95%;max-height:95%;"/>
 <a title="Download original image" target="_blank" href="#IMGURL#"><div id="download">&nbsp;</div></a>
 <a id="fullscreen-a" title="Fullscreen" href="javascript:;" onclick="togglefull()"><img src="<?php echo $base_url; ?>library/fullscreen.png" alt="fullscreen" id="fullscreen"/></a>
 
@@ -230,7 +230,7 @@ if ($info) {
 ?>
 </div>
 
-<div id="sidebar-img" class="sidebar"><div id="sidebar-wrap-img">
+<div id="sidebar-img" class="sidebar" #FULLSCREENSIDEBAR#><div id="sidebar-wrap-img">
 
 <div class="widget-container">
 <p id="parent"><a href="<?php echo $base_url; ?>?id=<?php echo $folder_id; ?>">&lt;&lt;&nbsp;Back to <?php if ($folder_id !== $box_root_folder_id) echo $folder_name; else echo 'homepage'; ?></a></p>
@@ -273,7 +273,7 @@ if ($info) {
 </div></div>
 
 <?php if ($seq && count($seq) > 1) { ?>
-  <div id="info-img-nav" class="info-img"><div id="imagename"><?php echo $name; ?> (<?php echo $k; ?> of <?php echo count($file_list); ?> images)</div>
+  <div id="info-img-nav" class="info-img #FULLSCREENCLASS#"><div id="imagename"><?php echo $name; ?> (<?php echo $k; ?> of <?php echo count($file_list); ?> images)</div>
   <div id="nav-img">
 <?php
   $i=0;
@@ -295,7 +295,7 @@ if ($info) {
 ?>
   </div>
 <?php } else { ?>
-  <div id="info-img" class="info-img"><div id="imagename"><?php echo $name; ?></div>
+  <div id="info-img" class="info-img #FULLSCREENCLASS#"><div id="imagename"><?php echo $name; ?></div>
 <?php } ?>
 
 <div id="message-img">
@@ -336,24 +336,20 @@ if (isset($map) && $map) {
 })(); 
 function full() {
   show('sidebar-img');
-  document.getElementById("content-img").style.width = "100%";
+  $("#content-img").addClass('fullscreen');
   if (document.getElementById("info-img-nav")) {
-    document.getElementById("info-img-nav").style.width = "100%";
-    document.getElementById("info-img-nav").style.borderWidth = "1px 0px 0px 0px";
+    $("#info-img-nav").addClass('fullscreen');
   } else {
-    document.getElementById("info-img").style.width = "100%";
-    document.getElementById("info-img").style.borderWidth = "1px 0px 0px 0px";
+    $("#info-img").addClass('fullscreen');
   }
 }
 function small() {
   show('sidebar-img');
-  document.getElementById("content-img").style.width = "60%";
+  $("#content-img").removeClass('fullscreen');
   if (document.getElementById("info-img-nav")) {
-    document.getElementById("info-img-nav").style.width = "60%";
-    document.getElementById("info-img-nav").style.borderWidth = "1px 1px 0px 0px";
+    $("#info-img-nav").removeClass('fullscreen');
   } else {
-    document.getElementById("info-img").style.width = "60%";
-    document.getElementById("info-img").style.borderWidth = "1px 1px 0px 0px";
+    $("#info-img").removeClass('fullscreen');
   }
 }
 function togglefull() {
@@ -443,7 +439,9 @@ if ($auth_admin !== 'pass') {
 
 $output = str_replace(array('#OTP#', '#IMGURL#'), array($otp, $match[1]), $output);
 if (isset($_SESSION['fullscreen']['id-'.$folder_id]))
-  $output = str_replace('#FULLSCREENSTYLE#', $fullscreen_style, $output);
+  $output = str_replace(array('#FULLSCREENCLASS#', '#FULLSCREENSIDEBAR#'), array('fullscreen', 'style="display:none;"'), $output);
+else
+  $output = str_replace(array('#FULLSCREENCLASS#', '#FULLSCREENSIDEBAR#'), array('', 'style="display:block;"'), $output);
 echo $output;
 
 ob_end_flush();

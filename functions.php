@@ -797,4 +797,22 @@ function movefile($id, $dest, $type) {
     return($new_id);
   }
 }
+function cut($str,$len){
+  $str = preg_replace('/[\r\n]+/',' ',$str);
+  $str = preg_replace('/&quot;/','"',$str);
+  $str = preg_replace('/&lt;/','<',$str);
+  $str = preg_replace('/&gt;/','>',$str);
+  preg_match_all('/(<[^>]+>)/',$str,$match);
+  $tagarray=$match[1];
+  foreach($tagarray as $tagstr ){
+	  $l=mb_strlen($tagstr,'utf-8');
+	  $len=$len+$l;
+  }
+  if ( mb_strlen($str,'utf-8') <= $len || $len < 1 ) {
+   return $str ;
+  } else {
+   $newstr=mb_substr($str,0,$len-3,'utf-8').'...';
+   return $newstr;
+  }
+}
 ?>

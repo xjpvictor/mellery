@@ -137,7 +137,7 @@ foreach ($file_list as $entry) {
   <div style="z-index:<?php echo rand(1,6); ?>" class="<?php echo $class; ?> container thumbnail tipTip" title="<?php echo $name; if (!empty($entry['description'])) echo '<br/><br/>',$entry['description']; ?>">
   <a href="<?php echo $base_url; ?>image.php?id=<?php echo $entry['id']; ?>&amp;fid=<?php echo $folder_id; ?>">
     <img src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $entry['id']; ?>&amp;fid=<?php echo $folder_id; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" title="<?php echo $name; ?>" />
-    <span class="thumbtitle"><?php echo $name; ?><br/><br/>#VIEW_COUNT_CHANGE_<?php echo $entry['id']; ?># views</span>
+    <span class="thumbtitle"><?php echo cut($name,18); ?><br/><br/>#VIEW_COUNT_CHANGE_<?php echo $entry['id']; ?># views</span>
   </a>
   </div>
 <?php
@@ -151,7 +151,7 @@ foreach ($file_list as $entry) {
   <div style="z-index:<?php echo rand(1,6); ?>" class="<?php echo $class; ?> container album tipTip" title="<?php echo $entry['name']; if (!empty($entry['description'])) echo '<br/><br/>',$entry['description'];?>">
   <a href="?id=<?php echo $entry['id']; ?>">
     <img src="<?php echo $base_url; ?>cover.php?id=<?php echo $entry['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $entry['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
-    <span class="albumtitle"><?php echo $entry['name']; ?><br/><br/><?php echo $count; ?> items (#VIEW_COUNT_CHANGE_<?php echo $entry['id']; ?># views)</span>
+    <span class="albumtitle"><?php echo cut($entry['name'],18); ?><br/><br/><?php echo $count; ?> items (#VIEW_COUNT_CHANGE_<?php echo $entry['id']; ?># views)</span>
   </a>
   </div>
 <?php
@@ -208,7 +208,7 @@ foreach ($file_list as $entry) {
     <div class="albumlist tipTip" title="<?php echo $folder['name']; if (!empty($folder['description'])) echo '<br/><br/>',$folder['description']; ?>">
     <a href="<?php echo $base_url; ?>?id=<?php echo $folder['id']; ?>">
       <img src="<?php echo $base_url; ?>cover.php?id=<?php echo $folder['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $folder['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
-      <span class="albumtitle"><?php echo $folder['name']; ?><br/><br/><?php echo $count; ?> images (#VIEW_COUNT_CHANGE_<?php echo $folder['id']; ?># views)</span>
+      <span class="albumtitle"><?php echo cut($folder['name'],18); ?><br/><br/><?php echo $count; ?> images (#VIEW_COUNT_CHANGE_<?php echo $folder['id']; ?># views)</span>
     </a>
     </div>
 <?php

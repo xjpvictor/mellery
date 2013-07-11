@@ -19,6 +19,7 @@ if (!defined('includeauth')) {
 </head>
 <body id="body-admin">
 <div id="main-admin" class="clearfix">
+<div id="ss">&nbsp;</div>
 <div class="logo">
 <h1><a href="<?php echo $base_url; ?>" title="<?php echo $site_name; ?>"><?php echo $site_name; ?></a></h1><p><?php echo $site_description; ?></p>
 </div>
