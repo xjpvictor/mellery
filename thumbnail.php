@@ -1,13 +1,13 @@
 <?php
 include_once('./data/config.php');
 include_once($base_dir.'functions.php');
-if(!array_key_exists('w',$_GET) || !array_key_exists('h',$_GET) || !array_key_exists('id',$_GET) || !array_key_exists('fid',$_GET) || !array_key_exists('otp',$_GET)) {
+if(!array_key_exists('w',$_GET) || !array_key_exists('h',$_GET) || !array_key_exists('id',$_GET) || !array_key_exists('otp',$_GET)) {
   header("HTTP/1.1 403 Forbidden");
   include($base_dir.'library/403.php');
   exit(0);
 }
 
-if ($_GET['otp'] !== substr(hash('sha256', $secret_key.$_GET['id'].'-'.$_GET['fid']), 13, 15) && !verifykey($_GET['otp'], $expire_image, null)) {
+if ($_GET['otp'] !== substr(hash('sha256', $secret_key.$_GET['id']), 13, 15) && !verifykey($_GET['otp'], $expire_image, null)) {
   header("HTTP/1.1 403 Forbidden");
   include($base_dir.'library/403.php');
   exit(0);
@@ -16,8 +16,9 @@ if ($_GET['otp'] !== substr(hash('sha256', $secret_key.$_GET['id'].'-'.$_GET['fi
 $header_string=boxauth();
 $box_cache=boxcache();
 $folder_list=getfolderlist();
+$info = getexif($_GET['id']);
+$folder_id = $info['parent_id'];
 
-$folder_id=$_GET['fid'];
 if (!array_key_exists('id-'.$folder_id,$folder_list)) {
   header("Status: 404 Not Found");
   include($base_dir.'library/404.php');

@@ -224,6 +224,8 @@ function getexif($id) {
   else {
     $tmp_file='/tmp/'.$id;
     downloadfile($tmp_file,$id);
+    $parent=getfileparent($id);
+    $parent_id=$parent['parent']['id'];
     if (file_exists($tmp_file) && filesize($tmp_file) !== 0) {
       $size = getimagesize($tmp_file);
       $type=$size['mime'];
@@ -240,9 +242,9 @@ function getexif($id) {
       $fsize = filesize($tmp_file);
       $fsize = getsize($fsize);
       if (isset($exif) && $exif) {
-        $info = array('size' => $size, 'fsize' => $fsize, 'exif' => $exif);
+        $info = array('size' => $size, 'fsize' => $fsize, 'exif' => $exif, 'parent_id' => $parent_id);
       } else {
-        $info = array('size' => $size, 'fsize' => $fsize);
+        $info = array('size' => $size, 'fsize' => $fsize, 'parent_id' => $parent_id);
       }
       file_put_contents($exif_file, '<?php return '.var_export($info, true).';');
     } else
@@ -445,6 +447,21 @@ function getfolderlist() {
   file_put_contents($data_file, "<?php return ".var_export($folder_list,true). "; ?>", LOCK_EX);
   chmod($data_file, 0600);
   return($folder_list);
+}
+function getfileparent($id) {
+  global $header_string;
+  $request_method="GET";
+  $url='https://api.box.com/2.0/files/'.$id;
+  $ch = curl_init();
+  curl_setopt($ch, CURLOPT_URL,$url);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, array($header_string));
+  curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+  $data=json_decode(curl_exec($ch),true);
+  curl_close($ch);
+  if (!isset($data) || empty($data) || (array_key_exists('type',$data) && $data['type'] == 'error'))
+    return('error');
+
+  return($data);
 }
 function coverbordercompose($dimg,$nw,$nh,$nbw,$nbh,$border_width,$thumb,$i) {
   $ntw = $nbw - 2 * $border_width;

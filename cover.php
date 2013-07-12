@@ -1,13 +1,13 @@
 <?php
 include_once('./data/config.php');
 include_once($base_dir.'functions.php');
-if(!array_key_exists('w',$_GET) || !array_key_exists('h',$_GET) || !array_key_exists('id',$_GET) || !array_key_exists('otp',$_GET)) {
+if(!array_key_exists('w',$_GET) || !array_key_exists('h',$_GET) || !array_key_exists('fid',$_GET) || !array_key_exists('otp',$_GET)) {
   header("HTTP/1.1 403 Forbidden");
   include($base_dir.'library/403.php');
   exit(0);
 }
 
-if ($_GET['otp'] !== substr(hash('sha256', $secret_key.$_GET['id']), 13, 15) && !verifykey($_GET['otp'], $expire_image, null)) {
+if ($_GET['otp'] !== substr(hash('sha256', $secret_key.$_GET['fid']), 13, 15) && !verifykey($_GET['otp'], $expire_image, null)) {
   header("HTTP/1.1 403 Forbidden");
   include($base_dir.'library/403.php');
   exit(0);
@@ -15,7 +15,7 @@ if ($_GET['otp'] !== substr(hash('sha256', $secret_key.$_GET['id']), 13, 15) && 
 
 $nw = $_GET['w'];
 $nh = $_GET['h'];
-$folder_id=$_GET['id'];
+$folder_id=$_GET['fid'];
 $dest='/tmp/'.$folder_id;
 $thumb_lock=$base_dir.'library/lock.png';
 

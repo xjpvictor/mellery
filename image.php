@@ -3,13 +3,12 @@ define('includeauth',true);
 define('isimage',true);
 include_once('./data/config.php');
 include_once($base_dir.'functions.php');
-if(!array_key_exists('id',$_GET) || !array_key_exists('fid',$_GET)) {
+if(!array_key_exists('id',$_GET)) {
   header("Status: 404 Not Found");
   include($base_dir.'library/404.php');
   exit(0);
 }
 $id=$_GET['id'];
-$folder_id = $_GET['fid'];
 
 $header_string=boxauth();
 
@@ -30,12 +29,14 @@ if (empty($match)) {
 $box_cache=boxcache();
 $folder_list=getfolderlist();
 $url=getpageurl();
+$info = getexif($id);
+$folder_id = $info['parent_id'];
 
 if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access']['public'][0] !== '1') {
   $auth=auth(array($username,'id-'.$folder_id));
   if ($auth !== 'pass') {
     header("HTTP/1.1 401 Unauthorized");
-    $redirect_url = $base_url.'access.php?id='.$folder_id.'&ref='.$url;
+    $redirect_url = $base_url.'access.php?fid='.$folder_id.'&ref='.$url;
     $redirect_message = 'Access restricted';
     include($base_dir.'library/redirect.php');
     exit(0);
@@ -121,9 +122,9 @@ if ($seq && count($seq) > 1) {
     $i++;
   }
   if ($n > 0)
-    $prev_url=$base_url.'image.php?id='.$seq[$n - 1]['id'].'&amp;fid='.$folder_id;
+    $prev_url=$base_url.'image.php?id='.$seq[$n - 1]['id'];
   if ($n < count($seq) - 1)
-    $next_url=$base_url.'image.php?id='.$seq[$n + 1]['id'].'&amp;fid='.$folder_id;
+    $next_url=$base_url.'image.php?id='.$seq[$n + 1]['id'];
   if (isset($prev_url))
     echo '<a title="Previous" href="'.$prev_url.'"><div id="left">&nbsp;</div></a>';
   if (isset($next_url))
@@ -135,7 +136,6 @@ if ($seq && count($seq) > 1) {
 
 <div id="image-exif"><a class="close" href="javascript:;" onclick="show('image-exif')">[Close]</a><br/>
 <?php
-$info = getexif($id);
 if ($info) {
   $size = $info['size'];
   $fsize = $info['fsize'];
@@ -233,7 +233,7 @@ if ($info) {
 <div id="sidebar-img" class="sidebar" #FULLSCREENSIDEBAR#><div id="sidebar-wrap-img">
 
 <div class="widget-container">
-<p id="parent"><a href="<?php echo $base_url; ?>?id=<?php echo $folder_id; ?>">&lt;&lt;&nbsp;Back to <?php if ($folder_id !== $box_root_folder_id) echo $folder_name; else echo 'homepage'; ?></a></p>
+<p id="parent"><a href="<?php echo $base_url; ?>?fid=<?php echo $folder_id; ?>">&lt;&lt;&nbsp;Back to <?php if ($folder_id !== $box_root_folder_id) echo $folder_name; else echo 'homepage'; ?></a></p>
 </div>
 
 <div class="widget-container">
@@ -259,7 +259,7 @@ if ($info) {
 <div class="widget-container">
 <div class="edit-img">
 <?php if ($auth_admin == 'pass') { ?>
-<a href="<?php echo $base_url; ?>admin/folder.php?id=<?php echo $folder_id; ?>&amp;p=<?php echo floor($k / $admin_folder_limit); ?>#<?php echo $id; ?>">Edit</a></div><div class="edit-img"><a href="<?php echo $base_url; ?>admin">Dashboard</a></div><div class="edit-img right"><a href="<?php echo $base_url; ?>admin/logout.php?ref=<?php echo $url; ?>">Log out</a>
+<a href="<?php echo $base_url; ?>admin/folder.php?fid=<?php echo $folder_id; ?>&amp;p=<?php echo floor($k / $admin_folder_limit); ?>#<?php echo $id; ?>">Edit</a></div><div class="edit-img"><a href="<?php echo $base_url; ?>admin">Dashboard</a></div><div class="edit-img right"><a href="<?php echo $base_url; ?>admin/logout.php?ref=<?php echo $url; ?>">Log out</a>
 <?php } else { ?>
 <a href="<?php echo $base_url; ?>admin/login.php?ref=<?php echo $url; ?>">Log in</a>
 <?php } ?>
@@ -281,7 +281,7 @@ if ($info) {
     $i++;
     $name = substr($item['name'], 0, strrpos($item['name'], '.', -1));
 ?>
-  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $item['id']; ?>&amp;fid=<?php echo $folder_id; ?>"><img class="item-img" <?php if ($item['id']==$id) { echo 'id="current-img" '; $n = $i; } ?> src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $item['id']; ?>&amp;fid=<?php echo $folder_id; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" title="<?php echo $name; ?>" width="150" height="150" /></a>
+  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $item['id']; ?>"><img class="item-img" <?php if ($item['id']==$id) { echo 'id="current-img" '; $n = $i; } ?> src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $item['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" title="<?php echo $name; ?>" width="150" height="150" /></a>
 <?php
   }
 ?>

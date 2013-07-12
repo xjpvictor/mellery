@@ -152,7 +152,7 @@ $otp_session=getkey($expire_session);
 }
 ?>
 <tr><td><p<?php if (!isset($general_access_code) || ($general_access_code !== '0' && empty($general_access_code))) {echo ' class="notset"'; $notify = true;} ?>>General album access code (Leave blank if not changed):</p></td><td><input type="password" name="general_access_code"></td></tr>
-<tr><td></td><td><p class="button" style="width:200px;"><a href="<?php echo $base_url; ?>admin/folder.php?code=1&amp;id=general&amp;otp=<?php echo $otp_session; ?>" target="_blank">Show current access code</a></p></td></tr>
+<tr><td></td><td><p class="button" style="width:200px;"><a href="<?php echo $base_url; ?>admin/folder.php?code=1&amp;fid=general&amp;otp=<?php echo $otp_session; ?>" target="_blank">Show current access code</a></p></td></tr>
 </table>
 </div>
 

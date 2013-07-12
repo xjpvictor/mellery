@@ -3,7 +3,7 @@ define('includeauth',true);
 include_once('./data/config.php');
 include_once($base_dir.'functions.php');
 
-if (!empty($_GET) && array_key_exists('id',$_GET) && array_key_exists('ref',$_GET))
+if (!empty($_GET) && array_key_exists('fid',$_GET) && array_key_exists('ref',$_GET))
   $url = urldecode($_GET['ref']);
 else {
   header("HTTP/1.1 403 Forbidden");
@@ -25,7 +25,7 @@ $header_string=boxauth();
 $box_cache=boxcache();
 $folder_list=getfolderlist();
 
-$folder_id=$_GET['id'];
+$folder_id=$_GET['fid'];
 if (!array_key_exists('id-'.$folder_id,$folder_list)) {
   header("Status: 404 Not Found");
   include($base_dir.'library/404.php');
@@ -94,7 +94,7 @@ if ($pass) {
 <div id="login-back">
 <div id="access-form">
 <p >You are trying to access restricted zone.<br/>Please enter access code:<br/></p>
-<form name="form1" method="post" action="<?php echo $base_url;?>access.php?id=<?php echo $folder_id; ?>&amp;ref=<?php echo urlencode($url); ?>">
+<form name="form1" method="post" action="<?php echo $base_url;?>access.php?fid=<?php echo $folder_id; ?>&amp;ref=<?php echo urlencode($url); ?>">
 <input required id="accesscode" name="accesscode" type="text">
 <input class="button" type="submit" value="Submit" onclick="SubmitForm();">
 </form>

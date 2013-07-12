@@ -19,7 +19,7 @@ $folder_list = getfolderlist();
 $data_file = $data_dir.'folder.php';
 
 if (!empty($_GET) && array_key_exists('code',$_GET)) {
-  if ($_GET['code'] == '1' && array_key_exists('id',$_GET) && !empty($_GET['id']) && array_key_exists('otp',$_GET)) {
+  if ($_GET['code'] == '1' && array_key_exists('fid',$_GET) && !empty($_GET['fid']) && array_key_exists('otp',$_GET)) {
     $otp_session=$_GET['otp'];
     if (!verifykey($otp_session,$expire_session,null)) {
       header("HTTP/1.1 403 Forbidden");
@@ -27,12 +27,12 @@ if (!empty($_GET) && array_key_exists('code',$_GET)) {
       exit(0);
     }
 
-    if ($_GET['id'] == 'general') {
+    if ($_GET['fid'] == 'general') {
       echo $general_access_code;
       exit(0);
     }
 
-    $id='id-'.$_GET['id'];
+    $id='id-'.$_GET['fid'];
     if (!array_key_exists($id,$folder_list)) {
       header("Status: 404 Not Found");
       include($base_dir.'library/404.php');
@@ -245,32 +245,32 @@ if (empty($_GET) || !array_key_exists('p', $_GET) || empty($_GET['p']))
   $p = '0';
 else
   $p = $_GET['p'];
-if (empty($_GET) || !array_key_exists('id', $_GET) || empty($_GET['id']) || !array_key_exists('id-'.$_GET['id'], $folder_list))
-  $_GET['id'] = $box_root_folder_id;
+if (empty($_GET) || !array_key_exists('fid', $_GET) || empty($_GET['fid']) || !array_key_exists('id-'.$_GET['fid'], $folder_list))
+  $_GET['fid'] = $box_root_folder_id;
 
 $move_list = '';
 $all_album_list = '<ul>';
 foreach ($folder_list as $id => $folder) {
   if ($folder['id'] == $box_root_folder_id) {
     $move_list .= '<option value="'.$folder['id'].'">Box.com</option>'."\n";
-    $all_album_list .= '<li><a href="'.$base_url.'admin/folder.php?id='.$folder['id'].'">Albums list</a></li>'."\n";
+    $all_album_list .= '<li><a href="'.$base_url.'admin/folder.php?fid='.$folder['id'].'">Albums list</a></li>'."\n";
   } else {
     $move_list .= '<option value="'.$folder['id'].'">'.$folder['name'].'</option>'."\n";
-    $all_album_list .= '<li><a href="'.$base_url.'admin/folder.php?id='.$folder['id'].'">'.$folder['name'].'</a></li>'."\n";
+    $all_album_list .= '<li><a href="'.$base_url.'admin/folder.php?fid='.$folder['id'].'">'.$folder['name'].'</a></li>'."\n";
   }
 }
 $all_album_list .= '</ul>';
 
-if ($_GET['id'] !== $box_root_folder_id) {
-  $folder = $folder_list['id-'.$_GET['id']];
-  $list = getfilelist($_GET['id'], null, null);
+if ($_GET['fid'] !== $box_root_folder_id) {
+  $folder = $folder_list['id-'.$_GET['fid']];
+  $list = getfilelist($_GET['fid'], null, null);
   $n = count($list);
   $list = array_slice($list, $p * $admin_folder_limit, $admin_folder_limit);
   $single = true;
 } else {
   if (array_key_exists('id-'.$box_root_folder_id, $folder_list))
     unset($folder_list['id-'.$box_root_folder_id]);
-  $list = getfilelist($_GET['id'], null, null);
+  $list = getfilelist($_GET['fid'], null, null);
   $n1 = count($folder_list);
   $n2 = count($list) - $n1;
   $folder_list = array_merge($list, $folder_list);
@@ -297,16 +297,16 @@ if ($single) {
 <?php } ?>
 <span class="edit-admin"><a href="javascript:;" onclick="show('admin-folder-<?php echo $folder['id']; ?>')">Manage Album</a></span>
 
-<form class="right" method="post" action="folder.php?ref=<?php echo urlencode($base_url.'admin/folder.php?id='.$_GET['id']); ?>">
+<form class="right" method="post" action="folder.php?ref=<?php echo urlencode($base_url.'admin/folder.php?fid='.$_GET['fid']); ?>">
 <input name="name">
-<input type="hidden" name="dest" value="<?php echo $_GET['id']; ?>">
+<input type="hidden" name="dest" value="<?php echo $_GET['fid']; ?>">
 <input type="hidden" name="otp" value="<?php echo $otp_session; ?>">
 <input class="button" type="submit" name="new" value="New Album">
 </form><br/>
 
 <div class="admin-folder clearfix" id="admin-folder-<?php echo $folder['id']; ?>" style="display:none;">
 
-<img class="admin-album" src="<?php echo $base_url; ?>cover.php?id=<?php echo $folder['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=<?php echo $otp; ?>" alt="<?php echo $folder['name']; ?>" title="<?php echo $folder['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+<img class="admin-album" src="<?php echo $base_url; ?>cover.php?fid=<?php echo $folder['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=<?php echo $otp; ?>" alt="<?php echo $folder['name']; ?>" title="<?php echo $folder['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
 
 <div class="admin-access">
 <form style="padding:10px;line-height:25px;vertical-align:middle;" method="POST" action="folder.php?ref=<?php echo $url; ?>">
@@ -322,7 +322,7 @@ if ($single) {
 <input type="hidden" name="single[<?php echo $folder['id']; ?>][general]" value="0"><label><input class="checkbox" type="checkbox" name="single[<?php echo $folder['id']; ?>][general]" value="1" <?php if ($access['general']['0'] == 1) echo ' checked'; ?>>Access with general access code</label><br/>
 <input type="hidden" name="single[<?php echo $folder['id']; ?>][specific]" value="0"><label><input class="checkbox" type="checkbox" name="single[<?php echo $folder['id']; ?>][specific]" value="1"<?php if ($access['specific']['0'] == 1) echo ' checked'; ?>>Specify an access code: </label><input id="specific-code-<?php echo $folder['id']; ?>" type="text" style="width:180px;font-size:12px;" name="single[<?php echo $folder['id']; ?>][specific-code]" value="Leave blank if not changed" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;"> or
 <input class="button" type="button" name="single[<?php echo $folder['id']; ?>][specific-code-generate]" value="Generate randomly" onclick="document.getElementById ('specific-code-<?php echo $folder['id']; ?>').value=(getRandomString(8))"><br/>
-<p class="button" style="margin-left:25px;width:180px;"><a href="<?php echo $base_url; ?>admin/folder.php?code=1&amp;id=<?php echo $folder['id']; ?>&amp;otp=<?php echo $otp_session; ?>" target="_blank">Show current access code</a></p>
+<p class="button" style="margin-left:25px;width:180px;"><a href="<?php echo $base_url; ?>admin/folder.php?code=1&amp;fid=<?php echo $folder['id']; ?>&amp;otp=<?php echo $otp_session; ?>" target="_blank">Show current access code</a></p>
 <input type="hidden" name="single[<?php echo $folder['id']; ?>][temporary]" value="0"><label><input class="checkbox" type="checkbox" name="single[<?php echo $folder['id']; ?>][temporary]" value="1"<?php if ($access['temporary']['0'] == 1) echo ' checked'; ?>>Grant temporary access for </label><input type="text" style="width:30px;" name="single[<?php echo $folder['id']; ?>][temporary-time]" value="24"> hours<br/><input id="temporary-code-<?php echo $folder['id']; ?>" type="text" style="margin-left:25px;width:180px;font-size:12px;" name="single[<?php echo $folder['id']; ?>][temporary-code]" value="Specify an access code" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;"> or <input class="button" type="button" name="single[<?php echo $folder['id']; ?>][temporary-code-generate]" value="Generate temporary access code" onclick="document.getElementById ('temporary-code-<?php echo $folder['id']; ?>').value=(getRandomString(8))"><br/>
 <p style="padding-left:25px;" class="small">* Specifying new access code will revoke the original one</p>
 </div>
@@ -338,9 +338,9 @@ if ($single) {
 
 <br/><p>Embed:</p>
 <p>Folder cover</p>
-<input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?id='.$folder['id'].'" target="_blank"><img src="'.$base_url.'cover.php?id='.$folder['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$folder['id']), 13, 15).'" alt="'.$folder['name'].'" title="'.$folder['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
+<input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?id='.$folder['id'].'" target="_blank"><img src="'.$base_url.'cover.php?fid='.$folder['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$folder['id']), 13, 15).'" alt="'.$folder['name'].'" title="'.$folder['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
 <p>Folder preview</p>
-<input class="name-conf" value="<?php echo htmlentities('<iframe src="'.$base_url.'frame.php?id='.$folder['id'].'&limit=6" width="540" height="480" allowtransparency="true" seamless scrolling="auto" frameborder="0">'.$folder['name'].'</iframe>'); ?>" onclick="this.select()"><br/>
+<input class="name-conf" value="<?php echo htmlentities('<iframe src="'.$base_url.'frame.php?fid='.$folder['id'].'&limit=6" width="540" height="480" allowtransparency="true" seamless scrolling="auto" frameborder="0">'.$folder['name'].'</iframe>'); ?>" onclick="this.select()"><br/>
 
 <br/><input class="button" type="submit" name="single[<?php echo $folder['id']; ?>][submit]" value="Update">
 <input class="button right delete" type="submit" name="single[<?php echo $folder['id']; ?>][submit]" value="Delete" onclick="return confirmAct();">
@@ -353,7 +353,7 @@ if ($single) {
 
 <div class="admin-folder-nav clearfix">
 <div class="admin-folder-parent">
-<a href="<?php echo $base_url; ?>admin/folder.php<?php if ($folder['parent']['id'] !== $box_root_folder_id) echo '?id=',$folder['parent']['id']; ?>">&lt;&lt;&nbsp;<?php if ($folder['parent']['id'] !== $box_root_folder_id) echo $folder['parent']['name']; else echo 'Albums list'; ?></a>
+<a href="<?php echo $base_url; ?>admin/folder.php<?php if ($folder['parent']['id'] !== $box_root_folder_id) echo '?fid=',$folder['parent']['id']; ?>">&lt;&lt;&nbsp;<?php if ($folder['parent']['id'] !== $box_root_folder_id) echo $folder['parent']['name']; else echo 'Albums list'; ?></a>
 <div class="edit-admin" id="jumpto">
 <a href="javascript:;" onclick="show('all-album-list')">Jump to..</a>
 <div id="all-album-list">
@@ -367,10 +367,10 @@ if ($single) {
 ?>
 <div class="admin-folder-nav clearfix">
 Albums list (<?php echo $n1; ?> albums<?php if ($n2 > 0) echo ', ',$n2,' images'; ?>)
-<form class="right" method="post" action="folder.php?ref=<?php echo urlencode($base_url.'admin/folder.php?id='.$_GET['id']); ?>">
+<form class="right" method="post" action="folder.php?ref=<?php echo urlencode($base_url.'admin/folder.php?fid='.$_GET['fid']); ?>">
 <input name="name">
 <input class="button" type="submit" name="new" value="New Album">
-<input type="hidden" name="dest" value="<?php echo $_GET['id']; ?>">
+<input type="hidden" name="dest" value="<?php echo $_GET['fid']; ?>">
 <input type="hidden" name="otp" value="<?php echo $otp_session; ?>">
 </form>
 </div>
@@ -381,16 +381,16 @@ Albums list (<?php echo $n1; ?> albums<?php if ($n2 > 0) echo ', ',$n2,' images'
 }
 ?>
 
-<form method="post" class="admin-folder-form right" action="folder.php?ref=<?php echo urlencode($base_url.'admin/folder.php?id='.$_GET['id']); ?>">
+<form method="post" class="admin-folder-form right" action="folder.php?ref=<?php echo urlencode($base_url.'admin/folder.php?fid='.$_GET['fid']); ?>">
 Items per page:<input class="admin-folder-limit" name="admin_folder_limit" value="<?php echo $admin_folder_limit; ?>">
 </form>
 
 <div id="pager-top">
 <?php
 if ($p > 0)
-  echo '<div class="prev"><a href="folder.php?id='.$_GET['id'].'&amp;p='.($p - 1).'" title="Previous">← Previous</a></div>';
+  echo '<div class="prev"><a href="folder.php?fid='.$_GET['fid'].'&amp;p='.($p - 1).'" title="Previous">← Previous</a></div>';
 if (($p + 1) * $admin_folder_limit < $n)
-  echo '<div class="next"><a href="folder.php?id='.$_GET['id'].'&amp;p='.($p + 1).'" title="Next">Next →</a></div>';
+  echo '<div class="next"><a href="folder.php?fid='.$_GET['fid'].'&amp;p='.($p + 1).'" title="Next">Next →</a></div>';
 ?>
 <div class="pager">Page <?php echo ($p + 1); ?> of <?php echo max(1, ceil($n / $admin_folder_limit)); ?></div>
 </div>
@@ -421,7 +421,7 @@ if (($p + 1) * $admin_folder_limit < $n)
 </select>
 </div>
 
-<input type="hidden" name="multi-move-ori" value="<?php echo $_GET['id']; ?>">
+<input type="hidden" name="multi-move-ori" value="<?php echo $_GET['fid']; ?>">
 <input class="button left multiform" type="submit" name="multi-submit" value="Move">
 <input class="button right delete" type="submit" name="multi-submit" value="Delete" onclick="return confirmAct();">
 
@@ -442,19 +442,19 @@ if (($p + 1) * $admin_folder_limit < $n)
    <span class="new">NEW</span>
 <?php } ?>
 
-   <span class="edit-admin"><a href="folder.php?id=<?php echo $item['id']; ?>">Manage Album</a></span>
-   <br/><img class="admin-album" src="<?php echo $base_url; ?>cover.php?id=<?php echo $item['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=<?php echo $otp; ?>" alt="<?php echo $item['name']; ?>" title="<?php echo $item['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+   <span class="edit-admin"><a href="folder.php?fid=<?php echo $item['id']; ?>">Manage Album</a></span>
+   <br/><img class="admin-album" src="<?php echo $base_url; ?>cover.php?fid=<?php echo $item['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=<?php echo $otp; ?>" alt="<?php echo $item['name']; ?>" title="<?php echo $item['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
 
 <?php
   } elseif ($item !== 'error' && $item['type'] == 'file') {
 ?>
 
-  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $item['id']; ?>&amp;fid=<?php echo $_GET['id']; ?>"><?php echo $item['name']; ?></a> ( <?php if (file_exists($data_dir.$item['id'])) echo file_get_contents($data_dir.$item['id'], true); else echo '0'; ?> views)
+  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $item['id']; ?>"><?php echo $item['name']; ?></a> ( <?php if (file_exists($data_dir.$item['id'])) echo file_get_contents($data_dir.$item['id'], true); else echo '0'; ?> views)
 
 <?php
     $item['name'] = substr($item['name'], 0, strrpos($item['name'], '.', -1));
 ?>
-  <br/><img class="admin-img" src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $item['id']; ?>&amp;fid=<?php echo $_GET['id']; ?>&amp;w=150&amp;h=150&amp;otp=<?php echo $otp; ?>" alt="<?php echo $item['name']; ?>" title="<?php echo $item['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+  <br/><img class="admin-img" src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $item['id']; ?>&amp;w=150&amp;h=150&amp;otp=<?php echo $otp; ?>" alt="<?php echo $item['name']; ?>" title="<?php echo $item['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
 
 <?php
   }
@@ -473,7 +473,7 @@ if (($p + 1) * $admin_folder_limit < $n)
     <input type="hidden" name="single[<?php echo $item['id']; ?>][general]" value="0"><label><input class="checkbox" type="checkbox" name="single[<?php echo $item['id']; ?>][general]" value="1" <?php if ($access['general']['0'] == 1) echo ' checked'; ?>>Access with general access code</label><br/>
     <input type="hidden" name="single[<?php echo $item['id']; ?>][specific]" value="0"><label><input class="checkbox" type="checkbox" name="single[<?php echo $item['id']; ?>][specific]" value="1"<?php if ($access['specific']['0'] == 1) echo ' checked'; ?>>Specify an access code: </label><input id="specific-code-<?php echo $id; ?>" type="text" style="width:180px;font-size:12px;" name="single[<?php echo $item['id']; ?>][specific-code]" value="Leave blank if not changed" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;"> or
    <input class="button" type="button" name="single[<?php echo $item['id']; ?>][specific-code-generate]" value="Generate randomly" onclick="document.getElementById ('specific-code-<?php echo $id; ?>').value=(getRandomString(8))"><br/>
-    <p class="button" style="margin-left:25px;width:180px;"><a href="<?php echo $base_url; ?>admin/folder.php?code=1&amp;id=<?php echo $item['id']; ?>&amp;otp=<?php echo $otp_session; ?>" target="_blank">Show current access code</a></p>
+    <p class="button" style="margin-left:25px;width:180px;"><a href="<?php echo $base_url; ?>admin/folder.php?code=1&amp;fid=<?php echo $item['id']; ?>&amp;otp=<?php echo $otp_session; ?>" target="_blank">Show current access code</a></p>
     <input type="hidden" name="single[<?php echo $item['id']; ?>][temporary]" value="0"><label><input class="checkbox" type="checkbox" name="single[<?php echo $item['id']; ?>][temporary]" value="1"<?php if ($access['temporary']['0'] == 1) echo ' checked'; ?>>Grant temporary access for </label><input type="text" style="width:30px;" name="single[<?php echo $item['id']; ?>][temporary-time]" value="24"> hours<br/><input id="temporary-code-<?php echo $id; ?>" type="text" style="margin-left:25px;width:180px;font-size:12px;" name="single[<?php echo $item['id']; ?>][temporary-code]" value="Specify an access code" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;"> or <input class="button" type="button" name="single[<?php echo $item['id']; ?>][temporary-code-generate]" value="Generate temporary access code" onclick="document.getElementById ('temporary-code-<?php echo $id; ?>').value=(getRandomString(8))"><br/>
     <p style="padding-left:25px;" class="small">* Specifying new access code will revoke the original one</p>
     </div>
@@ -496,11 +496,11 @@ if (($p + 1) * $admin_folder_limit < $n)
 <?php if ($item !== 'error' && $item['type'] == 'folder') { ?>
   <br/><p>Embed:</p>
   <p>Folder cover</p>
-  <input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?id='.$item['id'].'" target="_blank"><img src="'.$base_url.'cover.php?id='.$item['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$item['id']), 13, 15).'" alt="'.$item['name'].'" title="'.$item['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
+  <input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?id='.$item['id'].'" target="_blank"><img src="'.$base_url.'cover.php?fid='.$item['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$item['id']), 13, 15).'" alt="'.$item['name'].'" title="'.$item['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
   <p>Folder preview</p>
-  <input class="name-conf" value="<?php echo htmlentities('<iframe src="'.$base_url.'frame.php?id='.$item['id'].'&limit=6" width="540" height="480" allowtransparency="true" scrolling="auto" seamless frameborder="0">'.$item['name'].'</iframe>'); ?>" onclick="this.select()"><br/>
+  <input class="name-conf" value="<?php echo htmlentities('<iframe src="'.$base_url.'frame.php?fid='.$item['id'].'&limit=6" width="540" height="480" allowtransparency="true" scrolling="auto" seamless frameborder="0">'.$item['name'].'</iframe>'); ?>" onclick="this.select()"><br/>
 <?php } elseif ($item !== 'error' && $item['type'] == 'file') { ?>
-  <br/><p>Embed:</p><p>Image Thumbnail</p><input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'image.php?id='.$item['id'].'&fid='.$item['parent']['id'].'" target="_blank"><img src="'.$base_url.'thumbnail.php?id='.$item['id'].'&fid='.$item['parent']['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$item['id'].'-'.$item['parent']['id']), 13, 15).'" alt="'.$item['name'].'" title="'.$item['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
+  <br/><p>Embed:</p><p>Image Thumbnail</p><input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'image.php?id='.$item['id'].'" target="_blank"><img src="'.$base_url.'thumbnail.php?id='.$item['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$item['id']), 13, 15).'" alt="'.$item['name'].'" title="'.$item['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
 <?php } ?>
 
   <br/><input class="button" type="submit" name="single[<?php echo $item['id']; ?>][submit]" value="Update">
@@ -530,7 +530,7 @@ if (($p + 1) * $admin_folder_limit < $n)
 <?php echo $move_list; ?>
 </select>
 </div>
-<input type="hidden" name="multi-move-ori" value="<?php echo $_GET['id']; ?>">
+<input type="hidden" name="multi-move-ori" value="<?php echo $_GET['fid']; ?>">
 <input class="button left multiform" type="submit" name="multi-submit" value="Move">
 <input class="button right delete" type="submit" name="multi-submit" value="Delete" onclick="return confirmAct();">
 </div>
@@ -541,9 +541,9 @@ if (($p + 1) * $admin_folder_limit < $n)
 
 <?php
 if ($p > 0)
-  echo '<div id="prev"><a href="folder.php?id=',$_GET['id'],'&amp;p='.($p - 1),'" title="Previous">← Previous</a></div>';
+  echo '<div id="prev"><a href="folder.php?fid=',$_GET['fid'],'&amp;p='.($p - 1),'" title="Previous">← Previous</a></div>';
 if (($p + 1) * $admin_folder_limit < $n)
-  echo '<div id="next"><a href="folder.php?id=',$_GET['id'],'&amp;p='.($p + 1),'" title="Next">Next →</a></div>';
+  echo '<div id="next"><a href="folder.php?fid=',$_GET['fid'],'&amp;p='.($p + 1),'" title="Next">Next →</a></div>';
 ?>
 
 <div class="pager">Page <?php echo ++$p; ?> of <?php echo max(1, ceil($n / $admin_folder_limit)); ?></div>
@@ -553,11 +553,11 @@ if (($p + 1) * $admin_folder_limit < $n)
 <div class="admin-folder-nav clearfix">
 
 <?php if($single) { ?>
-<div class="admin-folder-parent" id="parent"><a href="<?php echo $base_url; ?>admin/folder.php<?php if ($folder['parent']['id'] !== $box_root_folder_id) echo '?id=',$folder['parent']['id']; ?>">&lt;&lt;&nbsp;<?php if ($folder['parent']['id'] !== $box_root_folder_id) echo $folder['parent']['name']; else echo 'Albums list'; ?></a>
+<div class="admin-folder-parent" id="parent"><a href="<?php echo $base_url; ?>admin/folder.php<?php if ($folder['parent']['id'] !== $box_root_folder_id) echo '?fid=',$folder['parent']['id']; ?>">&lt;&lt;&nbsp;<?php if ($folder['parent']['id'] !== $box_root_folder_id) echo $folder['parent']['name']; else echo 'Albums list'; ?></a>
 <span class="edit-admin"><a href="#jumpto" onclick="show('all-album-list')">Jump to..</a></span></div>
 <?php } ?>
 
-<form method="post" class="admin-folder-form right" action="folder.php?ref=<?php echo urlencode($base_url.'admin/folder.php?id='.$_GET['id']); ?>">
+<form method="post" class="admin-folder-form right" action="folder.php?ref=<?php echo urlencode($base_url.'admin/folder.php?fid='.$_GET['fid']); ?>">
 Items per page:<input class="admin-folder-limit" name="admin_folder_limit" value="<?php echo $admin_folder_limit; ?>">
 </form>
 </div>

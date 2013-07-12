@@ -1,13 +1,13 @@
 <?php
 include_once('./data/config.php');
 include_once($base_dir.'functions.php');
-if(!array_key_exists('id',$_GET) || !array_key_exists('limit',$_GET)) {
+if(!array_key_exists('fid',$_GET) || !array_key_exists('limit',$_GET)) {
   header("HTTP/1.1 403 Forbidden");
   include($base_dir.'library/403.php');
   exit(0);
 }
 
-$folder_id=$_GET['id'];
+$folder_id=$_GET['fid'];
 
 $header_string=boxauth();
 $box_cache=boxcache();
@@ -17,7 +17,7 @@ if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access
   $auth=auth(array($username,'id-'.$folder_id));
   if ($auth !== 'pass') {
     header("HTTP/1.1 401 Unauthorized");
-    $redirect_url = $base_url.'access.php?id='.$folder_id.'&ref='.$url;
+    $redirect_url = $base_url.'access.php?fid='.$folder_id.'&ref='.$url;
     $redirect_message = 'Access restricted';
     include($base_dir.'library/redirect.php');
     exit(0);
@@ -56,8 +56,7 @@ ob_start();
 <link rel="shortcut icon" href="/favicon.ico" />
 <style type="text/css" media="all">
 <!--
-@import url(https://fonts.googleapis.com/css?family=Droid+Sans:400,700);
-html, body, div, span, p, a {font-family:'Droid Sans', arial, Helvetica, sans-serif;}
+html, body, div, span, p, a {font-family:"Lucida Sans Unicode","Lucida Grande",FreeSans,Arial,Helvetica,sans-serif;}
 body{background:rgba(255,255,255,0.8);padding:0px;margin:0px;font-size:16px;line-height:1.0em;}
 #main{padding:10px 15px;border:1px solid #999;}
 .thumb{margin:5px;border: 1px solid rgba(255,255,255,0.25);border-radius: 3px;box-shadow: 0 0 3px #555;}
@@ -75,28 +74,28 @@ a{text-decoration:none;color:#32cd32;}
 <body>
 <div id="main">
 <p id="title">
-<a href="<?php echo $base_url,'?id=',$folder_id; ?>" target="_blank"><?php echo $folder_name; ?></a>
+<a href="<?php echo $base_url,'?fid=',$folder_id; ?>" target="_blank"><?php echo $folder_name; ?></a>
 </p>
 <?php
 foreach ($file_list as $entry) {
   if (array_key_exists('type',$entry) && $entry['type'] == 'file') {
     $name = substr($entry['name'], 0, strrpos($entry['name'], '.', -1));
 ?>
-  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $entry['id']; ?>&amp;fid=<?php echo $folder_id; ?>" target="_blank">
-    <img class="thumb" src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $entry['id']; ?>&amp;fid=<?php echo $folder_id; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" title="<?php echo $name; ?>" />
+  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $entry['id']; ?>" target="_blank">
+    <img class="thumb" src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $entry['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" title="<?php echo $name; ?>" />
   </a>
 <?php
   } elseif (array_key_exists('type',$entry) && $entry['type'] == 'folder') {
 ?>
-  <a href="?id=<?php echo $entry['id']; ?>" target="_blank">
-    <img class="thumb" src="<?php echo $base_url; ?>cover.php?id=<?php echo $entry['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $entry['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+  <a href="?fid=<?php echo $entry['id']; ?>" target="_blank">
+    <img class="thumb" src="<?php echo $base_url; ?>cover.php?fid=<?php echo $entry['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $entry['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
   </a>
 <?php
   }
 }
 ?>
 <p id="more">
-<a href="<?php echo $base_url,'?id=',$folder_id; ?>" target="_blank">More...</a>
+<a href="<?php echo $base_url,'?fid=',$folder_id; ?>" target="_blank">More...</a>
 </p>
 <p id="footer">
 Powered by <a href="https://github.com/xjpvictor/mellery" target="_blank">mellery</a> and <a href="https://www.box.com/" target="_blank">box</a>
