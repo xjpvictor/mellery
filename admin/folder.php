@@ -253,10 +253,10 @@ $all_album_list = '<ul>';
 foreach ($folder_list as $id => $folder) {
   if ($folder['id'] == $box_root_folder_id) {
     $move_list .= '<option value="'.$folder['id'].'">Box.com</option>'."\n";
-    $all_album_list .= '<li><a href="'.$base_url.'admin/folder.php?fid='.$folder['id'].'">Albums list</a></li>'."\n";
+    $all_album_list .= '<li><span><a href="'.$base_url.'admin/folder.php?fid='.$folder['id'].'">Albums list</a></span></li>'."\n";
   } else {
     $move_list .= '<option value="'.$folder['id'].'">'.$folder['name'].'</option>'."\n";
-    $all_album_list .= '<li><a href="'.$base_url.'admin/folder.php?fid='.$folder['id'].'">'.$folder['name'].'</a></li>'."\n";
+    $all_album_list .= '<li><span><a href="'.$base_url.'admin/folder.php?fid='.$folder['id'].'">'.$folder['name'].'</a></span></li>'."\n";
   }
 }
 $all_album_list .= '</ul>';

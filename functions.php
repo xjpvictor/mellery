@@ -183,23 +183,17 @@ function createthumbnail($dimg,$source_file,$nw,$nh) {
   }
   if (!isset($simg) || !$simg)
     return(false);
-  $wm = $w/$nw;
-  $hm = $h/$nh;
+  $wm = max($w,$nw)/$nw;
+  $hm = max($h,$nh)/$nh;
   $h_height = $nh/2;
   $w_height = $nw/2;
-  if($w> $h) {
-      $adjusted_width = $w / $hm;
-      $half_width = $adjusted_width / 2;
-      $int_width = $half_width - $w_height;
-      imagecopyresampled($dimg,$simg,-$int_width,0,0,0,$adjusted_width,$nh,$w,$h);
-  } elseif(($w <$h) || ($w == $h)) {
-      $adjusted_height = $h / $wm;
-      $half_height = $adjusted_height / 2;
-      $int_height = $half_height - $h_height;
-      imagecopyresampled($dimg,$simg,0,-$int_height,0,0,$nw,$adjusted_height,$w,$h);
-  } else {
-      imagecopyresampled($dimg,$simg,0,0,0,0,$nw,$nh,$w,$h);
-  }
+  $adjusted_width = $w / min($hm,$wm);
+  $adjusted_height = $h / min($hm,$wm);
+  $half_width = $adjusted_width / 2;
+  $half_height = $adjusted_height / 2;
+  $int_width = $half_width - $w_height;
+  $int_height = $half_height - $h_height;
+  imagecopyresampled($dimg,$simg,-$int_width,-$int_height,0,0,$adjusted_width,$adjusted_height,$w,$h);
   return($dimg);
 }
 function getsize($fsize) {

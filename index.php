@@ -179,7 +179,7 @@ foreach ($file_list as $entry) {
 <div class="widget-container">
 <div id="shareside">
 <a href="https://twitter.com/share" class="twitter-share-button"></a>
-<div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+<div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div><br/>
 <div class="g-plusone" data-size="medium"></div>
 </div>
 </div>
