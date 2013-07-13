@@ -226,7 +226,7 @@ if ($info) {
       echo '</div><div id="map"></div>';
     }
   }
-  echo '<div id="meta-div"><span id="meta-border"></span><p id="meta">',date('d. F Y', strtotime($info['created_at'])),' by ',$username;
+  echo '<div id="meta-div"><span id="meta-border"></span><p id="meta">Uploaded ',date('d. F Y', strtotime($info['created_at'])),' by ',$username;
   if ($nolicense)
     echo ' with all rights reserved';
   else {

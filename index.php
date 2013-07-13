@@ -277,7 +277,7 @@ if (isset($my_page) && isset($my_page['widget'])) {
 <?php
 if ($folder_id !== $box_root_folder_id) {
   echo '<span id="meta-border"></span>';
-  echo '<p id="meta">',date('d. F Y', strtotime($folder['created_at'])),' by ',$username;
+  echo '<p id="meta">Uploaded ',date('d. F Y', strtotime($folder['created_at'])),' by ',$username;
   if ($nolicense)
     echo ' with all rights reserved';
   else {
