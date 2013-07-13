@@ -226,7 +226,20 @@ if ($info) {
       echo '</div><div id="map"></div>';
     }
   }
-  echo '<div id="meta-div"><span id="meta-border"></span><p id="meta">',date('d. F Y', strtotime($info['created_at'])),' by ',$username,' </p></div>';
+  echo '<div id="meta-div"><span id="meta-border"></span><p id="meta">',date('d. F Y', strtotime($info['created_at'])),' by ',$username;
+  if ($nolicense)
+    echo ' with all rights reserved';
+  else {
+    $cc_str = 'by';
+    if ($nc)
+      $cc_str .= '-nc';
+    if ($sa == '0')
+      $cc_str .= '-nd';
+    elseif ($sa == '2')
+      $cc_str .= '-sa';
+    echo ' under <a href="',$cc_url,$cc_str,'/',$cc_ver,'" target="_blank" rel="license">CC ',strtoupper($cc_str),' ',$cc_ver,'</a>';
+  }
+  echo '</p></div>';
 }
 ?>
 </div>

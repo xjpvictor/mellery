@@ -148,6 +148,18 @@ $otp_session=getkey($expire_session);
 </div>
 
 <div class="site-config clearfix">
+<p class="config-title" onclick="show('conf-share')">Share</p>
+<div id="conf-share" style="display:none;">
+<table>
+<tr><td><p<?php if (!isset($nolicense) || ($nolicense !== '0' && empty($nolicense))) {echo ' class="notset"'; $notify = true;} ?>>All rights reserved:</p></td><td><input type="hidden" name="nolicense" value="0"><input class="checkbox" type="checkbox" name="nolicense" value="1"<?php if (isset($nolicense) && $nolicense == '1') echo " checked"; ?> onclick="showTable('cc')"></td></tr>
+</table>
+<table id="cc" <?php if (isset($nolicense) && $nolicense == '1') echo 'style="display:none;"'; elseif (isset($nolicense) && $nolicense == '0') echo 'style="display:table;"'; ?>>
+<tr><td><p>Creative Common License</p></td><td><label><input class="radio" type="radio" name="sa" value="0" <?php if (isset($sa) && $sa == '0') echo " checked"; ?> />Disallow Modification</label><br/><label><input class="radio" type="radio" name="sa" value="1" <?php if (isset($sa) && $sa == '1') echo " checked"; ?> />Allow Modification</label><br/><label><input class="radio" type="radio" name="sa" value="2" <?php if (isset($sa) && $sa == '2') echo " checked"; ?> />Allow Modification only if shared alike</label><br/><input type="hidden" name="nc" value="0" /><label><input class="checkbox" type="checkbox" name="nc" value="1" <?php if (isset($nc) && $nc == '1') echo " checked"; ?> />No Commercial uses</label></td></tr>
+</table>
+</div>
+</div>
+
+<div class="site-config clearfix">
 <p class="config-title" onclick="show('conf-sec')">Security</p>
 <div id="conf-sec" style="display:none;">
 <table>

@@ -33,6 +33,9 @@ return array(
     'lock_timeout' => '60',
     'use_cdn' => '0',
     'thumb_cdn' => '1',
+    'nolicense' => '0',
+    'sa' => '0',
+    'nc' => '0',
   ),
   'fix' => array(
     'admin_folder_limit' => '25',
@@ -43,6 +46,8 @@ return array(
     'cache_dir' => '$base_dir.\'cache/\'',
     'data_dir' => '$base_dir.\'data/\'',
     'box_token_file' => '$base_dir.\'box_token.php\'',
+    'cc_url' => 'http://creativecommons.org/licenses/',
+    'cc_ver' => '3.0',
   ),
 );
 ?>

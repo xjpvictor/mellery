@@ -253,8 +253,21 @@ if (isset($my_page) && isset($my_page['widget'])) {
 <div id="sharebottom">
 <?php
 if ($folder_id !== $box_root_folder_id) {
-  echo '<span id="meta-border"></span><p id="meta">',date('d. F Y', strtotime($folder['created_at'])),' by ',$username,' </p><br/>';
-  echo '<p>Embed:</p>';
+  echo '<span id="meta-border"></span>';
+  echo '<p id="meta">',date('d. F Y', strtotime($folder['created_at'])),' by ',$username;
+  if ($nolicense)
+    echo ' with all rights reserved';
+  else {
+    $cc_str = 'by';
+    if ($nc)
+      $cc_str .= '-nc';
+    if ($sa == '0')
+      $cc_str .= '-nd';
+    elseif ($sa == '2')
+      $cc_str .= '-sa';
+    echo ' under <a href="',$cc_url,$cc_str,'/',$cc_ver,'" target="_blank" rel="license">CC ',strtoupper($cc_str),' ',$cc_ver,'</a>';
+  }
+  echo '</p><br/><p>Embed:</p>';
   echo '<input class="name-conf" value="',htmlentities('<iframe src="'.$base_url.'frame.php?fid='.$folder_id.'&limit=6" width="540" height="480" allowtransparency="true" seamless scrolling="auto" frameborder="0">'.$folder['name'].'</iframe>'),'" onclick="this.select()"><br/><br/>';
 }
 ?>

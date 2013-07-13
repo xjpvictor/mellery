@@ -316,8 +316,8 @@ if ($single) {
 <p>Description:</p><textarea rows="3" class="description-conf" name="single[<?php echo $folder['id']; ?>][description]"><?php echo $folder['description']; ?></textarea><br/>
 
 <p>Access:</p>
-<label><input class="checkme radio" type="radio" name="single[<?php echo $folder['id']; ?>][public]" value="1"<?php if ($access['public'][0] == 1) echo ' checked'; ?> onclick="hide('extra-<?php echo $folder['id']; ?>')">Public access</label><br/>
-<label><input class="checkme radio" type="radio" name="single[<?php echo $folder['id']; ?>][public]" value="0"<?php if ($access['public'][0] == 0 && ($access['general'][0] == 1 || $access['specific'][0] == 1 || $access['temporary'][0] == 1)) echo ' checked'; ?> onclick="show('extra-<?php echo $folder['id']; ?>')">Restrict access</label><br/>
+<label><input class="radio" type="radio" name="single[<?php echo $folder['id']; ?>][public]" value="1"<?php if ($access['public'][0] == 1) echo ' checked'; ?> onclick="hide('extra-<?php echo $folder['id']; ?>')">Public access</label><br/>
+<label><input class="radio" type="radio" name="single[<?php echo $folder['id']; ?>][public]" value="0"<?php if ($access['public'][0] == 0 && ($access['general'][0] == 1 || $access['specific'][0] == 1 || $access['temporary'][0] == 1)) echo ' checked'; ?> onclick="show('extra-<?php echo $folder['id']; ?>')">Restrict access</label><br/>
 
 <div class="extra" id="extra-<?php echo $folder['id']; ?>">
 <input type="hidden" name="single[<?php echo $folder['id']; ?>][general]" value="0"><label><input class="checkbox" type="checkbox" name="single[<?php echo $folder['id']; ?>][general]" value="1" <?php if ($access['general'][0] == 1) echo ' checked'; ?>>Access with general access code</label><br/>
@@ -328,7 +328,7 @@ if ($single) {
 <p style="padding-left:25px;" class="small">* Specifying new access code will revoke the original one</p>
 </div>
 
-<label><input class="checkme radio" type="radio" name="single[<?php echo $folder['id']; ?>][public]" value="private"<?php if ($access['public']['0'] == 0 && $access['general'][0] == 0 && $access['specific'][0] == 0 && $access['temporary'][0] == 0) echo ' checked'; ?> onclick="hide('extra-<?php echo $folder['id']; ?>')">Private</label><br/>
+<label><input class="radio" type="radio" name="single[<?php echo $folder['id']; ?>][public]" value="private"<?php if ($access['public']['0'] == 0 && $access['general'][0] == 0 && $access['specific'][0] == 0 && $access['temporary'][0] == 0) echo ' checked'; ?> onclick="hide('extra-<?php echo $folder['id']; ?>')">Private</label><br/>
 
 <p>Location:</p>
 <div class="dropdown drop-move">
@@ -467,8 +467,8 @@ if (($p + 1) * $admin_folder_limit < $n)
 
 <?php if ($item !== 'error' && $item['type'] == 'folder') { ?>
     <p>Access:</p>
-    <label><input class="checkme radio" type="radio" name="single[<?php echo $item['id']; ?>][public]" value="1"<?php if ($access['public'][0] == 1) echo ' checked'; ?> onclick="hide('extra-<?php echo $id; ?>')">Public access</label><br/>
-    <label><input class="checkme radio" type="radio" name="single[<?php echo $item['id']; ?>][public]" value="0"<?php if ($access['public'][0] == 0 && ($access['general'][0] == 1 || $access['specific'][0] == 1 || $access['temporary'][0] == 1)) echo ' checked'; ?> onclick="show('extra-<?php echo $id; ?>')">Restrict access</label><br/>
+    <label><input class="radio" type="radio" name="single[<?php echo $item['id']; ?>][public]" value="1"<?php if ($access['public'][0] == 1) echo ' checked'; ?> onclick="hide('extra-<?php echo $id; ?>')">Public access</label><br/>
+    <label><input class="radio" type="radio" name="single[<?php echo $item['id']; ?>][public]" value="0"<?php if ($access['public'][0] == 0 && ($access['general'][0] == 1 || $access['specific'][0] == 1 || $access['temporary'][0] == 1)) echo ' checked'; ?> onclick="show('extra-<?php echo $id; ?>')">Restrict access</label><br/>
 
     <div class="extra" id="extra-<?php echo $id; ?>">
     <input type="hidden" name="single[<?php echo $item['id']; ?>][general]" value="0"><label><input class="checkbox" type="checkbox" name="single[<?php echo $item['id']; ?>][general]" value="1" <?php if ($access['general'][0] == 1) echo ' checked'; ?>>Access with general access code</label><br/>
@@ -478,7 +478,7 @@ if (($p + 1) * $admin_folder_limit < $n)
     <input type="hidden" name="single[<?php echo $item['id']; ?>][temporary]" value="0"><label><input class="checkbox" type="checkbox" name="single[<?php echo $item['id']; ?>][temporary]" value="1"<?php if ($access['temporary'][0] == 1) echo ' checked'; ?>>Grant temporary access for </label><input type="text" style="width:30px;" name="single[<?php echo $item['id']; ?>][temporary-time]" value="24"> hours<br/><input id="temporary-code-<?php echo $id; ?>" type="text" style="margin-left:25px;width:180px;font-size:12px;" name="single[<?php echo $item['id']; ?>][temporary-code]" value="Specify an access code" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;"> or <input class="button" type="button" name="single[<?php echo $item['id']; ?>][temporary-code-generate]" value="Generate temporary access code" onclick="document.getElementById ('temporary-code-<?php echo $id; ?>').value=(getRandomString(8))"><br/>
     <p style="padding-left:25px;" class="small">* Specifying new access code will revoke the original one</p>
     </div>
-    <label><input class="checkme radio" type="radio" name="single[<?php echo $item['id']; ?>][public]" value="private"<?php if ($access['public']['0'] == 0 && $access['general'][0] == 0 && $access['specific'][0] == 0 && $access['temporary'][0] == 0) echo ' checked'; ?> onclick="hide('extra-<?php echo $id; ?>')">Private</label><br/>
+    <label><input class="radio" type="radio" name="single[<?php echo $item['id']; ?>][public]" value="private"<?php if ($access['public']['0'] == 0 && $access['general'][0] == 0 && $access['specific'][0] == 0 && $access['temporary'][0] == 0) echo ' checked'; ?> onclick="hide('extra-<?php echo $id; ?>')">Private</label><br/>
     <input type="hidden" name="single[<?php echo $item['id']; ?>][type]" value="folder">
 
 <?php } elseif ($item !== 'error' && $item['type'] == 'file') { ?>
