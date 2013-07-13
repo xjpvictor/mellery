@@ -136,7 +136,7 @@ foreach ($file_list as $entry) {
 ?>
   <div style="z-index:<?php echo rand(1,6); ?>" class="<?php echo $class; ?> container thumbnail tipTip" title="<?php echo $name; if (!empty($entry['description'])) echo '<br/><br/>',$entry['description']; ?>">
   <a href="<?php echo $base_url; ?>image.php?id=<?php echo $entry['id']; ?>">
-    <img src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $entry['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" title="<?php echo $name; ?>" />
+    <img src="<?php echo getcontenturl($folder_id); ?>thumbnail.php?id=<?php echo $entry['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" title="<?php echo $name; ?>" />
     <span class="thumbtitle"><?php echo cut($name,18); ?><br/><br/>#VIEW_COUNT_CHANGE_<?php echo $entry['id']; ?># views</span>
   </a>
   </div>
@@ -150,7 +150,7 @@ foreach ($file_list as $entry) {
 ?>
   <div style="z-index:<?php echo rand(1,6); ?>" class="<?php echo $class; ?> container album tipTip" title="<?php echo $entry['name']; if (!empty($entry['description'])) echo '<br/><br/>',$entry['description'];?>">
   <a href="?fid=<?php echo $entry['id']; ?>">
-    <img src="<?php echo $base_url; ?>cover.php?fid=<?php echo $entry['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $entry['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+    <img src="<?php echo getcontenturl($entry['id']); ?>cover.php?fid=<?php echo $entry['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $entry['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
     <span class="albumtitle"><?php echo cut($entry['name'],18); ?><br/><br/><?php echo $count; ?> items (#VIEW_COUNT_CHANGE_<?php echo $entry['id']; ?># views)</span>
   </a>
   </div>
@@ -178,7 +178,7 @@ foreach ($file_list as $entry) {
 <?php if ($folder_id == $box_root_folder_id) { ?>
 <div class="widget-container">
 <div id="shareside">
-<a href="https://twitter.com/share" class="twitter-share-button"></a>
+<a href="https://twitter.com/share" class="twitter-share-button"></a><br/>
 <div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div><br/>
 <div class="g-plusone" data-size="medium"></div>
 </div>
@@ -207,7 +207,7 @@ foreach ($file_list as $entry) {
 ?>
     <div class="albumlist tipTip" title="<?php echo $folder['name']; if (!empty($folder['description'])) echo '<br/><br/>',$folder['description']; ?>">
     <a href="<?php echo $base_url; ?>?fid=<?php echo $folder['id']; ?>">
-      <img src="<?php echo $base_url; ?>cover.php?fid=<?php echo $folder['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $folder['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+      <img src="<?php echo getcontenturl($folder['id']); ?>cover.php?fid=<?php echo $folder['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $folder['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
       <span class="albumtitle"><?php echo cut($folder['name'],18); ?><br/><br/><?php echo $count; ?> images (#VIEW_COUNT_CHANGE_<?php echo $folder['id']; ?># views)</span>
     </a>
     </div>
@@ -253,6 +253,7 @@ if (isset($my_page) && isset($my_page['widget'])) {
 <div id="sharebottom">
 <?php
 if ($folder_id !== $box_root_folder_id) {
+  echo '<span id="meta-border"></span><p id="meta">',date('d. F Y', strtotime($folder['created_at'])),' by ',$username,' </p><br/>';
   echo '<p>Embed:</p>';
   echo '<input class="name-conf" value="',htmlentities('<iframe src="'.$base_url.'frame.php?fid='.$folder_id.'&limit=6" width="540" height="480" allowtransparency="true" seamless scrolling="auto" frameborder="0">'.$folder['name'].'</iframe>'),'" onclick="this.select()"><br/><br/>';
 }

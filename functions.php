@@ -220,6 +220,8 @@ function getexif($id) {
     downloadfile($tmp_file,$id);
     $parent=getfileparent($id);
     $parent_id=$parent['parent']['id'];
+    $created_at = $parent['created_at'];
+    $modified_at = $parent['modified_at'];
     if (file_exists($tmp_file) && filesize($tmp_file) !== 0) {
       $size = getimagesize($tmp_file);
       $type=$size['mime'];
@@ -236,9 +238,9 @@ function getexif($id) {
       $fsize = filesize($tmp_file);
       $fsize = getsize($fsize);
       if (isset($exif) && $exif) {
-        $info = array('size' => $size, 'fsize' => $fsize, 'exif' => $exif, 'parent_id' => $parent_id);
+        $info = array('size' => $size, 'fsize' => $fsize, 'exif' => $exif, 'parent_id' => $parent_id, 'created_at' => $created_at, 'modified_at' => $modified_at);
       } else {
-        $info = array('size' => $size, 'fsize' => $fsize, 'parent_id' => $parent_id);
+        $info = array('size' => $size, 'fsize' => $fsize, 'parent_id' => $parent_id, 'created_at' => $created_at, 'modified_at' => $modified_at);
       }
       file_put_contents($exif_file, '<?php return '.var_export($info, true).';');
     } else
@@ -302,7 +304,7 @@ function getthumb($file_id,$nw,$nh) {
 function getlist($folder_id) {
   global $header_string;
   $request_parameter = array(
-    "fields" => "name,sequence_id,description,parent"
+    "fields" => "name,sequence_id,description,parent,created_at,modified_at"
   );
   $request_method="GET";
   $request_url='https://api.box.com/2.0/folders/'.$folder_id;
@@ -322,7 +324,7 @@ function getlist($folder_id) {
   $item_collection = array();
   for ($i = 0; $i * $limit <= $n; $i++) {
     $request_parameter = array(
-      "fields" => "name,sequence_id,description,parent",
+      "fields" => "name,sequence_id,description,parent,created_at,modified_at",
       "limit" => $limit,
       "offset" => $i * $limit
     );
@@ -825,5 +827,15 @@ function cut($str,$len){
    $newstr=mb_substr($str,0,$len-3,'utf-8').'...';
    return $newstr;
   }
+}
+function getcontenturl($folder_id){
+  global $use_cdn, $cdn_url, $thumb_cdn, $box_root_folder_id, $folder_list, $base_url;
+  if ($use_cdn == '1' && !empty($cdn_url)) {
+    if (!isset($folder_id))
+      return $cdn_url;
+    elseif (($folder_id == $box_root_folder_id || $folder_list['id-'.$folder_id]['access']['public'][0] == '1') && (isset($thumb_cdn) && $thumb_cdn == '1'))
+      return $cdn_url;
+  }
+  return $base_url;
 }
 ?>

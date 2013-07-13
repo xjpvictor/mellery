@@ -61,7 +61,7 @@ if ($auth_admin !== 'pass') {
       $output = file_get_contents($page_cache);
       $output = str_replace(array('#OTP#', '#IMGURL#'), array($otp, $match[1]), $output);
       if (isset($_SESSION['fullscreen']['id-'.$folder_id]))
-        $output = str_replace(array('#FULLSCREENSTYLE#', '#FULLSCREENCLASS#'), array($fullscreen_style, 'fullscreen'), $output);
+        $output = str_replace(array('#FULLSCREENCLASS#', '#FULLSCREENSIDEBAR#'), array('fullscreen', 'style="display:none;"'), $output);
       else
         $output = str_replace(array('#FULLSCREENCLASS#', '#FULLSCREENSIDEBAR#'), array('', 'style="display:block;"'), $output);
       echo $output;
@@ -102,7 +102,7 @@ $name = substr($file_name, 0, strrpos($file_name, '.', -1));
 ?>
 <img id="mainimg-img" src="#IMGURL#" alt="<?php echo $name; ?>" style="max-width:95%;max-height:95%;"/>
 <a title="Download original image" target="_blank" href="#IMGURL#"><div id="download">&nbsp;</div></a>
-<a id="fullscreen-a" title="Fullscreen" href="javascript:;" onclick="togglefull()"><img src="<?php echo $base_url; ?>library/fullscreen.png" alt="fullscreen" id="fullscreen"/></a>
+<a id="fullscreen-a" title="Fullscreen" href="javascript:;" onclick="togglefull()"><img src="<?php echo $cu; ?>library/fullscreen.png<?php if ($cu !== $base_url) echo '?ver=',filemtime($base_dir.'library/fullscreen.png'); ?>" alt="fullscreen" id="fullscreen"/></a>
 
 <?php
 foreach ($file_list as $key => $value) {
@@ -226,11 +226,16 @@ if ($info) {
       echo '</div><div id="map"></div>';
     }
   }
+  echo '<div id="meta-div"><span id="meta-border"></span><p id="meta">',date('d. F Y', strtotime($info['created_at'])),' by ',$username,' </p></div>';
 }
 ?>
 </div>
 
 <div id="sidebar-img" class="sidebar" #FULLSCREENSIDEBAR#><div id="sidebar-wrap-img">
+
+<div class="widget-container">
+<h1 id="logo-img"><a href="<?php echo $base_url; ?>" title="<?php echo $site_name; ?>"><?php echo $site_name; ?></a></h1>
+</div>
 
 <div class="widget-container">
 <p id="parent"><a href="<?php echo $base_url; ?>?fid=<?php echo $folder_id; ?>">&lt;&lt;&nbsp;Back to <?php if ($folder_id !== $box_root_folder_id) echo $folder_name; else echo 'homepage'; ?></a></p>
@@ -281,7 +286,7 @@ if ($info) {
     $i++;
     $name = substr($item['name'], 0, strrpos($item['name'], '.', -1));
 ?>
-  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $item['id']; ?>"><img class="item-img" <?php if ($item['id']==$id) { echo 'id="current-img" '; $n = $i; } ?> src="<?php echo $base_url; ?>thumbnail.php?id=<?php echo $item['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" title="<?php echo $name; ?>" width="150" height="150" /></a>
+  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $item['id']; ?>"><img class="item-img" <?php if ($item['id']==$id) { echo 'id="current-img" '; $n = $i; } ?> src="<?php echo getcontenturl($folder_id); ?>thumbnail.php?id=<?php echo $item['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" title="<?php echo $name; ?>" width="150" height="150" /></a>
 <?php
   }
 ?>
@@ -308,7 +313,7 @@ if ($info) {
 
 <?php
 if (isset($map) && $map) {
-  echo '<link rel="stylesheet" href="',$base_url,'library/map/leaflet.css" /><script src="',$base_url,'library/map/leaflet.js"></script>';
+  echo '<link rel="stylesheet" href="',getcontenturl(null),'library/map/leaflet.css" /><script src="',getcontenturl(null),'library/map/leaflet.js"></script>';
 }
 ?>
 

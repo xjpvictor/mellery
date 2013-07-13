@@ -43,8 +43,11 @@ if ($folder == 'error' || !array_key_exists('id-'.$_GET['id'],$folder)) {
 
 $seq_id = $folder['id-'.$_GET['id']]['sequence_id'];
 $file=getthumb($_GET['id'].'-'.$seq_id,$_GET['w'],$_GET['h']);
-if ($file) {
+if ($file && file_exists($file)) {
   header('Content-type: image/jpeg');
+  header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($file)).' GMT');
+  header('Expires: '.gmdate('D, d M Y H:i:s', filemtime($file) + max($expire_image, 86400)).' GMT');
+  header('Cache-Control: max-age='.max($expire_image, 86400));
   readfile($file);
 } else {
   header("Status: 404 Not Found");

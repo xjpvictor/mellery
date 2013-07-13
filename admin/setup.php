@@ -47,15 +47,14 @@ if (!empty($_POST)) {
       $base_dir = $_POST['base_dir'];
     }
   }
+  $secret_key = generaterandomstring(16);
   $config_key = include_once($base_dir.'admin/config_key.php');
   $config_file = $base_dir.'data/config.php';
   file_put_contents($config_file, '<?php'."\n", LOCK_EX);
   chmod($config_file, 0600);
 
-  foreach ($config_key as $key) {
-    if ($key == 'home_page' || $key == 'site_description' || $key == 'disqus_shortname') {
-      $$key = '';
-    } elseif (array_key_exists($key,$_POST) && ($_POST[$key] == '0' || !empty($_POST[$key]))) {
+  foreach ($config_key['mandatory'] as $key) {
+    if (array_key_exists($key,$_POST) && ($_POST[$key] == '0' || !empty($_POST[$key]))) {
       $_POST[$key] = str_replace('"','\"',$_POST[$key]);
       if ($key == 'password') {
         if ($_POST[$key] == $_POST[$key.'_1'])
@@ -67,13 +66,7 @@ if (!empty($_POST)) {
           exit(0);
         }
       } elseif ($key == 'google_auth') {
-        $secret_key = generaterandomstring(16);
-        $otp_recovery_code = generaterandomstring(8);
-        if ($_POST[$key] == '1') {
-          $_SESSION['showotpqr'] = true;
-          $_SESSION['otp_recovery_code'] = $otp_recovery_code;
-        }
-        $$key = $_POST[$key];
+        $$key = '0';
       } else
         $$key = $_POST[$key];
       if (($key == 'base_url' || $key == 'base_dir') && substr($$key, -1) !== '/') {
@@ -87,8 +80,16 @@ if (!empty($_POST)) {
     }
     file_put_contents($config_file, '$'.$key.' = "'.$$key.'";'."\n", FILE_APPEND | LOCK_EX);
   }
+  foreach ($config_key['optional'] as $key => $value) {
+    file_put_contents($config_file, '$'.$key.' = "'.$value.'";'."\n", FILE_APPEND | LOCK_EX);
+  }
+  foreach ($config_key['preset'] as $key => $value) {
+    file_put_contents($config_file, '$'.$key.' = "'.$value.'";'."\n", FILE_APPEND | LOCK_EX);
+  }
+  foreach ($config_key['fix'] as $key => $value) {
+    file_put_contents($config_file, '$'.$key.' = "'.$value.'";'."\n", FILE_APPEND | LOCK_EX);
+  }
 
-  file_put_contents($config_file, '$admin_folder_limit = \'25\';'."\n".'$secret_key = \''.$secret_key.'\';'."\n".'$otp_recovery_code = \''.hash('sha256',$otp_recovery_code).'\';'."\n".'$w = \'150\';'."\n".'$h = \'150\';'."\n".'$cache_dir = $base_dir.\'cache/\';'."\n".'$data_dir = $base_dir.\'data/\';'."\n".'$box_token_file = $base_dir.\'box_token.php\';'."\n".'?>', FILE_APPEND | LOCK_EX);
   session_destroy();
   session_name('_mellery');
   session_start();
@@ -127,13 +128,6 @@ if (!empty($_POST)) {
 <tr><td><p>Site name:</p></td><td><input required name="site_name"></td></tr>
 <tr><td><p>Base url for Mellery:</p></td><td><input required name="base_url" value="<?php echo $_SERVER['SERVER_NAME']; ?>"></td></tr>
 <tr><td><p>Installation directory for Mellery:</p></td><td><input required name="base_dir" value="<?php echo realpath('../').'/'; ?>"></td></tr>
-<tr><td><p>Maximum width of thumbnails:</p></td><td><input required name="w_max" value="300"></td></tr>
-<tr><td><p>Maximum height of thumbnails:</p></td><td><input required name="h_max" value="300"></td></tr>
-<tr><td><p>Thumbnails shown per page:</p></td><td><input required name="limit" value="25"></td></tr>
-<tr><td><p>Image expiration time (s, 0 for not expiring):</p></td><td><input required name="expire_image" value="86400"></td></tr>
-<tr><td><p>Cache expiration time (days):</p></td><td><input required name="cache_expire" value="1"></td></tr>
-<tr><td><p>Expired cache clean frequency (days, 0 for manually cleaning):</p></td><td><input required name="cache_clean" value="1"</td></tr>
-<tr><td><p>Show map if geolocation is available:</p></td><td><input type="hidden" name="usemap" value="0"><input class="checkbox" type="checkbox" name="usemap" value="1" checked></td></tr>
 </table>
 </div>
 
@@ -154,18 +148,7 @@ if (!empty($_POST)) {
 <tr><td><p>Email:</p></td><td><input required name="email"></td></tr>
 <tr><td><p>Password:</p></td><td><input required id="password" type="password" name="password"></td></tr>
 <tr><td><p>Re-type password:</p></td><td><input required id="password-1" type="password" name="password_1"></td></tr>
-<tr><td><p>Use Google 2-step authentication:</p></td><td><input type="hidden" name="google_auth" value="0"><input class="checkbox" type="checkbox" name="google_auth" value="1" checked></td></tr>
 <tr><td><p>General album access code:</p></td><td><input required type="password" name="general_access_code"></td></tr>
-</table>
-</div>
-
-<div class="site-config">
-<p class="config-title">Security</p>
-<table>
-<tr><td><p>Session expiration time (s):</p></td><td><input required name="expire_session" value="1800"></td></tr>
-<tr><td><p>Use cookie on HTTPS only:</p></td><td><input type="hidden" name="https" value="0"><input class="checkbox" type="checkbox" name="https" value="1" checked></td></tr>
-<tr><td><p>Maximum access retry in one minutes (0 for unlimited):</p></td><td><input required name="retry" value="5"></td></tr>
-<tr><td><p>Exessive access retry lock down period (s, 0 for always locked):</p></td><td><input required name="lock_timeout" value="60"></td></tr>
 </table>
 </div>
 
