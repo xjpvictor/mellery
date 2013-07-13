@@ -193,6 +193,29 @@ foreach ($file_list as $entry) {
 </div>
 <?php } ?>
 
+<?php
+if ($folder_id == $box_root_folder_id) {
+  echo '<div class="widget-container">';
+  echo '<h3 class="widget-title">License</h3>';
+  echo '<div>';
+  $cc_str = '';
+  if ($nolicense)
+    echo 'All rights reserved';
+  else {
+    $cc_str = 'by';
+    if ($nc)
+      $cc_str .= '-nc';
+    if ($sa == '0')
+      $cc_str .= '-nd';
+    elseif ($sa == '2')
+      $cc_str .= '-sa';
+    echo '<a href="',$cc_url,$cc_str,'/',$cc_ver,'" target="_blank" rel="license">CC ',strtoupper($cc_str),' ',$cc_ver,'</a>';
+  }
+  echo '</div>';
+  echo '</div>';
+}
+?>
+
 <?php if ($folder_id !== $box_root_folder_id) { ?>
 <div class="widget-container">
 <h3 class="widget-title">Albums</h3>
