@@ -24,7 +24,7 @@ if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access
     header("HTTP/1.1 401 Unauthorized");
     $redirect_url = $base_url.'access.php?fid='.$folder_id.'&ref='.$url;
     $redirect_message = 'Access restricted';
-    include($base_dir.'library/redirect.php');
+    include($base_dir.'includes/redirect.php');
     exit(0);
   }
 }
@@ -68,7 +68,7 @@ if ($auth_admin !== 'pass') {
 $file_list=getfilelist($folder_id,$limit,$p);
 if (!array_key_exists('id-'.$folder_id,$folder_list) || $file_list == 'error' || ($p !== '0' && empty($file_list))) {
   header("Status: 404 Not Found");
-  include($base_dir.'library/404.php');
+  include($base_dir.'includes/404.php');
   exit(0);
 }
 

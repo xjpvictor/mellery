@@ -110,7 +110,7 @@ if (!empty($_POST)) {
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
 <title>Setup | Mellery</title>
 <link rel="profile" href="http://gmpg.org/xfn/11" />
-<link rel="stylesheet" href="../library/style.css" type="text/css" media="all" />
+<link rel="stylesheet" href="../content/style.css" type="text/css" media="all" />
 <link rel="shortcut icon" href="/favicon.ico" />
 </head>
 <body>
@@ -160,8 +160,8 @@ if (!empty($_POST)) {
 </div>
 </div>
 </div>
-<script type="text/javascript" src="../library/sha256.js"></script>
-<script type="text/javascript" src="../library/jquery.js"></script>
+<script type="text/javascript" src="../content/sha256.js"></script>
+<script type="text/javascript" src="../content/jquery.js"></script>
 <script type="text/javascript">
     function SubmitForm() {
       if (document.getElementById("password").value) {

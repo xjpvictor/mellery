@@ -265,7 +265,7 @@ function gps2Num($coordPart) {
 }
 function getthumb($file_id,$nw,$nh) {
   global $header_string,$secret_key,$cache_dir,$base_dir,$w_max,$h_max;
-  $thumb_na=$base_dir.'library/na.jpg';
+  $thumb_na=$base_dir.'content/na.jpg';
   preg_match('/(\d+)-(\d+)/',$file_id,$match);
   $id=$match[1];
   $nw = min($nw, $w_max);

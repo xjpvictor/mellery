@@ -9,7 +9,7 @@ if ($auth !== 'pass') {
   header("HTTP/1.1 401 Unauthorized");
   $redirect_url = $base_url.'admin/login.php?ref='.$url;
   $redirect_message = 'Access restricted';
-  include($base_dir.'library/redirect.php');
+  include($base_dir.'includes/redirect.php');
   exit(0);
 }
   
@@ -23,7 +23,7 @@ if (!empty($_GET) && array_key_exists('code',$_GET)) {
     $otp_session=$_GET['otp'];
     if (!verifykey($otp_session,$expire_session,null)) {
       header("HTTP/1.1 403 Forbidden");
-      include($base_dir.'library/403.php');
+      include($base_dir.'includes/403.php');
       exit(0);
     }
 
@@ -35,7 +35,7 @@ if (!empty($_GET) && array_key_exists('code',$_GET)) {
     $id='id-'.$_GET['fid'];
     if (!array_key_exists($id,$folder_list)) {
       header("Status: 404 Not Found");
-      include($base_dir.'library/404.php');
+      include($base_dir.'includes/404.php');
       exit(0);
     }
 
@@ -47,7 +47,7 @@ if (!empty($_GET) && array_key_exists('code',$_GET)) {
     exit(0);
   } else {
     header("HTTP/1.1 403 Forbidden");
-    include($base_dir.'library/403.php');
+    include($base_dir.'includes/403.php');
     exit(0);
   }
 }
@@ -68,7 +68,7 @@ if (!empty($_POST) && array_key_exists('otp',$_POST)) {
   $otp_session=$_POST['otp'];
   if (!verifykey($otp_session,$expire_session,null)) {
     header("HTTP/1.1 403 Forbidden");
-    include($base_dir.'library/403.php');
+    include($base_dir.'includes/403.php');
     exit(0);
   }
 
@@ -163,7 +163,7 @@ if (!empty($_POST) && array_key_exists('otp',$_POST)) {
           $update_folder = false;
         } else {
           header("Status: 404 Not Found");
-          include($base_dir.'library/404.php');
+          include($base_dir.'includes/404.php');
           exit(0);
         }
 

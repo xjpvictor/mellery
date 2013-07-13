@@ -25,7 +25,7 @@ Load();
 </head>
 <body bgcolor="white">
 <center><h1>404 Not Found</h1></center>
-<center><img src="<?php echo $base_url; ?>library/404.jpg" height="300px"/></center>
+<center><img src="<?php echo $base_url; ?>content/404.jpg" height="300px"/></center>
 <center><p>Will be automatically redirected to <a href="<?php echo $base_url; ?>"><?php echo $site_name; ?></a> in <span id="count-down"></span> s.</p></center>
 </body>
 </html>

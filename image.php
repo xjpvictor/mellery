@@ -5,7 +5,7 @@ include_once('./data/config.php');
 include_once($base_dir.'functions.php');
 if(!array_key_exists('id',$_GET)) {
   header("Status: 404 Not Found");
-  include($base_dir.'library/404.php');
+  include($base_dir.'includes/404.php');
   exit(0);
 }
 $id=$_GET['id'];
@@ -22,7 +22,7 @@ curl_close($ch);
 preg_match('/Location:\ (\S+)/',$data,$match);
 if (empty($match)) {
   header("Status: 404 Not Found");
-  include($base_dir.'library/404.php');
+  include($base_dir.'includes/404.php');
   exit(0);
 }
 
@@ -38,7 +38,7 @@ if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access
     header("HTTP/1.1 401 Unauthorized");
     $redirect_url = $base_url.'access.php?fid='.$folder_id.'&ref='.$url;
     $redirect_message = 'Access restricted';
-    include($base_dir.'library/redirect.php');
+    include($base_dir.'includes/redirect.php');
     exit(0);
   }
 }
@@ -78,7 +78,7 @@ if ($auth_admin !== 'pass') {
 $file_list=getfilelist($folder_id,null,null);
 if ($file_list == 'error' || !array_key_exists('id-'.$id,$file_list) || !array_key_exists('id-'.$folder_id,$folder_list)) {
   header("Status: 404 Not Found");
-  include($base_dir.'library/404.php');
+  include($base_dir.'includes/404.php');
   exit(0);
 }
 
@@ -102,7 +102,7 @@ $name = substr($file_name, 0, strrpos($file_name, '.', -1));
 ?>
 <img id="mainimg-img" src="#IMGURL#" alt="<?php echo $name; ?>" style="max-width:95%;max-height:95%;"/>
 <a title="Download original image" target="_blank" href="#IMGURL#"><div id="download">&nbsp;</div></a>
-<a id="fullscreen-a" title="Fullscreen" href="javascript:;" onclick="togglefull()"><img src="<?php echo $cu; ?>library/fullscreen.png<?php if ($cu !== $base_url) echo '?ver=',filemtime($base_dir.'library/fullscreen.png'); ?>" alt="fullscreen" id="fullscreen"/></a>
+<a id="fullscreen-a" title="Fullscreen" href="javascript:;" onclick="togglefull()"><img src="<?php echo $cu; ?>content/fullscreen.png<?php if ($cu !== $base_url) echo '?ver=',filemtime($base_dir.'content/fullscreen.png'); ?>" alt="fullscreen" id="fullscreen"/></a>
 
 <?php
 foreach ($file_list as $key => $value) {
@@ -326,7 +326,7 @@ if ($info) {
 
 <?php
 if (isset($map) && $map) {
-  echo '<link rel="stylesheet" href="',getcontenturl(null),'library/map/leaflet.css" /><script src="',getcontenturl(null),'library/map/leaflet.js"></script>';
+  echo '<link rel="stylesheet" href="',getcontenturl(null),'content/map/leaflet.css" /><script src="',getcontenturl(null),'content/map/leaflet.js"></script>';
 }
 ?>
 

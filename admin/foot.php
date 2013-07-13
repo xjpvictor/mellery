@@ -18,7 +18,7 @@ if (!defined('includeauth')) {
 </div>
 </div>
 
-<script type="text/javascript" src="<?php echo $base_url; ?>library/jquery.js"></script>
+<script type="text/javascript" src="<?php echo $base_url; ?>content/jquery.js"></script>
 <?php if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) { ?>
 <div id="delaymessage">
 <?php echo $_SESSION['message']; $_SESSION['message'] = ''; ?>

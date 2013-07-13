@@ -1,10 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
-<head><title>Redirecting..</title>
+<head><title>403 Forbidden</title>
 <link rel="shortcut icon" href="/favicon.ico" />
-<script type="text/javascript">
-var stoptime=2;
-var My_Url="<?php echo $redirect_url; ?>"
+<script language="javascript">
+var stoptime=5;
+var My_Url="<?php echo $base_url; ?>";
 godomain();
 function godomain()
 {setTimeout("gourl()",stoptime*1000);}
@@ -21,11 +21,11 @@ function doUpdate(num)
   document.getElementById('count-down').innerHTML = num ;
 }
 Load();
-</script>
+</script> 
 </head>
 <body bgcolor="white">
-<center><h1><?php echo $redirect_message; ?></h1></center>
-<center><img src="<?php echo $base_url; ?>library/redirect.png" height="250px"/></center>
-<center><p>Will be automatically <a href="<?php echo $redirect_url; ?>">redirected</a> in <span id="count-down"></span> s.</p></center>
+<center><h1>403 Forbidden</h1></center>
+<center><img src="<?php echo $base_url; ?>content/404.jpg" height="300px"/></center>
+<center><p>Will be automatically redirected to <a href="<?php echo $base_url; ?>"><?php echo $site_name; ?></a> in <span id="count-down"></span> s.</p></center>
 </body>
 </html>

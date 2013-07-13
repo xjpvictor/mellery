@@ -47,7 +47,7 @@ if (!empty($_POST)) {
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
 <title>Password reset | <?php echo $site_name; ?></title>
 <link rel="profile" href="http://gmpg.org/xfn/11" />
-<link rel="stylesheet" href="<?php echo $base_url; ?>library/style.css" type="text/css" media="all" />
+<link rel="stylesheet" href="<?php echo $base_url; ?>content/style.css" type="text/css" media="all" />
 <link rel="shortcut icon" href="/favicon.ico" />
 </head>
 <body id="login-body">
@@ -81,7 +81,7 @@ if (!empty($_POST)) {
 </div>
 </div>
 </div>
-<script type="text/javascript" src="<?php echo $base_url; ?>library/sha256.js"></script>
+<script type="text/javascript" src="<?php echo $base_url; ?>content/sha256.js"></script>
 <script type="text/javascript">
 function SubmitForm() {
   if (document.getElementById("password") && document.getElementById("password").value) {

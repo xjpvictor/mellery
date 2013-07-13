@@ -2,7 +2,8 @@ User-agent: *
 Disallow: /cache/
 Disallow: /data/
 Disallow: /admin/
-Disallow: /library/
+Disallow: /content/
+Disallow: /includes/
 Disallow: /utils/
 Disallow: */thumbnail.php*
 Disallow: */cover.php*

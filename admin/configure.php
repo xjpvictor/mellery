@@ -9,7 +9,7 @@ if ($auth !== 'pass') {
   header("HTTP/1.1 401 Unauthorized");
   $redirect_url = $base_url.'admin/login.php?ref='.$url;
   $redirect_message = 'Access restricted';
-  include($base_dir.'library/redirect.php');
+  include($base_dir.'includes/redirect.php');
   exit(0);
 }
 
@@ -236,7 +236,7 @@ $otp_session=getkey($expire_session);
 </div>
 </form>
 </div>
-<script type="text/javascript" src="<?php echo $base_url; ?>library/sha256.js"></script>
+<script type="text/javascript" src="<?php echo $base_url; ?>content/sha256.js"></script>
 <script type="text/javascript">
     function SubmitForm() {
       if (document.getElementById("password").value) {
