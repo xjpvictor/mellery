@@ -264,8 +264,8 @@ function gps2Num($coordPart) {
     return floatval($parts[0]) / floatval($parts[1]);
 }
 function getthumb($file_id,$nw,$nh) {
-  global $header_string,$secret_key,$cache_dir,$base_dir,$w_max,$h_max;
-  $thumb_na=$base_dir.'content/na.jpg';
+  global $header_string,$secret_key,$cache_dir,$content_dir,$w_max,$h_max;
+  $thumb_na=$content_dir.'na.jpg';
   preg_match('/(\d+)-(\d+)/',$file_id,$match);
   $id=$match[1];
   $nw = min($nw, $w_max);
@@ -749,7 +749,7 @@ function updatedetail($id, $details, $type) {
   return($response);
 }
 function deletefile($id, $type) {
-  global $header_string, $data_dir;
+  global $header_string, $stat_dir;
   $url = 'https://api.box.com/2.0/'.$type.'s/'.$id;
   if ($type == 'folder')
     $url .= '?recursive=true';
@@ -761,8 +761,8 @@ function deletefile($id, $type) {
   curl_setopt($ch, CURLOPT_HTTPHEADER, array($header_string));
   $response=json_decode(curl_exec($ch), true);
   curl_close($ch);
-  if (file_exists($data_dir.$id))
-    unlink($data_dir.$id);
+  if (file_exists($stat_dir.$id))
+    unlink($stat_dir.$id);
   return($response);
 }
 function newfolder($name, $dest) {
@@ -781,7 +781,7 @@ function newfolder($name, $dest) {
   return($response);
 }
 function movefile($id, $dest, $type) {
-  global $header_string, $data_dir;
+  global $header_string, $data_dir, $stat_dir;
   $url = 'https://api.box.com/2.0/'.$type.'s'.$id;
   $postfield = json_encode(array('parent' => array('id' => $dest)));
   $ch=curl_init();
@@ -797,9 +797,9 @@ function movefile($id, $dest, $type) {
     return(false);
   else {
     $new_id = $response['id'];
-    if (file_exists($data_dir.$id)) {
-      rename($data_dir.$id, $data_dir.$new_id);
-      chmod($data_dir.$new_id, 0600);
+    if (file_exists($stat_dir.$id)) {
+      rename($stat_dir.$id, $stat_dir.$new_id);
+      chmod($stat_dir.$new_id, 0600);
     }
     if ($type == 'folder') {
       $folder_list = getfolderlist();

@@ -7,7 +7,7 @@ if (!empty($_GET) && array_key_exists('fid',$_GET) && array_key_exists('ref',$_G
   $url = urldecode($_GET['ref']);
 else {
   header("HTTP/1.1 403 Forbidden");
-  include($base_dir.'includes/403.php');
+  include($includes_dir.'403.php');
   exit(0);
 }
 
@@ -15,7 +15,7 @@ if (ipblock($_SERVER['REMOTE_ADDR'])) {
   header("HTTP/1.1 401 Unauthorized");
   $redirect_url = $base_url;
   $redirect_message = 'Too many failures. Please wait for some time.';
-  include($base_dir.'includes/redirect.php');
+  include($includes_dir.'redirect.php');
   exit(0);
 }
 
@@ -28,7 +28,7 @@ $folder_list=getfolderlist();
 $folder_id=$_GET['fid'];
 if (!array_key_exists('id-'.$folder_id,$folder_list)) {
   header("Status: 404 Not Found");
-  include($base_dir.'includes/404.php');
+  include($includes_dir.'404.php');
   exit(0);
 }
 
@@ -86,7 +86,7 @@ if ($pass) {
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
 <title>Access | <?php echo $site_name; ?></title>
 <link rel="profile" href="http://gmpg.org/xfn/11" />
-<link rel="stylesheet" href="<?php $cu = getcontenturl(null); echo $cu; ?>content/style.css<?php if ($cu !== $base_url) echo '?ver=',filemtime($base_dir.'content/style.css'); ?>" type="text/css" media="all" />
+<link rel="stylesheet" href="<?php $cu = getcontenturl(null); echo $cu; ?>content/style.css<?php if ($cu !== $base_url) echo '?ver=',filemtime($content_dir.'/style.css'); ?>" type="text/css" media="all" />
 <link rel="shortcut icon" href="/favicon.ico" />
 </head>
 <body id="login-body">
@@ -103,7 +103,7 @@ if ($pass) {
 </div>
 </div>
 </div>
-<script src="<?php echo $cu; ?>content/sha256.js<?php if ($cu !== $base_url) echo '?ver=',filemtime($base_dir.'content/sha256.js'); ?>"></script>
+<script src="<?php echo $cu; ?>content/sha256.js<?php if ($cu !== $base_url) echo '?ver=',filemtime($content_dir.'/sha256.js'); ?>"></script>
 <script type="text/javascript">
 function SubmitForm() {
   if (document.getElementById("accesscode").value) {

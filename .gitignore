@@ -1,6 +1,8 @@
+!*/.gitkeep
+!.gitignore
+!data/stat/
+!data/comment/
+.*
 data/*
 cache/*
 box_token.php
-!*/.gitkeep
-!.gitignore
-.*

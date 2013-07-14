@@ -3,13 +3,13 @@ include_once('./data/config.php');
 include_once($base_dir.'functions.php');
 if(!array_key_exists('w',$_GET) || !array_key_exists('h',$_GET) || !array_key_exists('fid',$_GET) || !array_key_exists('otp',$_GET)) {
   header("HTTP/1.1 403 Forbidden");
-  include($base_dir.'includes/403.php');
+  include($includes_dir.'403.php');
   exit(0);
 }
 
 if ($_GET['otp'] !== substr(hash('sha256', $secret_key.$_GET['fid']), 13, 15) && !verifykey($_GET['otp'], $expire_image, null)) {
   header("HTTP/1.1 403 Forbidden");
-  include($base_dir.'includes/403.php');
+  include($includes_dir.'403.php');
   exit(0);
 }
 
@@ -17,7 +17,7 @@ $nw = $_GET['w'];
 $nh = $_GET['h'];
 $folder_id=$_GET['fid'];
 $dest='/tmp/'.$folder_id;
-$thumb_lock=$base_dir.'content/lock.png';
+$thumb_lock=$content_dir.'lock.png';
 $lck = false;
 $na = false;
 
@@ -27,7 +27,7 @@ $folder_list=getfolderlist();
 
 if (!array_key_exists('id-'.$folder_id,$folder_list)) {
   header("Status: 404 Not Found");
-  include($base_dir.'includes/404.php');
+  include($includes_dir.'404.php');
   exit(0);
 }
 
@@ -79,7 +79,7 @@ if (!file_exists($dest) || time() - filemtime($dest) >= $expire_image) {
         if ($thumb_file) {
           $thumb=createthumbnail($thumb,$thumb_file,$ntw,$nth);
           $dimg=coverbordercompose($dimg,$nw,$nh,$ntw,$nth,$border_width,$thumb,$i);
-          if ($thumb_file == $base_dir.'content/na.jpg')
+          if ($thumb_file == $content_dir.'na.jpg')
             $na = true;
         }
         $i++;
@@ -98,8 +98,8 @@ if (!file_exists($dest) || time() - filemtime($dest) >= $expire_image) {
 
 header('Content-Type: image/png');
 header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($dest)).' GMT');
-header('Expires: '.gmdate('D, d M Y H:i:s', filemtime($dest) + max($expire_image, 86400)).' GMT');
-header('Cache-Control: max-age='.max($expire_image, 86400));
+header('Expires: '.gmdate('D, d M Y H:i:s', filemtime($dest) + max($expire_image, 3600)).' GMT');
+header('Cache-Control: max-age='.max($expire_image, 3600));
 readfile($dest);
 
 if ($na)

@@ -13,5 +13,5 @@ if ($auth == 'pass') {
 }
 header("HTTP/1.1 302 Found");
 $redirect_message = 'You have logged out!';
-include($base_dir.'includes/redirect.php');
+include($includes_dir.'redirect.php');
 ?>

@@ -9,7 +9,7 @@ if ($auth !== 'pass') {
   header("HTTP/1.1 401 Unauthorized");
   $redirect_url = $base_url.'admin/login.php?ref='.$url;
   $redirect_message = 'Access restricted';
-  include($base_dir.'includes/redirect.php');
+  include($includes_dir.'redirect.php');
   exit(0);
 }
   
@@ -23,7 +23,7 @@ if (!empty($_GET) && array_key_exists('code',$_GET)) {
     $otp_session=$_GET['otp'];
     if (!verifykey($otp_session,$expire_session,null)) {
       header("HTTP/1.1 403 Forbidden");
-      include($base_dir.'includes/403.php');
+      include($includes_dir.'403.php');
       exit(0);
     }
 
@@ -35,7 +35,7 @@ if (!empty($_GET) && array_key_exists('code',$_GET)) {
     $id='id-'.$_GET['fid'];
     if (!array_key_exists($id,$folder_list)) {
       header("Status: 404 Not Found");
-      include($base_dir.'includes/404.php');
+      include($includes_dir.'404.php');
       exit(0);
     }
 
@@ -47,7 +47,7 @@ if (!empty($_GET) && array_key_exists('code',$_GET)) {
     exit(0);
   } else {
     header("HTTP/1.1 403 Forbidden");
-    include($base_dir.'includes/403.php');
+    include($includes_dir.'403.php');
     exit(0);
   }
 }
@@ -68,7 +68,7 @@ if (!empty($_POST) && array_key_exists('otp',$_POST)) {
   $otp_session=$_POST['otp'];
   if (!verifykey($otp_session,$expire_session,null)) {
     header("HTTP/1.1 403 Forbidden");
-    include($base_dir.'includes/403.php');
+    include($includes_dir.'403.php');
     exit(0);
   }
 
@@ -163,7 +163,7 @@ if (!empty($_POST) && array_key_exists('otp',$_POST)) {
           $update_folder = false;
         } else {
           header("Status: 404 Not Found");
-          include($base_dir.'includes/404.php');
+          include($includes_dir.'404.php');
           exit(0);
         }
 
@@ -291,7 +291,7 @@ if ($single) {
 <div class="admin-folder-nav clearfix" id="<?php echo $folder['id']; ?>">
 
 <a href="<?php echo $base_url; ?>?id=<?php echo $folder['id']; ?>"><?php echo $folder['name']; ?></a>
-(<?php echo $folder['total_count']; ?> items, <?php if (file_exists($data_dir.$folder['id'])) echo file_get_contents($data_dir.$folder['id'], true); else echo '0'; ?> views)
+(<?php echo $folder['total_count']; ?> items, <?php if (file_exists($stat_dir.$folder['id'])) echo file_get_contents($stat_dir.$folder['id'], true); else echo '0'; ?> views)
 <?php if ($folder['new'] == 1) { ?>
 <span class="new">NEW</span>
 <?php } ?>
@@ -437,7 +437,7 @@ if (($p + 1) * $admin_folder_limit < $n)
     $access=$folder_list[$id]['access'];
 ?>
 
-  <a href="<?php echo $base_url; ?>?id=<?php echo $item['id']; ?>"><?php echo $item['name']; ?></a> (<?php echo $folder_list[$id]['total_count']; ?> items, <?php if (file_exists($data_dir.$item['id'])) echo file_get_contents($data_dir.$item['id'], true); else echo '0'; ?> views)
+  <a href="<?php echo $base_url; ?>?id=<?php echo $item['id']; ?>"><?php echo $item['name']; ?></a> (<?php echo $folder_list[$id]['total_count']; ?> items, <?php if (file_exists($stat_dir.$item['id'])) echo file_get_contents($stat_dir.$item['id'], true); else echo '0'; ?> views)
 
 <?php if ($folder_list[$id]['new'] == 1) { ?>
    <span class="new">NEW</span>
@@ -450,7 +450,7 @@ if (($p + 1) * $admin_folder_limit < $n)
   } elseif ($item !== 'error' && $item['type'] == 'file') {
 ?>
 
-  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $item['id']; ?>"><?php echo $item['name']; ?></a> ( <?php if (file_exists($data_dir.$item['id'])) echo file_get_contents($data_dir.$item['id'], true); else echo '0'; ?> views)
+  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $item['id']; ?>"><?php echo $item['name']; ?></a> ( <?php if (file_exists($stat_dir.$item['id'])) echo file_get_contents($stat_dir.$item['id'], true); else echo '0'; ?> views)
 
 <?php
     $item['name'] = substr($item['name'], 0, strrpos($item['name'], '.', -1));

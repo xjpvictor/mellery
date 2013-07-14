@@ -3,7 +3,7 @@ include_once('./data/config.php');
 include_once($base_dir.'functions.php');
 if(!array_key_exists('fid',$_GET) || !array_key_exists('limit',$_GET)) {
   header("HTTP/1.1 403 Forbidden");
-  include($base_dir.'includes/403.php');
+  include($includes_dir.'403.php');
   exit(0);
 }
 
@@ -19,7 +19,7 @@ if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access
     header("HTTP/1.1 401 Unauthorized");
     $redirect_url = $base_url.'access.php?fid='.$folder_id.'&ref='.$url;
     $redirect_message = 'Access restricted';
-    include($base_dir.'includes/redirect.php');
+    include($includes_dir.'redirect.php');
     exit(0);
   }
 }
@@ -40,7 +40,7 @@ if (file_exists($page_cache)) {
 $file_list=getfilelist($folder_id,$_GET['limit'],'0');
 if (!array_key_exists('id-'.$folder_id,$folder_list) || $file_list == 'error') {
   header("Status: 404 Not Found");
-  include($base_dir.'includes/404.php');
+  include($includes_dir.'404.php');
   exit(0);
 }
 

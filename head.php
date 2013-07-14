@@ -16,7 +16,7 @@ if (!isset($folder_list))
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
 <title><?php if ($folder_id !== $box_root_folder_id) { $folder_name=$folder_list['id-'.$folder_id]['name']; echo $folder_name,' | '; } echo $site_name; ?></title>
 <link rel="profile" href="http://gmpg.org/xfn/11" />
-<link rel="stylesheet" href="<?php $cu = getcontenturl(null); echo $cu; ?>content/style.css<?php if ($cu !== $base_url) echo '?ver=',filemtime($base_dir.'content/style.css'); ?>" type="text/css" media="all" />
+<link rel="stylesheet" href="<?php $cu = getcontenturl(null); echo $cu; ?>content/style.css<?php if ($cu !== $base_url) echo '?ver=',filemtime($content_dir.'style.css'); ?>" type="text/css" media="all" />
 <?php if (file_exists($data_dir.'my_style.css')) echo '<link rel="stylesheet" href="'.$base_url.'my_style.css" type="text/css" media="all" />'; ?>
 <link rel="shortcut icon" href="/favicon.ico" />
 <?php if (!isset($my_page) && file_exists($data_dir.'my_page.php')) $my_page = include($data_dir.'my_page.php'); echo $my_page['header']; ?>

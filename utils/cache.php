@@ -21,7 +21,7 @@ if (empty($_GET)) {
     header("HTTP/1.1 401 Unauthorized");
     $redirect_url = $base_url.'admin/login.php?ref='.urlencode($url);
     $redirect_message = 'Access restricted';
-    include($base_dir.'includes/redirect.php');
+    include($includes_dir.'redirect.php');
     exit(0);
   }
   $_SESSION['message'] = 'Cache cleaned successfully';

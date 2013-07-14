@@ -9,7 +9,7 @@ if ($auth !== 'pass') {
   header("HTTP/1.1 401 Unauthorized");
   $redirect_url = $base_url.'admin/login.php?ref='.$url;
   $redirect_message = 'Access restricted';
-  include($base_dir.'includes/redirect.php');
+  include($includes_dir.'redirect.php');
   exit(0);
 }
 
@@ -92,10 +92,9 @@ if (!empty($_POST)) {
     file_put_contents($config_file, '$'.$key.' = "'.$$key.'";'."\n", FILE_APPEND | LOCK_EX);
   }
   foreach ($config_key['fix'] as $key => $value) {
-    file_put_contents($config_file, '$'.$key.' = "'.$$key.'";'."\n", FILE_APPEND | LOCK_EX);
+    file_put_contents($config_file, '$'.$key.' = "'.$value.'";'."\n", FILE_APPEND | LOCK_EX);
   }
 
-  file_put_contents($config_file, '$admin_folder_limit = \''.$admin_folder_limit.'\';'."\n".'$secret_key = \''.$secret_key.'\';'."\n".'$otp_recovery_code = \''.hash('sha256',$otp_recovery_code).'\';'."\n".'$w = \'150\';'."\n".'$h = \'150\';'."\n".'$cache_dir = $base_dir.\'cache/\';'."\n".'$data_dir = $base_dir.\'data/\';'."\n".'$box_token_file = $base_dir.\'box_token.php\';'."\n".'?>', FILE_APPEND | LOCK_EX);
   if (isset($notify) && $notify)
     $_SESSION['message'] = $_SESSION['message'].'Please fill up the highlighted parts';
   else

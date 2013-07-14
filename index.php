@@ -18,13 +18,18 @@ $box_cache=boxcache();
 $folder_list = getfolderlist();
 $url=getpageurl();
 
-if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access']['public'][0] !== '1') {
+if (!array_key_exists('id-'.$folder_id,$folder_list)) {
+  header("Status: 404 Not Found");
+  include($includes_dir.'404.php');
+  exit(0);
+}
+if ($folder_id !== $box_root_folder_id && isset($folder_list['id-'.$folder_id]['access']['public'][0]) && $folder_list['id-'.$folder_id]['access']['public'][0] !== '1') {
   $auth=auth(array($username,'id-'.$folder_id));
   if ($auth !== 'pass') {
     header("HTTP/1.1 401 Unauthorized");
     $redirect_url = $base_url.'access.php?fid='.$folder_id.'&ref='.$url;
     $redirect_message = 'Access restricted';
-    include($base_dir.'includes/redirect.php');
+    include($includes_dir.'redirect.php');
     exit(0);
   }
 }
@@ -48,8 +53,8 @@ if ($auth_admin !== 'pass') {
       $output = str_replace('#OTP#', $otp, $output);
       preg_match_all('/#VIEW_COUNT_CHANGE_(\d+)#/', $output, $matches);
       foreach ($matches[1] as $match) {
-        if (file_exists($data_dir.$match))
-          $c = file_get_contents($data_dir.$match, true);
+        if (file_exists($stat_dir.$match))
+          $c = file_get_contents($stat_dir.$match, true);
         else
           $c = '0';
         $output = str_replace('#VIEW_COUNT_CHANGE_'.$match.'#', $c, $output);
@@ -66,9 +71,9 @@ if ($auth_admin !== 'pass') {
 }
 
 $file_list=getfilelist($folder_id,$limit,$p);
-if (!array_key_exists('id-'.$folder_id,$folder_list) || $file_list == 'error' || ($p !== '0' && empty($file_list))) {
+if ($file_list == 'error' || ($p !== '0' && empty($file_list))) {
   header("Status: 404 Not Found");
-  include($base_dir.'includes/404.php');
+  include($includes_dir.'404.php');
   exit(0);
 }
 
@@ -321,8 +326,8 @@ if ($auth_admin !== 'pass') {
 $output = str_replace('#OTP#', $otp, $output);
 preg_match_all('/#VIEW_COUNT_CHANGE_(\d+)#/', $output, $matches);
 foreach ($matches[1] as $match) {
-  if (file_exists($data_dir.$match))
-    $c = file_get_contents($data_dir.$match, true);
+  if (file_exists($stat_dir.$match))
+    $c = file_get_contents($stat_dir.$match, true);
   else
     $c = '0';
   $output = str_replace('#VIEW_COUNT_CHANGE_'.$match.'#', $c, $output);

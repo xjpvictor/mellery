@@ -4,7 +4,7 @@ include_once($base_dir.'functions.php');
 
 if(!array_key_exists('fid',$_GET) || !array_key_exists('option',$_GET) || !array_key_exists('set',$_GET)) {
   header("Status: 404 Not Found");
-  include($base_dir.'includes/404.php');
+  include($includes_dir.'404.php');
   exit(0);
 }
 

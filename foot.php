@@ -12,7 +12,7 @@ if (!defined('includeauth')) {
 <?php if (!isset($my_page) && file_exists($data_dir.'my_page.php')) $my_page = include($data_dir.'my_page.php'); echo $my_page['foot']; ?>
 
 <div id="fb-root"></div>
-<script type="text/javascript" src="<?php echo $cu; ?>content/jquery.js<?php if ($cu !== $base_url) echo '?ver=',filemtime($base_dir.'content/jquery.js'); ?>"></script>
+<script type="text/javascript" src="<?php echo $cu; ?>content/jquery.js<?php if ($cu !== $base_url) echo '?ver=',filemtime($content_dir.'jquery.js'); ?>"></script>
 <script type="text/javascript">
   !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
   (function(d, s, id) {
