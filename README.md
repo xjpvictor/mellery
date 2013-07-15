@@ -50,6 +50,8 @@ Cache is enabled for faster access and lower CPU/memory consumption
 
 * Display exif information and geolocation when available
 
+* CDN support for static contents and thumbnails
+
 ## Setup and backup ##
 
 PHP-GD required.
