@@ -2,6 +2,8 @@
 include_once('../data/config.php');
 include_once($base_dir.'functions.php');
 
+header('X-Robots-Tag: noindex,nofollow,noarchive');
+
 if (empty($_GET)) {
   ob_end_clean();
   header('HTTP/1.1 200 Ok');

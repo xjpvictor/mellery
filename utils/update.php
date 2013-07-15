@@ -3,6 +3,7 @@ include_once('./data/config.php');
 include_once($base_dir.'functions.php');
 
 ob_end_clean();
+header('X-Robots-Tag: noindex,nofollow,noarchive');
 header('HTTP/1.1 200 Ok');
 header("Connection: close");
 ob_start();

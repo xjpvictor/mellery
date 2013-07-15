@@ -3,6 +3,8 @@ define('includeauth',true);
 include_once('../data/config.php');
 include_once($base_dir.'functions.php');
 
+header('X-Robots-Tag: noindex,nofollow,noarchive');
+
 if (!empty($_GET) && array_key_exists('ref',$_GET))
   $url = urldecode($_GET['ref']);
 else

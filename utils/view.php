@@ -2,6 +2,8 @@
 include_once('../data/config.php');
 include_once($base_dir.'functions.php');
 
+header('X-Robots-Tag: noindex,nofollow,noarchive');
+
 if (array_key_exists('dnt', $_GET) && $_GET['dnt'] == '1') {
   $login = auth($username);
   $_SESSION['message'] = 'Your pageview will not be tracked';

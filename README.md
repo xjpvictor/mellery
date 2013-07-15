@@ -44,6 +44,8 @@ Cache is enabled for faster access and lower CPU/memory consumption
 
 * Built-in statistics of page views with option of _Do Not Track_ for the visitors
 
+* Disable search engine indexing
+
 * Easily customize the page
 
 * Keyboard shortcut enabled for navigation

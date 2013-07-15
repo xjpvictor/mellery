@@ -100,6 +100,7 @@ header('Content-Type: image/png');
 header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($dest)).' GMT');
 header('Expires: '.gmdate('D, d M Y H:i:s', filemtime($dest) + max($expire_image, 3600)).' GMT');
 header('Cache-Control: max-age='.max($expire_image, 3600));
+header('X-Robots-Tag: noindex,nofollow,noarchive');
 readfile($dest);
 
 if ($na)

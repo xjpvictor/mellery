@@ -36,6 +36,7 @@ return array(
     'nolicense' => '0',
     'sa' => '0',
     'nc' => '0',
+    'allow_se' => '1',
   ),
   'fix' => array(
     'admin_folder_limit' => '25',

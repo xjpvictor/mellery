@@ -14,6 +14,9 @@ if (!isset($folder_list))
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+<?php if (!$allow_se) : ?>
+<meta name='robots' content='noindex,nofollow' />
+<?php endif; ?>
 <title><?php if ($folder_id !== $box_root_folder_id) { $folder_name=$folder_list['id-'.$folder_id]['name']; echo $folder_name,' | '; } echo $site_name; ?></title>
 <link rel="profile" href="http://gmpg.org/xfn/11" />
 <link rel="stylesheet" href="<?php $cu = getcontenturl(null); echo $cu; ?>content/style.css<?php if ($cu !== $base_url) echo '?ver=',filemtime($content_dir.'style.css'); ?>" type="text/css" media="all" />

@@ -1,5 +1,7 @@
 <?php
 
+header('X-Robots-Tag: noindex,nofollow,noarchive');
+
 if (file_exists('../data/config.php') && file_exists('../box_token.php')) {
   include_once('../data/config.php');
   header("Location: ".$base_url."admin/configure.php");

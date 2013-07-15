@@ -2,6 +2,8 @@
 include_once('../data/config.php');
 include_once($base_dir.'functions.php');
 
+header('X-Robots-Tag: noindex,nofollow,noarchive');
+
 $auth=auth($username);
 if ($auth !== 'pass') {
   header("HTTP/1.1 401 Unauthorized");

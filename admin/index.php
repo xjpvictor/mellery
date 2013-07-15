@@ -3,6 +3,8 @@ define('includeauth',true);
 include_once('../data/config.php');
 include_once($base_dir.'functions.php');
 
+header('X-Robots-Tag: noindex,nofollow,noarchive');
+
 $auth=auth($username);
 $url=getpageurl();
 if ($auth !== 'pass') {

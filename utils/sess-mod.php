@@ -2,6 +2,8 @@
 include_once('../data/config.php');
 include_once($base_dir.'functions.php');
 
+header('X-Robots-Tag: noindex,nofollow,noarchive');
+
 if(!array_key_exists('fid',$_GET) || !array_key_exists('option',$_GET) || !array_key_exists('set',$_GET)) {
   header("Status: 404 Not Found");
   include($includes_dir.'404.php');

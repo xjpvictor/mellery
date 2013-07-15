@@ -2,6 +2,8 @@
 include_once('../data/config.php');
 include_once($base_dir.'functions.php');
 
+header('X-Robots-Tag: noindex,nofollow,noarchive');
+
 $auth=auth($username);
 session_regenerate_id(true);
 if ($auth !== 'pass') {

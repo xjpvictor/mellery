@@ -1,6 +1,9 @@
 <?php
 include_once('./data/config.php');
 include_once($base_dir.'functions.php');
+
+header('X-Robots-Tag: noindex,nofollow,noarchive');
+
 if(!array_key_exists('fid',$_GET) || !array_key_exists('limit',$_GET)) {
   header("HTTP/1.1 403 Forbidden");
   include($includes_dir.'403.php');

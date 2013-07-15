@@ -3,6 +3,8 @@ define('includeauth',true);
 include_once('../data/config.php');
 include_once($base_dir.'functions.php');
 
+header('X-Robots-Tag: noindex,nofollow,noarchive');
+
 $auth=auth($username);
 $url=getpageurl();
 if ($auth !== 'pass') {
@@ -77,7 +79,7 @@ if (!empty($_POST)) {
     file_put_contents($config_file, '$'.$key.' = "'.$$key.'";'."\n", FILE_APPEND | LOCK_EX);
   }
   foreach ($config_key['optional'] as $key => $value) {
-    if (array_key_exists($key,$_POST)) {
+    if (array_key_exists($key,$_POST) && ($_POST[$key] == '0' || !empty($_POST[$key])) && $_POST[$key] !== $$key) {
       $$key = str_replace('"','\"',$_POST[$key]);
     }
     if ($key == 'cdn_url' && substr($$key, -1) !== '/') {
@@ -86,8 +88,19 @@ if (!empty($_POST)) {
     file_put_contents($config_file, '$'.$key.' = "'.$$key.'";'."\n", FILE_APPEND | LOCK_EX);
   }
   foreach ($config_key['preset'] as $key => $value) {
-    if (array_key_exists($key,$_POST)) {
+    if (array_key_exists($key,$_POST) && ($_POST[$key] == '0' || !empty($_POST[$key])) && $_POST[$key] !== $$key) {
       $$key = str_replace('"','\"',$_POST[$key]);
+      if ($key == 'allow_se') {
+        $robots = file($base_dir.'robots.txt', FILE_IGNORE_NEW_LINES);
+        if ($$key) {
+          $robots = preg_replace('/^(Disallow: \/)$/','#\1',$robots);
+        } else {
+          $robots = preg_replace('/^#(Disallow: \/)$/','\1',$robots);
+        }
+        unlink($base_dir.'robots.txt');
+        foreach ($robots as $line)
+          file_put_contents($base_dir.'robots.txt',$line."\n", FILE_APPEND | LOCK_EX);
+      }
     }
     file_put_contents($config_file, '$'.$key.' = "'.$$key.'";'."\n", FILE_APPEND | LOCK_EX);
   }
@@ -147,9 +160,11 @@ $otp_session=getkey($expire_session);
 </div>
 
 <div class="site-config clearfix">
-<p class="config-title" onclick="show('conf-share')">Share</p>
-<div id="conf-share" style="display:none;">
+<p class="config-title" onclick="show('conf-privacy')">Privacy</p>
+<div id="conf-privacy" style="display:none;">
 <table>
+<tr><td><p<?php if (!isset($allow_se) || ($allow_se !== '0' && empty($allow_se))) {echo ' class="notset"'; $notify = true;} ?>>Allow search engine to index:</p></td><td><input type="hidden" name="allow_se" value="0"><input class="checkbox" type="checkbox" name="allow_se" value="1"<?php if (isset($allow_se) && $allow_se == '1') echo " checked"; ?>></td></tr>
+<tr><td></td><td><p class="small">* Only applicable when installed in site root directory and if search engine follows robots.txt standard</p></td></tr>
 <tr><td><p<?php if (!isset($nolicense) || ($nolicense !== '0' && empty($nolicense))) {echo ' class="notset"'; $notify = true;} ?>>All rights reserved:</p></td><td><input type="hidden" name="nolicense" value="0"><input class="checkbox" type="checkbox" name="nolicense" value="1"<?php if (isset($nolicense) && $nolicense == '1') echo " checked"; ?> onclick="showTable('cc')"></td></tr>
 </table>
 <table id="cc" <?php if (isset($nolicense) && $nolicense == '1') echo 'style="display:none;"'; elseif (isset($nolicense) && $nolicense == '0') echo 'style="display:table;"'; ?>>
