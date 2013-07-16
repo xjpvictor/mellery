@@ -53,13 +53,15 @@ if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSI
   $session_message = false;
 }
 
+$sharetable = '<table><tr><td><a href="https://twitter.com/share" class="twitter-share-button"></a></td><td><div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div></td><td><div class="g-plusone" data-size="medium"></div></td></tr></table>';
+
 if ($auth_admin !== 'pass') {
   $page_cache=$cache_dir.$folder_id.'-'.$id.'.html';
   if (file_exists($page_cache)) {
     $age = filemtime($page_cache);
     if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($data_dir.'config.php') && (!file_exists($data_dir.'my_page.php') || $age >= filemtime($data_dir.'my_page.php'))) {
       $output = file_get_contents($page_cache);
-      $output = str_replace(array('#OTP#', '#IMGURL#'), array($otp, $match[1]), $output);
+      $output = str_replace(array('#OTP#', '#IMGURL#', '##sharetable##'), array($otp, $match[1], $sharetable), $output);
       if (isset($_SESSION['fullscreen']['id-'.$folder_id]))
         $output = str_replace(array('#FULLSCREENCLASS#', '#FULLSCREENSIDEBAR#'), array('fullscreen', 'style="display:none;"'), $output);
       else
@@ -239,7 +241,10 @@ if ($info) {
       $cc_str .= '-sa';
     echo ' under <a href="',$cc_url,$cc_str,'/',$cc_ver,'" target="_blank" rel="license">CC ',strtoupper($cc_str),' ',$cc_ver,'</a>';
   }
-  echo '</p></div>';
+  if ($folder_id !== $box_root_folder_id && !$folder_list['id-'.$folder_id]['access']['public'][0])
+    echo '<br/>Private image. DO NOT share.';
+  echo '</p>';
+  echo '</div>';
 }
 ?>
 </div>
@@ -261,13 +266,11 @@ if ($info) {
 <?php } ?>
 </div>
 
-<div id="shareimg"><table>
-<tr>
-<td><a href="https://twitter.com/share" class="twitter-share-button"></a></td>
-<td><div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div></td>
-<td><div class="g-plusone" data-size="medium"></div></td>
-</tr>
-</table></div>
+<?php if ($folder_id == $box_root_folder_id || $folder_list['id-'.$folder_id]['access']['public'][0]) : ?>
+<div id="shareimg">
+##sharetable##
+</div>
+<?php endif; ?>
 </div>
 
 <div class="widget-container">
@@ -455,7 +458,7 @@ if ($auth_admin !== 'pass') {
   file_put_contents($page_cache,$output);
 }
 
-$output = str_replace(array('#OTP#', '#IMGURL#'), array($otp, $match[1]), $output);
+$output = str_replace(array('#OTP#', '#IMGURL#', '##sharetable##'), array($otp, $match[1], $sharetable), $output);
 if (isset($_SESSION['fullscreen']['id-'.$folder_id]))
   $output = str_replace(array('#FULLSCREENCLASS#', '#FULLSCREENSIDEBAR#'), array('fullscreen', 'style="display:none;"'), $output);
 else

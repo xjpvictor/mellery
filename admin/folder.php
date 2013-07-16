@@ -339,11 +339,13 @@ if ($single) {
 </select>
 </div>
 
+<?php if ($access['public'][0]) { ?>
 <br/><p>Embed:</p>
 <p>Folder cover</p>
 <input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?id='.$folder['id'].'" target="_blank"><img src="'.$base_url.'cover.php?fid='.$folder['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$folder['id']), 13, 15).'" alt="'.$folder['name'].'" title="'.$folder['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
 <p>Folder preview</p>
 <input class="name-conf" value="<?php echo htmlentities('<iframe src="'.$base_url.'frame.php?fid='.$folder['id'].'&limit=6" width="550" height="480" allowtransparency="true" seamless scrolling="auto" frameborder="0">'.$folder['name'].'</iframe>'); ?>" onclick="this.select()"><br/>
+<?php } ?>
 
 <br/><input class="button" type="submit" name="single[<?php echo $folder['id']; ?>][submit]" value="Update">
 <input class="button right delete" type="submit" name="single[<?php echo $folder['id']; ?>][submit]" value="Delete" onclick="return confirmAct();">
@@ -496,13 +498,13 @@ if (($p + 1) * $admin_folder_limit < $n)
   </select>
   </div>
 
-<?php if ($item !== 'error' && $item['type'] == 'folder') { ?>
+<?php if ($item !== 'error' && $item['type'] == 'folder' && $access['public'][0]) { ?>
   <br/><p>Embed:</p>
   <p>Folder cover</p>
   <input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?id='.$item['id'].'" target="_blank"><img src="'.$base_url.'cover.php?fid='.$item['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$item['id']), 13, 15).'" alt="'.$item['name'].'" title="'.$item['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
   <p>Folder preview</p>
   <input class="name-conf" value="<?php echo htmlentities('<iframe src="'.$base_url.'frame.php?fid='.$item['id'].'&limit=6" width="550" height="480" allowtransparency="true" scrolling="auto" seamless frameborder="0">'.$item['name'].'</iframe>'); ?>" onclick="this.select()"><br/>
-<?php } elseif ($item !== 'error' && $item['type'] == 'file') { ?>
+<?php } elseif ($item !== 'error' && $item['type'] == 'file' && $access['public'][0]) { ?>
   <br/><p>Embed:</p><p>Image Thumbnail</p><input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'image.php?id='.$item['id'].'" target="_blank"><img src="'.$base_url.'thumbnail.php?id='.$item['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$item['id']), 13, 15).'" alt="'.$item['name'].'" title="'.$item['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
 <?php } ?>
 

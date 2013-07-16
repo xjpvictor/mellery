@@ -44,13 +44,15 @@ if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSI
   $session_message = false;
 }
 
+$sharetable = '<table><tr><td><a href="https://twitter.com/share" class="twitter-share-button"></a></td><td><div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div></td><td><div class="g-plusone" data-size="medium"></div></td></tr></table>';
+
 if ($auth_admin !== 'pass') {
   $page_cache=$cache_dir.$folder_id.'-'.$p.'.html';
   if (file_exists($page_cache)) {
     $age = filemtime($page_cache);
     if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($data_dir.'config.php') && (!file_exists($data_dir.'my_page.php') || $age >= filemtime($data_dir.'my_page.php'))) {
       $output = file_get_contents($page_cache);
-      $output = str_replace('#OTP#', $otp, $output);
+      $output = str_replace(array('#OTP#','##sharetable##'), array($otp,$sharetable), $output);
       preg_match_all('/#VIEW_COUNT_CHANGE_(\d+)#/', $output, $matches);
       foreach ($matches[1] as $match) {
         if (file_exists($stat_dir.$match))
@@ -122,13 +124,11 @@ if ($folder_id !== $box_root_folder_id) {
 <?php if ($folder_id !== $box_root_folder_id) { ?>
 <div class="view-count"><script src="<?php echo $base_url; ?>utils/view.php?id=<?php echo $folder_id; ?>&amp;update=#OTP#"></script></div>
 
-<div id="sharetop"><table>
-<tr>
-<td><a href="https://twitter.com/share" class="twitter-share-button"></a></td>
-<td><div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div></td>
-<td><div class="g-plusone" data-size="medium"></div></td>
-</tr>
-</table></div>
+<div id="sharetop">
+<?php if ($folder_list['id-'.$folder_id]['access']['public'][0]) : ?>
+##sharetable##
+<?php endif; ?>
+</div>
 
 <?php } ?>
 
@@ -148,10 +148,10 @@ foreach ($file_list as $entry) {
 <?php
   } elseif (array_key_exists('type',$entry) && $entry['type'] == 'folder') {
     $folder=$folder_list['id-'.$entry['id']];
-    if ($folder !== 'error')
+    if ($folder !== 'error') {
       $count=$folder['total_count'];
-    else
-      $count='0';
+      foreach ($folder['access'] as $access) {
+        if ($auth_admin == 'pass' || $access[0]) {
 ?>
   <div style="z-index:<?php echo rand(1,6); ?>" class="<?php echo $class; ?> container album tipTip" title="<?php echo $entry['name']; if (!empty($entry['description'])) echo '<br/><br/>',$entry['description'];?>">
   <a href="?fid=<?php echo $entry['id']; ?>">
@@ -160,6 +160,10 @@ foreach ($file_list as $entry) {
   </a>
   </div>
 <?php
+          break;
+        }
+      }
+    }
   }
 }
 ?>
@@ -232,14 +236,19 @@ if ($folder_id == $box_root_folder_id) {
   foreach ($folder_list as $folder) {
     if ($folder !== 'error') {
       $count=$folder['total_count'];
+      foreach ($folder['access'] as $access) {
+        if ($auth_admin == 'pass' || $access[0]) {
 ?>
-    <div class="albumlist tipTip" title="<?php echo $folder['name']; if (!empty($folder['description'])) echo '<br/><br/>',$folder['description']; ?>">
-    <a href="<?php echo $base_url; ?>?fid=<?php echo $folder['id']; ?>">
-      <img src="<?php echo getcontenturl($folder['id']); ?>cover.php?fid=<?php echo $folder['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $folder['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
-      <span class="albumtitle"><?php echo cut($folder['name'],18); ?><br/><br/><?php echo $count; ?> images (#VIEW_COUNT_CHANGE_<?php echo $folder['id']; ?># views)</span>
-    </a>
-    </div>
+      <div class="albumlist tipTip" title="<?php echo $folder['name']; if (!empty($folder['description'])) echo '<br/><br/>',$folder['description']; ?>">
+      <a href="<?php echo $base_url; ?>?fid=<?php echo $folder['id']; ?>">
+        <img src="<?php echo getcontenturl($folder['id']); ?>cover.php?fid=<?php echo $folder['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $folder['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+        <span class="albumtitle"><?php echo cut($folder['name'],18); ?><br/><br/><?php echo $count; ?> images (#VIEW_COUNT_CHANGE_<?php echo $folder['id']; ?># views)</span>
+      </a>
+      </div>
 <?php
+          break;
+        }
+      }
     }
   }
 ?>
@@ -295,19 +304,15 @@ if ($folder_id !== $box_root_folder_id) {
       $cc_str .= '-sa';
     echo ' under <a href="',$cc_url,$cc_str,'/',$cc_ver,'" target="_blank" rel="license">CC ',strtoupper($cc_str),' ',$cc_ver,'</a>';
   }
-  echo '</p><br/><p>Embed:</p>';
-  echo '<input class="name-conf" value="',htmlentities('<iframe src="'.$base_url.'frame.php?fid='.$folder_id.'&limit=6" width="540" height="480" allowtransparency="true" seamless scrolling="auto" frameborder="0">'.$folder['name'].'</iframe>'),'" onclick="this.select()"><br/><br/>';
+  if ($folder_list['id-'.$folder_id]['access']['public'][0]) {
+    echo '</p><br/><p>Embed:</p><input class="name-conf" value="',htmlentities('<iframe src="'.$base_url.'frame.php?fid='.$folder_id.'&limit=6" width="540" height="480" allowtransparency="true" seamless scrolling="auto" frameborder="0">'.$folder['name'].'</iframe>'),'" onclick="this.select()"><br/><br/>';
+    echo '##sharetable##';
+  } else
+    echo '<br/>Private album. DO NOT share.</p>';
 }
 ?>
-<table>
-<tr>
-<td><a href="https://twitter.com/share" class="twitter-share-button"></a></td>
-<td><div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div></td>
-<td><div class="g-plusone" data-size="medium"></div></td>
-</tr>
-</table></div>
 
-</div>
+</div></div>
 </div>
 
 <div id="footer">
@@ -323,7 +328,7 @@ if ($auth_admin !== 'pass') {
   file_put_contents($page_cache,$output);
 }
 
-$output = str_replace('#OTP#', $otp, $output);
+$output = str_replace(array('#OTP#','##sharetable##'), array($otp,$sharetable), $output);
 preg_match_all('/#VIEW_COUNT_CHANGE_(\d+)#/', $output, $matches);
 foreach ($matches[1] as $match) {
   if (file_exists($stat_dir.$match))
