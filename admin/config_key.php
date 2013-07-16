@@ -37,6 +37,7 @@ return array(
     'sa' => '0',
     'nc' => '0',
     'allow_se' => '1',
+    'default_public' => '0',
   ),
   'fix' => array(
     'admin_folder_limit' => '25',

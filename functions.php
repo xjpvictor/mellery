@@ -415,7 +415,7 @@ function getfolders($folder_id) {
   return($folder_list);
 }
 function getfolderlist() {
-  global $data_dir,$box_cache,$box_root_folder_id;
+  global $data_dir,$box_cache,$box_root_folder_id,$default_public;
   $data_file=$data_dir.'folder.php';
   if ($box_cache == 1 && file_exists($data_file)) {
     $folder_list=include($data_file);
@@ -434,7 +434,7 @@ function getfolderlist() {
       }
     } else {
       if ($folder !== 'error') {
-        $access = array('public' => array('0'), 'general' => array('0'), 'specific' => array('0','code' => ''), 'temporary' => array('0','code' => '', 'time' => ''));
+        $access = array('public' => array($default_public), 'general' => array('0'), 'specific' => array('0','code' => ''), 'temporary' => array('0','code' => '', 'time' => ''));
         $folder = array_merge($folder,array('new' => '1', 'access' => $access));
       }
     }
