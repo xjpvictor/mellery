@@ -89,12 +89,6 @@ foreach ($file_list as $entry) {
     <img class="thumb" src="<?php echo getcontenturl($folder_id); ?>thumbnail.php?id=<?php echo $entry['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" title="<?php echo $name; ?>" />
   </a>
 <?php
-  } elseif (array_key_exists('type',$entry) && $entry['type'] == 'folder') {
-?>
-  <a href="?fid=<?php echo $entry['id']; ?>" target="_blank">
-    <img class="thumb" src="<?php echo getcontenturl($entry['id']); ?>cover.php?fid=<?php echo $entry['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $entry['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
-  </a>
-<?php
   }
 }
 ?>
