@@ -6,7 +6,7 @@ header('X-Robots-Tag: noindex,nofollow,noarchive');
 
 if(!array_key_exists('fid',$_GET) || !array_key_exists('limit',$_GET)) {
   header("HTTP/1.1 403 Forbidden");
-  include($includes_dir.'403.php');
+  include($includes_dir.'403-noredirect.php');
   exit(0);
 }
 
@@ -22,7 +22,7 @@ if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access
     header("HTTP/1.1 401 Unauthorized");
     $redirect_url = $base_url.'access.php?fid='.$folder_id.'&ref='.$url;
     $redirect_message = 'Access restricted';
-    include($includes_dir.'redirect.php');
+    include($includes_dir.'401-noredirect.php');
     exit(0);
   }
 }
@@ -43,7 +43,7 @@ if (file_exists($page_cache)) {
 $file_list=getfilelist($folder_id,$_GET['limit'],'0');
 if (!array_key_exists('id-'.$folder_id,$folder_list) || $file_list == 'error') {
   header("Status: 404 Not Found");
-  include($includes_dir.'404.php');
+  include($includes_dir.'404-noredirect.php');
   exit(0);
 }
 
@@ -60,15 +60,16 @@ ob_start();
 <style type="text/css" media="all">
 <!--
 html, body, div, span, p, a {font-family:"Lucida Sans Unicode","Lucida Grande",FreeSans,Arial,Helvetica,sans-serif;}
-body{background:rgba(255,255,255,0.8);padding:0px;margin:0px;font-size:16px;line-height:1.0em;}
-#main{padding:10px 15px;border:1px solid #999;}
+html{height:100%;}
+body{background:rgba(255,255,255,0.8);padding:0px;margin:0px;font-size:16px;line-height:1.0em;height:99%;border:1px solid #999;}
+#main{padding:0px 15px;height:100%;overflow:auto;}
 .thumb{margin:5px;border: 1px solid rgba(255,255,255,0.25);border-radius: 3px;box-shadow: 0 0 3px #555;}
 .thumb:hover{border: 1px solid rgba(255,255,255,0.75);box-shadow: 0 0 6px #555;}
 a{text-decoration:none;color:#32cd32;}
 #title a:hover{text-decoration:underline;}
 #more a{color:#999;}
 #more a:hover{text-decoration:underline;color:#32cd32;}
-#footer{text-align:right;color:#999;font-size:12px;}
+#footer{text-align:right;color:#999;font-size:12px;padding-bottom:10px;}
 #footer a{color:#999;}
 #footer a:hover{text-decoration:underline;}
 -->
