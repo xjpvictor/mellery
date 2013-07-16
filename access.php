@@ -97,10 +97,10 @@ if ($pass) {
 <div id="access-form">
 <p >You are trying to access restricted zone.<br/>Please enter access code:<br/></p>
 <form name="form1" method="post" action="<?php echo $base_url;?>access.php?fid=<?php echo $folder_id; ?>&amp;ref=<?php echo urlencode($url); ?>">
-<input required id="accesscode" name="accesscode" type="text">
+<input required id="accesscode" name="accesscode" type="text" autofocus>
 <input class="button" type="submit" value="Submit" onclick="SubmitForm();">
 </form>
-<p class="small">* This page is valid for <span id="count-down"></span> s.</p><br/>
+<p class="small">* This page is valid for <span id="count-down"></span> s</p><br/>
 <a href="<?php echo $base_url; ?>"><p>&lt;&lt; Go Back to Homepage</p></a>
 </div>
 </div>
@@ -122,7 +122,11 @@ for(var i=stoptime;i>=0;i--)
 } 
 function doUpdate(num) 
 {
-  document.getElementById('count-down').innerHTML = num ;
+  if (num > 10) {
+    document.getElementById('count-down').innerHTML = num ;
+  } else {
+    document.getElementById('count-down').innerHTML = '<span class="red">' + num + '</span>';
+  }
 }
 Load();
 </script>

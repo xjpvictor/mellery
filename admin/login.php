@@ -74,7 +74,7 @@ if (!empty($_POST) && array_key_exists('username',$_POST) && array_key_exists('p
 <p><b>Please log in</b></p>
 <form name="form1" method="post" action="login.php?ref=<?php echo urlencode($url); ?>">
 <p>Username:</p>
-<input required id="username" name="username"><br/>
+<input required id="username" name="username" autofocus><br/>
 <p>Password:</p>
 <input required id="password" name="password" type="password"><br/>
 <p>Google Authenticator code:</p>
@@ -82,7 +82,7 @@ if (!empty($_POST) && array_key_exists('username',$_POST) && array_key_exists('p
 <p class="small">* Leave blank if not enabled</p>
 <input class="button" type="submit" value="Log in" onclick="SubmitForm();">
 </form>
-<p class="small">* This page is valid for <span id="count-down"></span> s.</p>
+<p class="small">* This page is valid for <span id="count-down"></span> s</p>
 <p><a href="<?php echo $base_url; ?>admin/reset.php">Reset password</a></p>
 <br/><a href="<?php echo $base_url; ?>">&lt;&lt; Go Back to Homepage</a>
 </div>
@@ -109,7 +109,11 @@ for(var i=stoptime;i>=0;i--)
 } 
 function doUpdate(num) 
 {
-  document.getElementById('count-down').innerHTML = num ;
+  if (num > 10) {
+    document.getElementById('count-down').innerHTML = num ;
+  } else {
+    document.getElementById('count-down').innerHTML = '<span class="red">' + num + '</span>';
+  }
 }
 Load();
 </script>

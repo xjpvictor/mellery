@@ -243,6 +243,7 @@ span.multiform{line-height:1.5em;font-size:16px;vertical-align:text-bottom;}
 #login-form{width:220px;margin:0px auto;padding:20px;line-height:2em;}
 #reset{background:url(redirect.png) no-repeat center 50px transparent;}
 #reset-form{width:210px;margin:0px auto;line-height:2em;}
+.red{color:red;}
 
 /** Access **/
 #access{background:url(redirect.png) no-repeat center 50px transparent;}
