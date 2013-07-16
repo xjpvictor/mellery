@@ -292,7 +292,7 @@ if ($single) {
 ?>
 <div class="admin-folder-nav clearfix" id="<?php echo $folder['id']; ?>">
 
-<a href="<?php echo $base_url; ?>?id=<?php echo $folder['id']; ?>"><?php echo $folder['name']; ?></a>
+<a href="<?php echo $base_url; ?>?fid=<?php echo $folder['id']; ?>"><?php echo $folder['name']; ?></a>
 (<?php echo $folder['total_count']; ?> items, <?php if (file_exists($stat_dir.$folder['id'])) echo file_get_contents($stat_dir.$folder['id'], true); else echo '0'; ?> views)
 <?php if ($folder['new'] == 1) { ?>
 <span class="new">NEW</span>
@@ -342,7 +342,7 @@ if ($single) {
 <?php if ($access['public'][0]) { ?>
 <br/><p>Embed:</p>
 <p>Folder cover</p>
-<input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?id='.$folder['id'].'" target="_blank"><img src="'.$base_url.'cover.php?fid='.$folder['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$folder['id']), 13, 15).'" alt="'.$folder['name'].'" title="'.$folder['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
+<input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?fid='.$folder['id'].'" target="_blank"><img src="'.$base_url.'cover.php?fid='.$folder['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$folder['id']), 13, 15).'" alt="'.$folder['name'].'" title="'.$folder['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
 <p>Folder preview</p>
 <input class="name-conf" value="<?php echo htmlentities('<iframe src="'.$base_url.'frame.php?fid='.$folder['id'].'&limit=6" width="550" height="480" allowtransparency="true" seamless scrolling="auto" frameborder="0">'.$folder['name'].'</iframe>'); ?>" onclick="this.select()"><br/>
 <?php } ?>
@@ -441,7 +441,7 @@ if (($p + 1) * $admin_folder_limit < $n)
     $access=$folder_list[$id]['access'];
 ?>
 
-  <a href="<?php echo $base_url; ?>?id=<?php echo $item['id']; ?>"><?php echo $item['name']; ?></a> (<?php echo $folder_list[$id]['total_count']; ?> items, <?php if (file_exists($stat_dir.$item['id'])) echo file_get_contents($stat_dir.$item['id'], true); else echo '0'; ?> views)
+  <a href="<?php echo $base_url; ?>?fid=<?php echo $item['id']; ?>"><?php echo $item['name']; ?></a> (<?php echo $folder_list[$id]['total_count']; ?> items, <?php if (file_exists($stat_dir.$item['id'])) echo file_get_contents($stat_dir.$item['id'], true); else echo '0'; ?> views)
 
 <?php if ($folder_list[$id]['new'] == 1) { ?>
    <span class="new">NEW</span>
@@ -501,7 +501,7 @@ if (($p + 1) * $admin_folder_limit < $n)
 <?php if ($item !== 'error' && $item['type'] == 'folder' && $access['public'][0]) { ?>
   <br/><p>Embed:</p>
   <p>Folder cover</p>
-  <input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?id='.$item['id'].'" target="_blank"><img src="'.$base_url.'cover.php?fid='.$item['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$item['id']), 13, 15).'" alt="'.$item['name'].'" title="'.$item['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
+  <input class="name-conf" value="<?php echo htmlentities('<a href="'.$base_url.'?fid='.$item['id'].'" target="_blank"><img src="'.$base_url.'cover.php?fid='.$item['id'].'&w='.$w.'&h='.$h.'&otp='.substr(hash('sha256', $secret_key.$item['id']), 13, 15).'" alt="'.$item['name'].'" title="'.$item['name'].'" width="'.$w.'" height="'.$h.'" /></a>'); ?>" onclick="this.select()"><br/>
   <p>Folder preview</p>
   <input class="name-conf" value="<?php echo htmlentities('<iframe src="'.$base_url.'frame.php?fid='.$item['id'].'&limit=6" width="550" height="480" allowtransparency="true" scrolling="auto" seamless frameborder="0">'.$item['name'].'</iframe>'); ?>" onclick="this.select()"><br/>
 <?php } elseif ($item !== 'error' && $item['type'] == 'file' && $access['public'][0]) { ?>
