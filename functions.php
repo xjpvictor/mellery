@@ -374,26 +374,6 @@ function getfilelist($folder_id,$limit,$p) {
   }
   return($file_list);
 }
-function getfiles($folder_id) {
-  global $box_root_folder_id;
-  if (!isset($folder_id))
-    $folder_id = $box_root_folder_id;
-  $files=array();
-  $list=getlist($folder_id);
-  if ($list == 'error')
-    return($files);
-  $entries=$list['item_collection']['entries'];
-  if (!empty($entries)) {
-    foreach($entries as $entry) {
-      if ($entry['type'] == 'folder') {
-        $list=getfiles($entry['id']);
-        $files=array_merge($files,$list);
-      } else
-        $files=array_merge($files,array('id-'.$entry['id'] => $entry['parent']['id']));
-    }
-  }
-  return($files);
-}
 function getfolders($folder_id) {
   $folder_list=array();
   $list=getlist($folder_id);

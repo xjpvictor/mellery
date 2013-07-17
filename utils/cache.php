@@ -6,13 +6,17 @@ header('X-Robots-Tag: noindex,nofollow,noarchive');
 
 if (empty($_GET)) {
   ob_end_clean();
-  header('HTTP/1.1 200 Ok');
-  header("Connection: close");
   ob_start();
+  header('HTTP/1.1 200 Ok');
   $size=ob_get_length();
   header("Content-Length: $size");
+  header("Connection: close");
   ob_end_flush();
   flush();
+  if (function_exists('fastcgi_finish_request'))
+    fastcgi_finish_request();
+  if (session_id())
+    session_write_close();
 } else {
   if (array_key_exists('ref', $_GET))
     $url = urldecode($_GET['ref']);
@@ -26,34 +30,46 @@ if (empty($_GET)) {
     include($includes_dir.'redirect.php');
     exit(0);
   }
-  $_SESSION['message'] = 'Cache cleaned successfully';
+  $_SESSION['message'] = 'Cache files will be cleaned';
   header("Location: $url");
+  if (function_exists('fastcgi_finish_request'))
+    fastcgi_finish_request();
+  if (session_id())
+    session_write_close();
   $cache_expire = '0';
   $cache_clean = 'always';
 }
 
-$timestamp_file = $cache_dir.'cache_timestamp';
+$timestamp_file = $cache_dir.'.cache_timestamp';
 if (file_exists($timestamp_file))
   $timestamp = file_get_contents($timestamp_file, true);
 else
   $timestamp = 0;
+
 if ($cache_clean !== 'always' && ($cache_clean == '0' || time() - $timestamp < $cache_clean * 86400))
   exit(0);
 
-$files = scandir($cache_dir);
-foreach ($files as $file) {
-  if (!preg_match('/^\./', $file) && time() - filemtime($cache_dir.$file) >= $cache_expire * 86400) {
-    if (!empty($_GET) && array_key_exists('option', $_GET) && $_GET['option'] == 'all' && preg_match('/^[a-z0-9][a-z0-9\-\.]+$/',$file))
-      unlink($cache_dir.$file);
-    elseif (!empty($_GET) && array_key_exists('option', $_GET) && $_GET['option'] == 'thumbnail' && preg_match('/^[a-z0-9\-]+$/',$file))
-      unlink($cache_dir.$file);
-    elseif (!empty($_GET) && array_key_exists('option', $_GET) && $_GET['option'] == 'html' && preg_match('/\.html/',$file))
-      unlink($cache_dir.$file);
-    elseif (!empty($_GET) && array_key_exists('option', $_GET) && $_GET['option'] == 'box' && preg_match('/\.php/',$file))
-      unlink($cache_dir.$file);
-    elseif (empty($_GET))
-      unlink($cache_dir.$file);
+file_put_contents($timestamp_file, time());
+
+if (!empty($_GET) && array_key_exists('option', $_GET) && $_GET['option'] == 'thumbnail') {
+  foreach (glob($cache_dir . "[^.]+", GLOB_NOSORT) as $file) {
+    if (time() - filemtime($file) >= $cache_expire * 86400)
+    unlink($file);
+  }
+} elseif (!empty($_GET) && array_key_exists('option', $_GET) && $_GET['option'] == 'html') {
+  foreach (glob($cache_dir . "[^.]*.html", GLOB_NOSORT) as $file) {
+    if (time() - filemtime($file) >= $cache_expire * 86400)
+    unlink($file);
+  }
+} elseif (!empty($_GET) && array_key_exists('option', $_GET) && $_GET['option'] == 'box') {
+  foreach (glob($cache_dir . "[^.]*.php", GLOB_NOSORT) as $file) {
+    if (time() - filemtime($file) >= $cache_expire * 86400)
+    unlink($file);
+  }
+} else {
+  foreach (glob($cache_dir . "[^.]*", GLOB_NOSORT) as $file) {
+    if (time() - filemtime($file) >= $cache_expire * 86400)
+    unlink($file);
   }
 }
-file_put_contents($timestamp_file, time());
 ?>
