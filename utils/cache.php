@@ -31,11 +31,17 @@ if (empty($_GET)) {
     exit(0);
   }
   $_SESSION['message'] = 'Cache files will be cleaned';
+  ob_end_clean();
+  ob_start();
   header("Location: $url");
+  $size=ob_get_length();
+  header("Content-Length: $size");
+  header("Connection: close");
+  ob_end_flush();
+  flush();
   if (function_exists('fastcgi_finish_request'))
     fastcgi_finish_request();
-  if (session_id())
-    session_write_close();
+  session_write_close();
   $cache_expire = '0';
   $cache_clean = 'always';
 }
