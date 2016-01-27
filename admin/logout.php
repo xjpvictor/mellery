@@ -1,6 +1,5 @@
 <?php
-include_once('../data/config.php');
-include_once($base_dir.'functions.php');
+include('../init.php');
 
 header('X-Robots-Tag: noindex,nofollow,noarchive');
 

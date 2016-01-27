@@ -1,7 +1,6 @@
 <?php
 define('includeauth',true);
-include_once('./data/config.php');
-include_once($base_dir.'functions.php');
+include(__DIR__.'/init.php');
 
 header('X-Robots-Tag: noindex,nofollow,noarchive');
 
@@ -21,14 +20,13 @@ if (ipblock($_SERVER['REMOTE_ADDR'])) {
   exit(0);
 }
 
-$otp=getkey(60);
-
 $header_string=boxauth();
 $box_cache=boxcache();
-$folder_list=getfolderlist();
+//$folder_list=getfolderlist();
 
 $folder_id=$_GET['fid'];
-if (!array_key_exists('id-'.$folder_id,$folder_list)) {
+$file_list=getfilelist($folder_id);
+if ($file_list == 'error') {
   header("Status: 404 Not Found");
   include($includes_dir.'404.php');
   exit(0);
@@ -41,26 +39,14 @@ if ($auth == 'pass') {
   exit(0);
 }
 
-if ($folder_list['id-'.$folder_id]['access']['public'][0] == '1') {
+$access = getaccess($folder_id);
+if ($access) {
   $pass = true;
 } else {
   $pass = false;
-  if (!empty($_POST) && array_key_exists('accesscode',$_POST)) {
-    foreach (array_slice($folder_list['id-'.$folder_id]['access'],1,3) as $key => $access) {
-      if ($key == 'general' && $access[0] == 1 ){
-        if ($_POST['accesscode'] == hash('sha256',hash('sha256',$general_access_code).$otp) || $_POST['password'] == hash('sha256',hash('sha256',$general_access_code).getprevkey(60))) {
-          $pass = true;
-          break;
-        }
-      } elseif ($access[0] == 1 && !empty($access['code'])) {
-        if (!array_key_exists('time',$access) || (array_key_exists('time',$access) && $access['time'] > time())) {
-          if ($_POST['accesscode'] == hash('sha256',hash('sha256',$access['code']).$otp) || $_POST['accesscode'] == hash('sha256',hash('sha256',$access['code']).getprevkey(60))) {
-            $pass = true;
-            break;
-          }
-        }
-      }
-    }
+  if (isset($_POST['accesscode'])) {
+    if (getaccess($folder_id, $_POST['accesscode']))
+      $pass = true;
     if (!$pass) {
       session_destroy();
       recordfailure($_SERVER['REMOTE_ADDR']);
@@ -69,12 +55,7 @@ if ($folder_list['id-'.$folder_id]['access']['public'][0] == '1') {
 }
 if ($pass) {
   $_SESSION['time'] = time();
-  if (!$auth) {
-    $_SESSION['ip'] = hash('sha256', $secret_key.$_SERVER['REMOTE_ADDR']);
-    $_SESSION['ip_ts'] = time();
-    $_SESSION['ip_change'] = 0;
-  }
-  $_SESSION['id-'.$folder_id] = hash('sha256',$secret_key.'id-'.$folder_id);
+  $_SESSION['id-'.$folder_id] = hash($hash_algro,'id-'.$folder_id);
   $_SESSION['message'] = 'Access granted';
   header("Location: $url");
   exit(0);
@@ -95,40 +76,15 @@ if ($pass) {
 <div id="access">
 <div id="login-back">
 <div id="access-form">
-<p >You are trying to access restricted zone.<br/>Please enter access code:<br/></p>
+<p >You are trying to access restricted zone.<br/>Please enter access code:<br/></p><br/>
 <form name="form1" method="post" action="<?php echo $base_url;?>access.php?fid=<?php echo $folder_id; ?>&amp;ref=<?php echo urlencode($url); ?>">
-<input required id="accesscode" name="accesscode" type="text" autofocus>
-<input class="button" type="submit" value="Submit" onclick="SubmitForm();">
+<input required id="accesscode" name="accesscode" type="password" autofocus><br/><br/>
+<input class="button" type="submit" value="Submit" >
 </form>
-<p class="small">* This page is valid for <span id="count-down"></span> s</p><br/>
-<a href="<?php echo $base_url; ?>"><p>&lt;&lt; Go Back to Homepage</p></a>
+<br/>
+<p><a href="<?php echo $base_url; ?>">&lt;&lt; Go Back to Homepage</a></p>
 </div>
 </div>
 </div>
-<script src="<?php echo $cu; ?>content/sha256.js<?php if ($cu !== $base_url) echo '?ver=',filemtime($content_dir.'/sha256.js'); ?>"></script>
-<script type="text/javascript">
-function SubmitForm() {
-  if (document.getElementById("accesscode").value) {
-    document.getElementById("accesscode").value = Sha256.hash(Sha256.hash(document.getElementById("accesscode").value) + "<?php echo $otp; ?>");
-  }
-  document.form1.submit
-}
-function Load(){ 
-  var stoptime=60;
-for(var i=stoptime;i>=0;i--) 
-{ 
-  window.setTimeout('doUpdate(' + i + ')', (stoptime-i) * 1000); 
-}
-} 
-function doUpdate(num) 
-{
-  if (num > 10) {
-    document.getElementById('count-down').innerHTML = num ;
-  } else {
-    document.getElementById('count-down').innerHTML = '<span class="red">' + num + '</span>';
-  }
-}
-Load();
-</script>
 </body>
 </html>

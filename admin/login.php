@@ -1,7 +1,6 @@
 <?php
 define('includeauth',true);
-include_once('../data/config.php');
-include_once($base_dir.'functions.php');
+include('../init.php');
 
 header('X-Robots-Tag: noindex,nofollow,noarchive');
 
@@ -26,24 +25,23 @@ if ($auth == 'pass') {
   exit(0);
 }
 
-$otp=getkey(60);
 if (!empty($_POST) && array_key_exists('username',$_POST) && array_key_exists('password',$_POST)) {
-  if ($_POST['username'] == $username && ($_POST['password'] == hash('sha256',$password.$otp) || $_POST['password'] == hash('sha256',$password.getprevkey(60)))) {
-    if ($google_auth == '1' && array_key_exists('otp',$_POST) && $_POST['otp'] == $otp_recovery_code) {
-      $google_auth = '0';
-      changeconf(array('google_auth' => '0'));
+  if ($_POST['username'] == $username && password_verify($_POST['password'], $password)) {
+    if ($otp_auth == '1' && array_key_exists('otp',$_POST) && $_POST['otp'] == $otp_recovery_code) {
+      $otp_auth = '0';
+      changeconf(array('otp_auth' => '0'));
       $otp_recovery = true;
     }
-    if ($google_auth == '0' || (array_key_exists('otp',$_POST) && verifykey($_POST['otp'],30,1))) {
+    if ($otp_auth == '0' || (array_key_exists('otp',$_POST) && verifyotp($_POST['otp'],30,'',0))) {
       $_SESSION['time'] = time();
       if (!$auth) {
-        $_SESSION['ip'] = hash('sha256', $secret_key.$_SERVER['REMOTE_ADDR']);
+        $_SESSION['ip'] = hash($hash_algro, $_SERVER['REMOTE_ADDR']);
         $_SESSION['ip_ts'] = time();
         $_SESSION['ip_change'] = 0;
       }
-      $_SESSION[$username] = hash('sha256',$secret_key.$username);
+      $_SESSION[$username] = hash($hash_algro,$username);
       if (isset($otp_recovery) && $otp_recovery) {
-        $_SESSION['message'] = 'Google 2-step authentication has been disabled';
+        $_SESSION['message'] = '2-step authentication has been disabled';
         header ("Location: ".$base_url."admin/configure.php");
       } else {
         $_SESSION['message'] = 'You have logged in!';
@@ -71,52 +69,26 @@ if (!empty($_POST) && array_key_exists('username',$_POST) && array_key_exists('p
 <div id="login">
 <div id="login-back">
 <div id="login-form">
-<p><b>Please log in</b></p>
+<p><b>Please log in</b></p><br/>
 <form name="form1" method="post" action="login.php?ref=<?php echo urlencode($url); ?>">
 <p>Username:</p>
 <input required id="username" name="username" autofocus><br/>
 <p>Password:</p>
 <input required id="password" name="password" type="password"><br/>
-<p>Google Authenticator code:</p>
-<input id="otp" name="otp"><br/>
-<p class="small">* Leave blank if not enabled</p>
-<input class="button" type="submit" value="Log in" onclick="SubmitForm();">
+<?php if (isset($otp_auth) && $otp_auth == '1') { ?>
+<p>2-Step Authenticator code:</p>
+<input id="otp" name="otp" type="password"><br/>
+<?php } ?>
+<br/>
+<input class="button" type="submit" value="Log in" >
 </form>
-<p class="small">* This page is valid for <span id="count-down"></span> s</p>
+<br/>
 <p><a href="<?php echo $base_url; ?>admin/reset.php">Reset password</a></p>
 <br/><a href="<?php echo $base_url; ?>">&lt;&lt; Go Back to Homepage</a>
 </div>
 </div>
 </div>
-<script type="text/javascript" src="<?php echo $base_url; ?>content/sha256.js"></script>
 <script type="text/javascript" src="<?php echo $base_url; ?>content/jquery.js"></script>
-<script type="text/javascript">
-function SubmitForm() {
-  if (document.getElementById("password").value) {
-    document.getElementById("password").value = Sha256.hash(Sha256.hash(document.getElementById("password").value) + "<?php echo $otp; ?>");
-  }
-  if (document.getElementById("otp").value) {
-    document.getElementById("otp").value = Sha256.hash(document.getElementById("otp").value);
-  }
-  document.form1.submit
-}
-function Load(){ 
-  var stoptime=60;
-for(var i=stoptime;i>=0;i--) 
-{ 
-  window.setTimeout('doUpdate(' + i + ')', (stoptime-i) * 1000); 
-}
-} 
-function doUpdate(num) 
-{
-  if (num > 10) {
-    document.getElementById('count-down').innerHTML = num ;
-  } else {
-    document.getElementById('count-down').innerHTML = '<span class="red">' + num + '</span>';
-  }
-}
-Load();
-</script>
 <?php if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) { ?>
 <div id="delaymessage">
 <?php echo $_SESSION['message']; $_SESSION['message'] = ''; ?>

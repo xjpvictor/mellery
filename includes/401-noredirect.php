@@ -6,7 +6,7 @@
 <body bgcolor="white">
 <center><h1>401 Unauthorized</h1></center>
 <center><img src="<?php echo $base_url; ?>content/404.jpg" height="300px"/></center>
-<center><p>Album not accessible. Please contact the administrator.</p><br/>
+<center><p>Album not accessible. Please contact the administrator.</p>
 <p>&copy; <a href="<?php echo $base_url; ?>"><?php echo $site_name; ?></a></p></center>
 </body>
 </html>

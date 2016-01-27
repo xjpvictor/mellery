@@ -1,7 +1,6 @@
 <?php
 define('includeauth',true);
-include_once('../data/config.php');
-include_once($base_dir.'functions.php');
+include('../init.php');
 
 header('X-Robots-Tag: noindex,nofollow,noarchive');
 
@@ -10,7 +9,7 @@ $url=getpageurl();
 if ($auth !== 'pass') {
   header("HTTP/1.1 401 Unauthorized");
   $redirect_url = $base_url.'admin/login.php?ref='.$url;
-  $redirect_message = 'Access restricted';
+  $redirect_message = 'Login required';
   include($includes_dir.'redirect.php');
   exit(0);
 }
@@ -39,14 +38,14 @@ if (!empty($_POST)) {
   }
   if (array_key_exists('widget',$_POST)) {
     foreach ($_POST['widget'] as $n => $value) {
-      if (empty($value['content']) && array_key_exists($n, $my_page['widget'])) {
+      if (empty($value['content']) && isset($my_page['widget'][$n])) {
         unset($my_page['widget'][$n]);
         $my_page['widget'] = array_values(array_filter($my_page['widget']));
         $update = true;
-      } elseif (!empty($value['content']) && !array_key_exists($n, $my_page['widget'])) {
+      } elseif (!empty($value['content']) && !isset($my_page['widget'][$n])) {
         $my_page['widget'][$n] = $value;
         $update = true;
-      } elseif (!empty($value['content']) && array_key_exists($n, $my_page['widget']) && ($value['title'] !== $my_page[$n]['title'] || $value['content'] !== $my_page[$n]['content'])) {
+      } elseif (!empty($value['content']) && isset($my_page['widget'][$n]) && ($value['title'] !== $my_page['widget'][$n]['title'] || $value['content'] !== $my_page['widget'][$n]['content'])) {
         $my_page['widget'][$n] = $value;
         $update = true;
       }
@@ -107,7 +106,7 @@ if (array_key_exists('widget', $my_page)) {
 }
 ?>
 
-<p class="button site-config" style="width:150px;"><a href="javascript:;" onclick="show('new-widget')">New sidebar widget</a></p>
+<p class="button site-config" style="width:200px;"><a href="javascript:;" onclick="show('new-widget')">New sidebar widget</a></p>
 <div class="site-config clearfix" id="new-widget">
 <p>New sidebar widget</p>
 <form method="post" action="customize.php">

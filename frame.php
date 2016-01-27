@@ -1,22 +1,29 @@
 <?php
-include_once('./data/config.php');
-include_once($base_dir.'functions.php');
+include(__DIR__.'/init.php');
 
 header('X-Robots-Tag: noindex,nofollow,noarchive');
 
-if(!array_key_exists('fid',$_GET) || !array_key_exists('limit',$_GET)) {
+if(!array_key_exists('fid',$_GET) || !array_key_exists('l',$_GET) || !isset($_GET['a']) || !verifyotp($_GET['a'], null, $_GET['fid'].'-id')) {
   header("HTTP/1.1 403 Forbidden");
   include($includes_dir.'403-noredirect.php');
   exit(0);
 }
 
 $folder_id=$_GET['fid'];
+$limit = min($embed_max, $_GET['l']);
 
 $header_string=boxauth();
 $box_cache=boxcache();
-$folder_list=getfolderlist();
+$file_list=getfilelist($folder_id,$limit,'0',$order);
 
-if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access']['public'][0] !== '1') {
+if ($file_list == 'error') {
+  header("Status: 404 Not Found");
+  include($includes_dir.'404-noredirect.php');
+  exit(0);
+}
+
+$access = getaccess($folder_id);
+if (!$access) {
   $auth=auth(array($username,'id-'.$folder_id));
   if ($auth !== 'pass') {
     header("HTTP/1.1 401 Unauthorized");
@@ -27,24 +34,17 @@ if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access
   }
 }
 
-$otp=getkey($expire_image);
+$otp=getotp($expire_image);
 
-$page_cache=$cache_dir.$folder_id.'-'.$_GET['limit'].'-embed.html';
+$page_cache=$cache_dir.$folder_id.'-'.$limit.'-embed.html';
 if (file_exists($page_cache)) {
   $age = filemtime($page_cache);
-  if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($data_dir.'config.php')) {
+  if ($age >= $box_cache && $age >= filemtime($data_dir.'config.php')) {
     $output = file_get_contents($page_cache);
     $output = str_replace('#OTP#', $otp, $output);
     echo $output;
     exit(0);
   }
-}
-
-$file_list=getfilelist($folder_id,$_GET['limit'],'0');
-if (!array_key_exists('id-'.$folder_id,$folder_list) || $file_list == 'error') {
-  header("Status: 404 Not Found");
-  include($includes_dir.'404-noredirect.php');
-  exit(0);
 }
 
 ob_start();
@@ -54,7 +54,7 @@ ob_start();
 <html>
 <head>
 <meta charset="utf-8" />
-<title><?php if ($folder_id !== $box_root_folder_id) { $folder_name=$folder_list['id-'.$folder_id]['name']; echo $folder_name,' | '; } echo $site_name; ?></title>
+<title><?php if ($folder_id !== $box_root_folder_id) { $folder_name=$file_list['name']; echo $folder_name,' | '; } echo $site_name; ?></title>
 <link rel="profile" href="http://gmpg.org/xfn/11" />
 <link rel="shortcut icon" href="/favicon.ico" />
 <style type="text/css" media="all">
@@ -81,12 +81,12 @@ a{text-decoration:none;color:#32cd32;}
 <a href="<?php echo $base_url,'?fid=',$folder_id; ?>" target="_blank"><?php echo $folder_name; ?></a>
 </p>
 <?php
-foreach ($file_list as $entry) {
-  if (array_key_exists('type',$entry) && $entry['type'] == 'file') {
+foreach ($file_list['item_collection'] as $id => $entry) {
+  if (isset($entry['type']) && $entry['type'] == 'file') {
     $name = substr($entry['name'], 0, strrpos($entry['name'], '.', -1));
 ?>
   <a href="<?php echo $base_url; ?>image.php?id=<?php echo $entry['id']; ?>" target="_blank">
-    <img class="thumb" src="<?php echo getcontenturl($folder_id); ?>thumbnail.php?id=<?php echo $entry['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" title="<?php echo $name; ?>" />
+    <img class="thumb" src="<?php echo getcontenturl($folder_id); ?>thumbnail.php?id=<?php echo $entry['id']; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" title="<?php echo $name; ?>" />
   </a>
 <?php
   }

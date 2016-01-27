@@ -1,6 +1,5 @@
 <?php
-include_once('../data/config.php');
-include_once($base_dir.'functions.php');
+include('../init.php');
 
 header('X-Robots-Tag: noindex,nofollow,noarchive');
 
@@ -13,25 +12,15 @@ if(!array_key_exists('fid',$_GET) || !array_key_exists('option',$_GET) || !array
 $folder_id = $_GET['fid'];
 $header_string=boxauth();
 $box_cache=boxcache();
-$folder_list=getfolderlist();
 $url=getpageurl();
 
 $auth=auth(array($username,'id-'.$folder_id));
-if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access']['public'][0] !== '1') {
+if (getaccess($folder_id) < '8') {
   if ($auth !== 'pass') {
     header("HTTP/1.1 401 Unauthorized");
     exit(0);
   }
 }
-
-ob_end_clean();
-header('HTTP/1.1 200 Ok');
-header("Connection: close");
-ob_start();
-$size=ob_get_length();
-header("Content-Length: $size");
-ob_end_flush();
-flush();
 
 if ($_GET['option'] == 'fullscreen' || $_GET['option'] == 'slideshow') {
   $option = $_GET['option'];

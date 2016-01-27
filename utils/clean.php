@@ -1,6 +1,5 @@
 <?php
-include_once('../data/config.php');
-include_once($base_dir.'functions.php');
+include('../init.php');
 
 header('X-Robots-Tag: noindex,nofollow,noarchive');
 
@@ -24,22 +23,27 @@ ob_end_flush();
 flush();
 if (function_exists('fastcgi_finish_request'))
   fastcgi_finish_request();
-session_write_close();
+if (session_id())
+  session_write_close();
 
 $header_string=boxauth();
 $box_cache=boxcache();
-$folder_list = getfolderlist();
 
-$all_files = getfiles(null);
+$clean_dir = $cache_dir.'clean_f';
+$dir_file = $cache_dir.'clean_f';
 
-$dir = $data_dir.'stat/';
-$files = scandir($dir);
-foreach ($files as $file) {
-  if (preg_match('/^\d+$/', $file))
-    if (!array_key_exists('id-'.$file, $all_files) && !array_key_exists('id-'.$file, $folder_list))
-      unlink($dir.$file);
-  } elseif (!preg_match('/^\./', $file)) {
-    unlink($dir.$file);
-  }
+if (!file_exists($clean_dir) || filemtime($clean_dir)) {
+  $fid = $box_root_folder_id;
+} else {
+  $folders = include($clean_dir);
+  $fid = $folders[0];
+  unset($folders[0]);
+/*  file_put_contents('<?php return '.var_export($folders, true).'; ?>', LOCK_EX);*/
+}
+
+$items = getfilelist($fid);
+
+foreach ($items['item_collection'] as $id => $item) {
+  $type = $item['type'];
 }
 ?>

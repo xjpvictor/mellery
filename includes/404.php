@@ -4,7 +4,7 @@
 <link rel="shortcut icon" href="/favicon.ico" />
 <script language="javascript">
 var stoptime=5;
-var My_Url="<?php echo $base_url; ?>";
+var My_Url="<?php echo (isset($redirect_url) && $redirect_url ? $redirect_url : $base_url); ?>";
 godomain();
 function godomain()
 {setTimeout("gourl()",stoptime*1000);}
@@ -26,6 +26,6 @@ Load();
 <body bgcolor="white">
 <center><h1>404 Not Found</h1></center>
 <center><img src="<?php echo $base_url; ?>content/404.jpg" height="300px"/></center>
-<center><p>Will be automatically redirected to <a href="<?php echo $base_url; ?>"><?php echo $site_name; ?></a> in <span id="count-down"></span> s.</p></center>
+<center><p>Will be automatically redirected to <a href="<?php echo (isset($redirect_url) && $redirect_url ? $redirect_url : $base_url); ?>"><?php echo $site_name; ?></a> in <span id="count-down"></span> s.</p></center>
 </body>
 </html>

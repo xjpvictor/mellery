@@ -1,7 +1,6 @@
 <?php
 define('includeauth',true);
-include_once('../data/config.php');
-include_once($base_dir.'functions.php');
+include('../init.php');
 
 header('X-Robots-Tag: noindex,nofollow,noarchive');
 
@@ -10,7 +9,7 @@ $url=getpageurl();
 if ($auth !== 'pass') {
   header("HTTP/1.1 401 Unauthorized");
   $redirect_url = $base_url.'admin/login.php?ref='.$url;
-  $redirect_message = 'Access restricted';
+  $redirect_message = 'Login required';
   include($includes_dir.'redirect.php');
   exit(0);
 }
@@ -20,31 +19,13 @@ if (file_exists($data_dir.'my_page.php'))
 include('head.php');
 $header_string=boxauth();
 $box_cache=boxcache();
-$folder_list = getfolderlist();
-
-$otp_session=getkey($expire_session);
+$file_list = getfilelist($box_root_folder_id, null, null, 2);
 ?>
 
 <div class="site-config clearfix">
 
 <p>Hello <?php echo $username; ?>,</p>
 <?php
-if (array_key_exists('id-'.$box_root_folder_id, $folder_list))
-  unset($folder_list['id-'.$box_root_folder_id]);
-$new = array();
-foreach ($folder_list as $id => $folder) {
-  if ($folder['new'] == 1)
-    $new = array_merge($new, array($id => $folder));
-}
-$new_count = count($new);
-$folder_list = array_merge($new, $folder_list);
-
-$image_count = 0;
-foreach ($folder_list as $id => $folder) {
-  $image_count += $folder['total_count'];
-  if ($folder['parent']['id'] !== $box_root_folder_id)
-    $image_count--;
-}
 $files = scandir($cache_dir);
 $size = 0;
 $thumbnail = 0;
@@ -64,24 +45,24 @@ foreach ($files as $file) {
 $size = getsize($size);
 ?>
 
-<p>You have <b><?php echo count($folder_list); ?></b> albums, and <b><?php echo $image_count; ?></b> images in the albums<span class="edit-admin"><a href="<?php echo $base_url; ?>admin/folder.php">Manage albums</a></span></p>
+<p>You have <b><?php echo $file_list['total_count']; ?></b> albums<span class="edit-admin"><a href="<?php echo $base_url; ?>admin/folder.php">Manage albums</a></span></p>
 
-<?php if ($new_count > 0) { ?>
-<p><b class="new"><?php echo $new_count; ?></b> new albums recently uploaded. New albums are kept private by default.</p>
-<?php } ?>
-
-<?php if (count($folder_list) > 0) { ?>
+<?php if ($file_list['total_count']) { ?>
 <p>Recent albums:</p>
 <div id="recent-list">
 <?php
-  $otp=getkey($expire_image);
+  $otp=getotp($expire_image);
   $i = 0;
-  foreach ($folder_list as $folder) {
+  foreach ($file_list['item_collection'] as $folder) {
 ?>
 <div>
+<?php if ($folder['type'] == 'folder') { ?>
 <a href="<?php echo $base_url; ?>admin/folder.php?fid=<?php echo $folder['id']; ?>">
-<img class="admin-album" src="<?php echo $base_url; ?>cover.php?fid=<?php echo $folder['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=<?php echo $otp; ?>" alt="<?php echo $folder['name']; ?>" title="<?php echo $folder['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+<?php } ?>
+<img class="admin-album" src="<?php echo $base_url; echo ($folder['type'] == 'folder' ? 'cover.php?f' : 'thumbnail.php?'); ?>id=<?php echo $folder['id']; ?>&amp;otp=<?php echo $otp; ?>" alt="<?php echo $folder['name']; ?>" title="<?php echo $folder['name']; ?>" width="<?php echo $w; ?>" height="<?php echo $h; ?>" />
+<?php if ($folder['type'] == 'folder') { ?>
 </a>
+<?php } ?>
 </div>
 <?php
     $i ++;
@@ -100,7 +81,7 @@ $size = getsize($size);
 <p style="padding-left:10px;"><b><?php echo $thumbnail; ?></b> cached thumbnail images<span class="button button-right"><a href="<?php echo $base_url; ?>utils/cache.php?option=thumbnail&amp;ref=<?php echo $url; ?>">Clean</a></span></p>
 <p style="padding-left:10px;"><b><?php echo $html; ?></b> cached html pages<span class="button button-right"><a href="<?php echo $base_url; ?>utils/cache.php?option=html&amp;ref=<?php echo $url; ?>">Clean</a></span></p>
 <p style="padding-left:10px;"><b><?php echo $box; ?></b> cached box.com file list<span class="button button-right"><a href="<?php echo $base_url; ?>utils/cache.php?option=box&amp;ref=<?php echo $url; ?>">Clean</a></span></p>
-<p class="small">* This may take some time.</p><br/>
+<br/>
 <p>Clean obsolete files<span class="button button-right"><a href="<?php echo $base_url; ?>utils/clean.php">Clean</a></span></p>
 <p class="small">* Data files are leftover when images are deleted from Box.com directly. Cleaning may take some time.</p>
 </div>

@@ -1,16 +1,21 @@
 <?php
-include_once('../data/config.php');
-include_once($base_dir.'functions.php');
+include('../init.php');
 
 header('X-Robots-Tag: noindex,nofollow,noarchive');
 
 if (empty($_GET)) {
+  $img = $content_dir.'logo.ico';
   ob_end_clean();
   ob_start();
   header('HTTP/1.1 200 Ok');
   $size=ob_get_length();
-  header("Content-Length: $size");
+  header('Content-Type: image/png');
+  header("Cache-Control: no-cache, must-revalidate");
+  header("Pragma: no-cache");
+  header('Expires: '.gmdate('D, d M Y H:i:s', time()).' GMT');
+  header("Content-Length: ".($size + filesize($img)));
   header("Connection: close");
+  readfile($img);
   ob_end_flush();
   flush();
   if (function_exists('fastcgi_finish_request'))
@@ -41,7 +46,8 @@ if (empty($_GET)) {
   flush();
   if (function_exists('fastcgi_finish_request'))
     fastcgi_finish_request();
-  session_write_close();
+  if (session_id())
+    session_write_close();
   $cache_expire = '0';
   $cache_clean = 'always';
 }
@@ -57,25 +63,25 @@ if ($cache_clean !== 'always' && ($cache_clean == '0' || time() - $timestamp < $
 
 file_put_contents($timestamp_file, time());
 
-if (!empty($_GET) && array_key_exists('option', $_GET) && $_GET['option'] == 'thumbnail') {
-  foreach (glob($cache_dir . "[^.]+", GLOB_NOSORT) as $file) {
+if (isset($_GET['option']) && $_GET['option'] == 'thumbnail') {
+  foreach (glob($cache_dir . "[^.]*.thumb", GLOB_NOSORT) as $file) {
     if (time() - filemtime($file) >= $cache_expire * 86400)
-    unlink($file);
+      unlink($file);
   }
-} elseif (!empty($_GET) && array_key_exists('option', $_GET) && $_GET['option'] == 'html') {
+} elseif (isset($_GET['option']) && $_GET['option'] == 'html') {
   foreach (glob($cache_dir . "[^.]*.html", GLOB_NOSORT) as $file) {
     if (time() - filemtime($file) >= $cache_expire * 86400)
-    unlink($file);
+      unlink($file);
   }
-} elseif (!empty($_GET) && array_key_exists('option', $_GET) && $_GET['option'] == 'box') {
+} elseif (isset($_GET['option']) && $_GET['option'] == 'box') {
   foreach (glob($cache_dir . "[^.]*.php", GLOB_NOSORT) as $file) {
     if (time() - filemtime($file) >= $cache_expire * 86400)
-    unlink($file);
+      unlink($file);
   }
 } else {
   foreach (glob($cache_dir . "[^.]*", GLOB_NOSORT) as $file) {
     if (time() - filemtime($file) >= $cache_expire * 86400)
-    unlink($file);
+      unlink($file);
   }
 }
 ?>

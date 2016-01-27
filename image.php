@@ -1,8 +1,8 @@
 <?php
 define('includeauth',true);
 define('isimage',true);
-include_once('./data/config.php');
-include_once($base_dir.'functions.php');
+include(__DIR__.'/init.php');
+
 if(!array_key_exists('id',$_GET)) {
   header("Status: 404 Not Found");
   include($includes_dir.'404.php');
@@ -12,8 +12,24 @@ $id=$_GET['id'];
 
 $header_string=boxauth();
 
+$box_cache=boxcache();
+$url=getpageurl();
+$info = getexif($id);
+if (!isset($info['parent_id'])) {
+  header("Status: 404 Not Found");
+  include($includes_dir.'404.php');
+  exit(0);
+}
+$folder_id = $info['parent_id'];
+$file_list=getfilelist($folder_id,null,null,$order);
+if ($file_list == 'error') {
+  header("Status: 404 Not Found");
+  include($includes_dir.'404.php');
+  exit(0);
+}
+
 $ch=curl_init();
-curl_setopt($ch, CURLOPT_URL,"https://api.box.com/2.0/files/".$id."/content");
+curl_setopt($ch, CURLOPT_URL,$box_url."/files/".$id."/content");
 curl_setopt($ch, CURLOPT_HEADER,true);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, array($header_string));
@@ -26,13 +42,8 @@ if (empty($match)) {
   exit(0);
 }
 
-$box_cache=boxcache();
-$folder_list=getfolderlist();
-$url=getpageurl();
-$info = getexif($id);
-$folder_id = $info['parent_id'];
-
-if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access']['public'][0] !== '1') {
+$access = getaccess($folder_id);
+if ($folder_id !== $box_root_folder_id && !$access) {
   $auth=auth(array($username,'id-'.$folder_id));
   if ($auth !== 'pass') {
     header("HTTP/1.1 401 Unauthorized");
@@ -43,7 +54,7 @@ if ($folder_id !== $box_root_folder_id && $folder_list['id-'.$folder_id]['access
   }
 }
 
-$otp=getkey($expire_image);
+$otp=getotp($expire_image);
 $auth_admin = auth($username);
 
 if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSION['message'])) {
@@ -53,13 +64,13 @@ if (!empty($_SESSION) && array_key_exists('message',$_SESSION) && !empty($_SESSI
   $session_message = false;
 }
 
-$sharetable = '<table><tr><td><a href="https://twitter.com/share" class="twitter-share-button"></a></td><td><div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div></td><td><div class="g-plusone" data-size="medium"></div></td></tr></table>';
+$sharetable = '<table><tr><td><a href="https://twitter.com/share" class="twitter-share-button"></a></td><td><div class="fb-like" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div></td></tr></table>';
 
 if ($auth_admin !== 'pass') {
   $page_cache=$cache_dir.$folder_id.'-'.$id.'.html';
   if (file_exists($page_cache)) {
     $age = filemtime($page_cache);
-    if ($box_cache == 1 && $age >= filemtime($data_dir.'folder.php') && $age >= filemtime($data_dir.'config.php') && (!file_exists($data_dir.'my_page.php') || $age >= filemtime($data_dir.'my_page.php'))) {
+    if ($age >= $box_cache && $age >= filemtime($data_dir.'config.php') && (!file_exists($data_dir.'my_page.php') || $age >= filemtime($data_dir.'my_page.php'))) {
       $output = file_get_contents($page_cache);
       $output = str_replace(array('#OTP#', '#IMGURL#', '##sharetable##'), array($otp, $match[1], $sharetable), $output);
       if (isset($_SESSION['fullscreen']['id-'.$folder_id]))
@@ -77,12 +88,10 @@ if ($auth_admin !== 'pass') {
   }
 }
 
-$file_list=getfilelist($folder_id,null,null);
-if ($file_list == 'error' || !array_key_exists('id-'.$id,$file_list) || !array_key_exists('id-'.$folder_id,$folder_list)) {
-  header("Status: 404 Not Found");
-  include($includes_dir.'404.php');
-  exit(0);
-}
+$files = $file_list['item_collection'];
+$file_name=$files['id-'.$id]['name'];
+$sequence_id=$files['id-'.$id]['sequence_id'];
+$name = substr($file_name, 0, strrpos($file_name, '.', -1));
 
 ob_start();
 
@@ -97,24 +106,21 @@ include($base_dir.'head.php');
 
 <div id="content-img" class="#FULLSCREENCLASS#">
 <div id="imgbox">
-<?php
-$file_name=$file_list['id-'.$id]['name'];
-$sequence_id=$file_list['id-'.$id]['sequence_id'];
-$name = substr($file_name, 0, strrpos($file_name, '.', -1));
-?>
 <img id="mainimg-img" src="#IMGURL#" alt="<?php echo $name; ?>" style="max-width:95%;max-height:95%;"/>
 <a title="Download original image" target="_blank" href="#IMGURL#"><div id="download">&nbsp;</div></a>
 <a id="fullscreen-a" title="Fullscreen" href="javascript:;" onclick="togglefull()"><img src="<?php echo $cu; ?>content/fullscreen.png<?php if ($cu !== $base_url) echo '?ver=',filemtime($content_dir.'fullscreen.png'); ?>" alt="fullscreen" id="fullscreen"/></a>
 
 <?php
-foreach ($file_list as $key => $value) {
-  if ($file_list[$key]['type'] !== 'file')
-    unset($file_list[$key]);
+foreach ($files as $key => $value) {
+  if ($value['type'] !== 'file')
+    unset($files[$key]);
+  else
+    break;
 }
-$description = $file_list['id-'.$id]['description'];
-$k=array_search('id-'.$id,array_keys($file_list)) + 1;
+$description = $files['id-'.$id]['description'];
+$k=array_search('id-'.$id,array_keys($files)) + 1;
 $seq_num=3;
-$seq=getseq($file_list,'id-'.$id,$seq_num);
+$seq=getseq($files,'id-'.$id,$seq_num);
 if ($seq && count($seq) > 1) {
   $i=0;
   foreach($seq as $item) {
@@ -153,74 +159,74 @@ if ($info) {
       $map = true;
     }
   }
-  echo '<ul id="exif-ul-1"><li>File name:<span class="right">',$file_name,'</span></li>';
-  echo '<li>File size:<span class="right">',$fsize,'</span></li>';
-  echo '<li>Type:<span class="right">',$size['mime'],'</span></li>';
+  echo '<ul id="exif-ul-1"><li>File name:<span>',$file_name,'</span></li>';
+  echo '<li>File size:<span>',$fsize,'</span></li>';
+  echo '<li>Type:<span>',$size['mime'],'</span></li>';
   echo '</ul>';
-  echo '<ul><li>Dimensions:<span class="right">',$size[0],' x ',$size[1],'</span></li>';
+  echo '<ul><li>Dimensions:<span>',$size[0],' x ',$size[1],'</span></li>';
   if (isset($exif) && $exif) {
     if (isset($exif['DateTimeOriginal']))
-      echo '<li>Date:<span class="right">',$exif['DateTimeOriginal'],'</span></li>';
+      echo '<li>Date:<span>',$exif['DateTimeOriginal'],'</span></li>';
     echo '</ul>';
     $str = '';
     if (isset($exif['Make']) && isset($exif['Model']))
-      $str .= '<li>Device:<span class="right">'.$exif['Make'].' '.$exif['Model'].'</span></li>';
+      $str .= '<li>Device:<span>'.$exif['Make'].' '.$exif['Model'].'</span></li>';
     if (isset($exif['ExposureTime'])) {
       if (preg_match('/(\d+)\/(\d+)/',$exif['ExposureTime'],$et))
-        $str .= '<li>Exposure time:<span class="right">1/'. floor($et[2] / $et[1]) .' s</span></li>';
+        $str .= '<li>Exposure time:<span>1/'. floor($et[2] / $et[1]) .' s</span></li>';
       elseif (is_numeric($exif['ExposureTime']))
-        $str .= '<li>Exposure time:<span class="right">1/'.$exif['ExposureTime'].' s</span></li>';
+        $str .= '<li>Exposure time:<span>1/'.$exif['ExposureTime'].' s</span></li>';
       else
-        $str .= '<li>Exposure time:<span class="right">1/'.$exif['ExposureTime'].'</span></li>';
+        $str .= '<li>Exposure time:<span>1/'.$exif['ExposureTime'].'</span></li>';
     }
     if (isset($exif['FNumber'])) {
       if (preg_match('/(\d+)\/(\d+)/',$exif['FNumber'],$fn))
-        $str .= '<li>F-Number:<span class="right">F/'. round($fn[1] / $fn[2],1) .'</span></li>';
+        $str .= '<li>F-Number:<span>F/'. round($fn[1] / $fn[2],1) .'</span></li>';
       elseif (is_numeric($exif['FNumber']))
-        $str .= '<li>F-Number:<span class="right">F/'.$exif['FNumber'].'</span></li>';
+        $str .= '<li>F-Number:<span>F/'.$exif['FNumber'].'</span></li>';
       else
-        $str .= '<li>F-Number:<span class="right">'.$exif['FNumber'].'</span></li>';
+        $str .= '<li>F-Number:<span>'.$exif['FNumber'].'</span></li>';
     }
     if (isset($exif['FocalLength'])) {
       if (preg_match('/(\d+)\/(\d+)/',$exif['FocalLength'],$fl))
-        $str .= '<li>Focal length:<span class="right">'. round($fl[1] / $fl[2],1) .' mm</span></li>';
+        $str .= '<li>Focal length:<span>'. round($fl[1] / $fl[2],1) .' mm</span></li>';
       elseif (is_numeric($exif['FocalLength']))
-        $str .= '<li>Focal length:<span class="right">'.$exif['FocalLength'].' mm</span></li>';
+        $str .= '<li>Focal length:<span>'.$exif['FocalLength'].' mm</span></li>';
       else
-        $str .= '<li>Focal length:<span class="right">'.$exif['FocalLength'].'</span></li>';
+        $str .= '<li>Focal length:<span>'.$exif['FocalLength'].'</span></li>';
     }
     if (isset($exif['ISOSpeedRatings']))
-      $str .= '<li>ISO:<span class="right">'.$exif['ISOSpeedRatings'].'</span></li>';
+      $str .= '<li>ISO:<span>'.$exif['ISOSpeedRatings'].'</span></li>';
     if (isset($exif['Flash'])) {
       switch($exif['Flash']) {
       case '0':
-        $str .= '<li>Flash:<span class="right">No</span></li>';
+        $str .= '<li>Flash:<span>No</span></li>';
         break;
       case '1':
-        $str .= '<li>Flash:<span class="right">Yes</span></li>';
+        $str .= '<li>Flash:<span>Yes</span></li>';
         break;
       case '5':
-        $str .= '<li>Flash:<span class="right">flash fired but strobe return light not detected</span></li>';
+        $str .= '<li>Flash:<span>flash fired but strobe return light not detected</span></li>';
         break;
       case '7':
-        $str .= '<li>Flash:<span class="right">flash fired and strobe return light detected</span></li>';
+        $str .= '<li>Flash:<span>flash fired and strobe return light detected</span></li>';
         break;
       }
     }
     if (isset($exif['ExposureBiasValue']))
-      $str .= '<li>Exposure bias:<span class="right">'.$exif['ExposureBiasValue'].'</span></li>';
+      $str .= '<li>Exposure bias:<span>'.$exif['ExposureBiasValue'].'</span></li>';
     if (isset($exif['WhiteBalance']) && $exif['WhiteBalance'] == '1')
-      $str .= '<li>White balance:<span class="right">Manual</span></li>';
+      $str .= '<li>White balance:<span>Manual</span></li>';
     if (isset($exif['WhiteBalance']) && $exif['WhiteBalance'] == '0')
-      $str .= '<li>White balance:<span class="right">Auto</span></li>';
+      $str .= '<li>White balance:<span>Auto</span></li>';
     if (isset($exif['MeteringMode']) && $exif['MeteringMode'] == '1')
-      $str .= '<li>Metering mode:<span class="right">Manual</span></li>';
+      $str .= '<li>Metering mode:<span>Manual</span></li>';
     if (isset($exif['MeteringMode']) && $exif['MeteringMode'] == '0')
-      $str .= '<li>Metering mode:<span class="right">Auto</span></li>';
+      $str .= '<li>Metering mode:<span>Auto</span></li>';
     if (isset($exif['ExposureMode']) && $exif['ExposureMode'] == '1')
-      $str .= '<li>Exposure mode:<span class="right">Manual</span></li>';
+      $str .= '<li>Exposure mode:<span>Manual</span></li>';
     if (isset($exif['ExposureMode']) && $exif['ExposureMode'] == '0')
-      $str .= '<li>Exposure mode:<span class="right">Auto</span></li>';
+      $str .= '<li>Exposure mode:<span>Auto</span></li>';
     if (!empty($str))
       echo '<ul>',$str;
     echo '</ul>';
@@ -228,20 +234,28 @@ if ($info) {
       echo '</div><div id="map"></div>';
     }
   }
-  echo '<div id="meta-div"><span id="meta-border"></span><p id="meta">Uploaded ',date('d. F Y', strtotime($info['created_at'])),' by ',$username;
-  if ($nolicense)
-    echo ' with all rights reserved';
-  else {
-    $cc_str = 'by';
-    if ($nc)
-      $cc_str .= '-nc';
-    if ($sa == '0')
-      $cc_str .= '-nd';
-    elseif ($sa == '2')
-      $cc_str .= '-sa';
-    echo ' under <a href="',$cc_url,$cc_str,'/',$cc_ver,'" target="_blank" rel="license">CC ',strtoupper($cc_str),' ',$cc_ver,'</a>';
+  echo '<div id="meta-div"><span id="meta-border"></span><p id="meta">Uploaded ',date('d. F Y', strtotime($info['created_at'])),' by ',$username,'.';
+  if (!($cl = getaccess($folder_id, null, null, 'cl'))) {
+    if (!isset($license) || !$license)
+      echo ' All rights reserved.';
+    elseif ($license == '-1')
+      echo ' No right reserved.';
+    elseif ($license == '1') {
+      $cc_str = 'by';
+      if ($nc)
+        $cc_str .= '-nc';
+      if ($sa == '0')
+        $cc_str .= '-nd';
+      elseif ($sa == '2')
+        $cc_str .= '-sa';
+      echo ' <a href="',$cc_url,$cc_str,'/',$cc_ver,'" target="_blank" rel="license">CC ',strtoupper($cc_str),' ',$cc_ver,'</a>.';
+    } elseif ($license == '2' && isset($custom_license) && $custom_license) {
+      echo ' '.(isset($custom_license_url) && $custom_license_url ? '<a href="'.$custom_license_url.'" target="_blank" rel="license"> ' : '').$custom_license.(isset($custom_license_url) && $custom_license_url ? '</a>' : '').'.';
+    }
+  } else {
+    echo ' '.(($cl_url = getaccess($folder_id, null, null, 'cl_url')) ? '<a href="'.$cl_url.'" target="_blank" rel="license"> ' : '').$cl.($cl_url ? '</a>' : '').'.';
   }
-  if ($folder_id !== $box_root_folder_id && !$folder_list['id-'.$folder_id]['access']['public'][0])
+  if ($folder_id !== $box_root_folder_id && !$access)
     echo '<br/>Private image. DO NOT share.';
   echo '</p>';
   echo '</div>';
@@ -256,17 +270,22 @@ if ($info) {
 </div>
 
 <div class="widget-container">
-<p id="parent"><a href="<?php echo $base_url; ?>?fid=<?php echo $folder_id; ?>">&lt;&lt;&nbsp;Back to <?php if ($folder_id !== $box_root_folder_id) echo $folder_name; else echo 'homepage'; ?></a></p>
+<p id="parent"><a href="<?php echo $base_url; if ($folder_id !== $box_root_folder_id) echo '?fid='.$folder_id; ?>">&lt;&lt;&nbsp;Back to <?php if ($folder_id !== $box_root_folder_id) echo $folder_name; else echo 'homepage'; ?></a></p>
 </div>
 
 <div class="widget-container">
-<div id="view-count" class="view-count"><script src="<?php echo $base_url; ?>utils/view.php?id=<?php echo $id; ?>&amp;update=#OTP#"></script>
+<div id="view-count" class="view-count">
+<?php if (isset($show_viewcount) && $show_viewcount) { ?>
+<script src="<?php echo $base_url; ?>utils/view.php?id=<?php echo $id; ?>&amp;update=#OTP#"></script>
+<?php } else { ?>
+&nbsp;
+<?php } ?>
 <?php if ($info) { ?>
 <span class="right" id="exif"><a href="javascript:;" onclick="show('image-exif')">Image details</a></span>
 <?php } ?>
 </div>
 
-<?php if ($folder_id == $box_root_folder_id || $folder_list['id-'.$folder_id]['access']['public'][0]) : ?>
+<?php if ($folder_id == $box_root_folder_id || $access) : ?>
 <div id="shareimg">
 ##sharetable##
 </div>
@@ -287,6 +306,20 @@ if ($info) {
 </div>
 </div>
 
+<?php
+if (!isset($my_page) && file_exists($data_dir.'my_page.php')) $my_page = include($data_dir.'my_page.php');
+if (isset($my_page) && isset($my_page['widget'])) {
+  foreach ($my_page['widget'] as $widget) {
+?>
+  <div class="widget-container">
+  <h3 class="widget-title"><?php echo $widget['title']; ?></h3>
+  <?php echo $widget['content']; ?>
+  </div>
+<?php
+  }
+}
+?>
+
 <?php if (isset($disqus_shortname) && !empty($disqus_shortname)) { ?>
 <div id="disqus_thread"></div>
 <?php } ?>
@@ -294,7 +327,7 @@ if ($info) {
 </div></div>
 
 <?php if ($seq && count($seq) > 1) { ?>
-  <div id="info-img-nav" class="info-img #FULLSCREENCLASS#"><div id="imagename"><?php echo $name; ?> (<?php echo $k; ?> of <?php echo count($file_list); ?> images)</div>
+  <div id="info-img-nav" class="info-img #FULLSCREENCLASS#"><div id="info-img-content"><div id="imagename"><?php echo $name; ?> (<?php echo $k; ?> of <?php echo count($files); ?> images)</div>
   <div id="nav-img">
 <?php
   $i=0;
@@ -302,7 +335,7 @@ if ($info) {
     $i++;
     $name = substr($item['name'], 0, strrpos($item['name'], '.', -1));
 ?>
-  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $item['id']; ?>"><img class="item-img" <?php if ($item['id']==$id) { echo 'id="current-img" '; $n = $i; } ?> src="<?php echo getcontenturl($folder_id); ?>thumbnail.php?id=<?php echo $item['id']; ?>&amp;w=<?php echo $w; ?>&amp;h=<?php echo $h; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" title="<?php echo $name; ?>" width="150" height="150" /></a>
+  <a href="<?php echo $base_url; ?>image.php?id=<?php echo $item['id']; ?>"><img class="item-img" <?php if ($item['id']==$id) { echo 'id="current-img" '; $n = $i; } ?> src="<?php echo getcontenturl($folder_id); ?>thumbnail.php?id=<?php echo $item['id']; ?>&amp;otp=#OTP#" alt="<?php echo $name; ?>" title="<?php echo $name; ?>" width="150" height="150" /></a>
 <?php
   }
 ?>
@@ -316,13 +349,14 @@ if ($info) {
 ?>
   </div>
 <?php } else { ?>
-  <div id="info-img" class="info-img #FULLSCREENCLASS#"><div id="imagename"><?php echo $name; ?></div>
+  <div id="info-img" class="info-img #FULLSCREENCLASS#"><div id="info-img-content"><div id="imagename"><?php echo $name; ?></div>
 <?php } ?>
 
 <div id="message-img">
 <?php include($base_dir.'foot.php'); ?>
 </div>
 
+</div>
 </div>
 
 </div>
@@ -384,7 +418,7 @@ function togglefull() {
   $(window).resize();
 }
 if (window.innerWidth > document.getElementById("ss").offsetWidth) {
-  $(document).ready(function () {$(document).bind('keydown', 'shift+f', function() {togglefull();});});
+  $(document).ready(function () {$(document).bind('keyup', 'f11', function() {togglefull();});});
 }
 <?php if (!$info) {echo '$(window).load(function(){';} ?>$(window).resize(function(){
   if (window.innerWidth > document.getElementById("ss").offsetWidth) {

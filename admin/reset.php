@@ -1,7 +1,6 @@
 <?php
 define('includeauth',true);
-include_once('../data/config.php');
-include_once($base_dir.'functions.php');
+include('../init.php');
 
 header('X-Robots-Tag: noindex,nofollow,noarchive');
 
@@ -14,8 +13,8 @@ if ($auth == 'pass') {
   exit(0);
 }
 
-$otp=getkey(3600);
-$otp_code = hash('sha256',$secret_key.$username.$otp);
+$otp=getotp(3600);
+$otp_code = getotp(null, $username.$otp);
 
 if (!empty($_GET) && array_key_exists('otp',$_GET) && $_GET['otp'] == $otp_code)
   $change = true;
@@ -24,7 +23,7 @@ else
 
 if (!empty($_POST)) {
   if (array_key_exists('username',$_POST) && array_key_exists('email',$_POST)) {
-    if ($_POST['username'] == $username && $_POST['email'] == $email && ($google_auth == '0' || (array_key_exists('google_auth',$_POST) && (verifykey($_POST['google_auth'],30,1) || $_POST['otp'] == $otp_recovery_code)))) {
+    if ($_POST['username'] == $username && $_POST['email'] == $email && ($otp_auth == '0' || (array_key_exists('otp_auth',$_POST) && (verifyotp($_POST['otp_auth'],30,'',0) || $_POST['otp'] == $otp_recovery_code)))) {
       mail($email,$site_name.' password reset',wordwrap('Hi '.$username.",<br/><br/>\r\n".'You are receiving this email from '.$site_name." for password reset<br/>\r\nYou can reset your password via the following url<br/><br/>\r\n".'<a href="'.$base_url.'admin/reset.php?otp='.$otp_code.'" target="_blank">'.$base_url.'admin/reset.php?otp='.$otp_code."</a><br/><br/>\r\nThis link is valid for 1 hour only<br/><br/>\r\nIf you did not request for this, please discard it\r\n", 70, "\r\n"),"From: \"Admin\" <admin@".preg_replace('#^www\.#', '', strtolower($_SERVER['SERVER_NAME'])).">\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\n");
       $_SESSION['message'] = 'Link for password reset has been sent to your registered email address';
       header("Location: $base_url");
@@ -32,7 +31,7 @@ if (!empty($_POST)) {
     }
   } elseif ($change) {
     if (array_key_exists('password',$_POST) && array_key_exists('password_1',$_POST) && $_POST['password'] == $_POST['password_1']) {
-      $_POST['password'] = str_replace('"','\"',$_POST['password']);
+      $_POST['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT, ['cost' => $hash_cost]);
       changeconf(array('password' => $_POST['password']));
       $_SESSION['message'] = 'You have changed the password! Please log in';
       header("Location: $url".'login.php');
@@ -63,7 +62,7 @@ if (!empty($_POST)) {
 <input id="password" name="password" type="password"><br/>
 <p >Verify new password:</p>
 <input id="password1" name="password_1" type="password"><br/>
-<input class="button" type="submit" value="Submit" onclick="SubmitForm();">
+<input class="button" type="submit" value="Submit">
 </form>
 <?php } else { ?>
 <form name="form1" method="post" action="reset.php">
@@ -71,32 +70,21 @@ if (!empty($_POST)) {
 <input required name="username"><br/>
 <p >Email address:</p>
 <input required name="email"><br/>
-<p >Google Authenticator code:</p>
-<input id="googleauth" name="google_auth"><br/>
-<p class="small">* Leave blank if not enabled</p>
-<input class="button" type="submit" value="Submit" onclick="SubmitForm();">
+<?php if (isset($otp_auth) && $otp_auth == '1') { ?>
+<p >2-Step Authenticator code:</p>
+<input name="otp_auth" type="password"><br/>
+<?php } ?>
+<br/>
+<input class="button" type="submit" value="Submit">
 </form>
 <?php } ?>
 
+<br/>
 <p><a href="<?php echo $base_url; ?>admin/login.php">&lt;&lt; Login</a></p>
+<br/>
 <p><a href="<?php echo $base_url; ?>">&lt;&lt; Go Back to Homepage</a></p>
 </div>
 </div>
 </div>
-<script type="text/javascript" src="<?php echo $base_url; ?>content/sha256.js"></script>
-<script type="text/javascript">
-function SubmitForm() {
-  if (document.getElementById("password") && document.getElementById("password").value) {
-    document.getElementById("password").value = Sha256.hash(document.getElementById("password").value);
-  }
-  if (document.getElementById("password1") && document.getElementById("password1").value) {
-    document.getElementById("password1").value = Sha256.hash(document.getElementById("password1").value);
-  }
-  if (document.getElementById("googleauth") && document.getElementById("googleauth").value) {
-    document.getElementById("googleauth").value = Sha256.hash(document.getElementById("googleauth").value);
-  }
-  document.form1.submit
-}
-</script>
 </body>
 </html>

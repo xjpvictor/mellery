@@ -1,6 +1,5 @@
 <?php
-include_once('../data/config.php');
-include_once($base_dir.'functions.php');
+include('../init.php');
 
 header('X-Robots-Tag: noindex,nofollow,noarchive');
 
@@ -16,12 +15,20 @@ if (array_key_exists('dnt', $_GET) && $_GET['dnt'] == '1') {
   exit(0);
 }
 
+if (!isset($_GET['id'])) {
+  header("HTTP/1.0 403 Forbidden");
+  exit('403');
+}
+
+if (!is_dir($stat_dir))
+  mkdir($stat_dir);
+
 if (file_exists($stat_dir.$_GET['id']))
   $ori = (int)file_get_contents($stat_dir.$_GET['id']);
 else
   $ori = 0;
 
-if (array_key_exists('update', $_GET) && verifykey($_GET['update'], $expire_image, 0) && preg_match('/^\d+$/', $_GET['id']) && auth($username) !== 'pass' && (empty($_COOKIE) || !array_key_exists('_mellery_dnt', $_COOKIE) || $_COOKIE['_mellery_dnt'] !== '1') && (!array_key_exists('HTTP_DNT', $_SERVER) || !isset($_SERVER['HTTP_DNT']) || $_SERVER['HTTP_DNT'] !== 1)) {
+if (array_key_exists('update', $_GET) && verifyotp($_GET['update'], $expire_image) && preg_match('/^\d+$/', $_GET['id']) && auth($username) !== 'pass' && (empty($_COOKIE) || !array_key_exists('_mellery_dnt', $_COOKIE) || $_COOKIE['_mellery_dnt'] !== '1') && (!array_key_exists('HTTP_DNT', $_SERVER) || !isset($_SERVER['HTTP_DNT']) || $_SERVER['HTTP_DNT'] !== 1)) {
   $ori ++;
   file_put_contents($stat_dir.$_GET['id'], $ori, LOCK_EX);
 }
