@@ -6,6 +6,8 @@ A PHP photo gallery
 
 This is a simple photo gallery written with PHP. All information and image files are stored on [box.com][b] and retrieved using the API provided.
 
+This branch "box" has ceased developing. Newer versions will be using local storage and will be pushed to branch "master".
+
 ## Features ##
 
 ### Cache ###
